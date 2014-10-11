@@ -1,0 +1,14 @@
+{
+    "name": "contents",
+    "version": "0.0.0",
+    "main": "dist/contents.min.js",
+    "license": "BSD-3-Clause",
+    "dependencies": {
+        "jquery": ">=1"
+    },
+    "keywords": [
+        "table of contents",
+        "toc",
+        "contents"
+    ]
+}
