@@ -5,6 +5,67 @@ describe('gc', function () {
         $('body').html($.parseHTML(__html__['test/fixture/page.html']));
     });
 
+    describe('.options()', function () {
+        var optionsFactory;
+
+        optionsFactory = function (overwrite) {
+            var options;
+
+            options = $.extend({
+                where: $('#options .options-toc'),
+                content: $('#options .content')
+            }, overwrite);
+
+            return options;
+        };
+
+        it('must throw an error if options parameter is not provided', function () {
+            expect(function () {
+                gc.options()
+            }).toThrowError('Missing setup options.');
+        });
+
+        describe('setting options.where', function () {
+            it('must throw an error if it is not a jQuery object', function () {
+                expect(function () {
+                    gc.options(optionsFactory({where: {}}))
+                }).toThrowError('Option "where" is not a jQuery object.');
+            });
+
+            it('must throw an error if it refers to a non existing element', function () {
+                expect(function () {
+                    gc.options(optionsFactory({where: $('#not-existing-element')}))
+                }).toThrowError('Option "where" does not refer to an existing element.');
+            });
+
+            it('must throw an error if it refers to more than one element', function () {
+                expect(function () {
+                    gc.options(optionsFactory({where: $('#options div')}))
+                }).toThrowError('Option "where" refers to more than one element.');
+            });
+        });
+
+        describe('setting options.content', function () {
+            it('must throw an error if it is not a jQuery object', function () {
+                expect(function () {
+                    gc.options(optionsFactory({content: {}}))
+                }).toThrowError('Option "content" is not a jQuery object.');
+            });
+
+            it('must throw an error if it refers to a non existing element', function () {
+                expect(function () {
+                    gc.options(optionsFactory({content: $('#not-existing-element')}))
+                }).toThrowError('Option "content" does not refer to an existing element.');
+            });
+        });
+
+        describe('setting options.slug', function () {
+            it('must default to $.gajus.contents.toSlug', function () {
+                expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.toSlug);
+            });
+        });
+    });
+
     describe('.getHeadings()', function () {
         it('must throw an error if target does not exist', function () {
             expect(function () {

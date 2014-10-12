@@ -14,14 +14,7 @@
             lastHeading;
         
         options = $.gajus.contents.options(options);
-
-        
-
         headings = $.gajus.contents.getHeadings(options.content);
-
-        if (!headings.length) {
-            throw new Error('"content" area does not have headings.');
-        }
 
         $.gajus.contents.giveId(headings, options.slug);
 
@@ -77,14 +70,20 @@
 
         if (!options.where) {
             throw new Error('Option "where" is not set.');
+        } else if (!(options.where instanceof jQuery)) {
+            throw new Error('Option "where" is not a jQuery object.');
         } else if (!options.where.length) {
-            throw new Error('Option "where" does refer to an existing container.');
+            throw new Error('Option "where" does not refer to an existing element.');
+        } else if (options.where.length > 1) {
+            throw new Error('Option "where" refers to more than one element.');
         }
 
         if (!options.content) {
             throw new Error('Option "content" is not set.');
+        } else if (!(options.content instanceof jQuery)) {
+            throw new Error('Option "content" is not a jQuery object.');
         } else if (!options.content.length) {
-            throw new Error('Option "content" does refer to an existing container.');
+            throw new Error('Option "content" does not refer to an existing element.');
         }
 
         if (!options.slug) {

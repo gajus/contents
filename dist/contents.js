@@ -12,34 +12,9 @@
             list,
             offsetIndex,
             lastHeading;
-        //options = $.extend({}, defaultOptions, options);
-
-        if (!options.where) {
-            throw new Error('Option "where" is not set.');
-        } else if (!options.where.length) {
-            throw new Error('Option "where" does refer to an existing container.');
-        }
-
-        if (!options.content) {
-            throw new Error('Option "content" is not set.');
-        } else if (!options.content.length) {
-            throw new Error('Option "content" does refer to an existing container.');
-        }
-
-        if (!options.slug) {
-            options.slug = $.gajus.contents.toSlug;
-        }
-
-        if (!options.offset) {
-            // @todo Must change when the window size is changed.
-            options.offset = $(window).height()/3;
-        }
-
+        
+        options = $.gajus.contents.options(options);
         headings = $.gajus.contents.getHeadings(options.content);
-
-        if (!headings.length) {
-            throw new Error('"content" area does not have headings.');
-        }
 
         $.gajus.contents.giveId(headings, options.slug);
 
@@ -81,6 +56,46 @@
         }, 10);
 
         return list;
+    };
+
+    /**
+     * Interpret execution options.
+     * 
+     * @return {Object}
+     */
+    $.gajus.contents.options = function (options) {
+        if (!options) {
+            throw new Error('Missing setup options.');
+        }
+
+        if (!options.where) {
+            throw new Error('Option "where" is not set.');
+        } else if (!(options.where instanceof jQuery)) {
+            throw new Error('Option "where" is not a jQuery object.');
+        } else if (!options.where.length) {
+            throw new Error('Option "where" does not refer to an existing element.');
+        } else if (options.where.length > 1) {
+            throw new Error('Option "where" refers to more than one element.');
+        }
+
+        if (!options.content) {
+            throw new Error('Option "content" is not set.');
+        } else if (!(options.content instanceof jQuery)) {
+            throw new Error('Option "content" is not a jQuery object.');
+        } else if (!options.content.length) {
+            throw new Error('Option "content" does not refer to an existing element.');
+        }
+
+        if (!options.slug) {
+            options.slug = $.gajus.contents.toSlug;
+        }
+
+        if (!options.offset) {
+            // @todo Must change when the window size is changed.
+            options.offset = $(window).height()/3;
+        }
+
+        return options;
     };
 
     /**
