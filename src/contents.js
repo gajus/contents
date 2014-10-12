@@ -12,28 +12,10 @@
             list,
             offsetIndex,
             lastHeading;
-        //options = $.extend({}, defaultOptions, options);
+        
+        options = $.gajus.contents.options(options);
 
-        if (!options.where) {
-            throw new Error('Option "where" is not set.');
-        } else if (!options.where.length) {
-            throw new Error('Option "where" does refer to an existing container.');
-        }
-
-        if (!options.content) {
-            throw new Error('Option "content" is not set.');
-        } else if (!options.content.length) {
-            throw new Error('Option "content" does refer to an existing container.');
-        }
-
-        if (!options.slug) {
-            options.slug = $.gajus.contents.toSlug;
-        }
-
-        if (!options.offset) {
-            // @todo Must change when the window size is changed.
-            options.offset = $(window).height()/3;
-        }
+        
 
         headings = $.gajus.contents.getHeadings(options.content);
 
@@ -81,6 +63,40 @@
         }, 10);
 
         return list;
+    };
+
+    /**
+     * Interpret execution options.
+     * 
+     * @return {Object}
+     */
+    $.gajus.contents.options = function (options) {
+        if (!options) {
+            throw new Error('Missing setup options.');
+        }
+
+        if (!options.where) {
+            throw new Error('Option "where" is not set.');
+        } else if (!options.where.length) {
+            throw new Error('Option "where" does refer to an existing container.');
+        }
+
+        if (!options.content) {
+            throw new Error('Option "content" is not set.');
+        } else if (!options.content.length) {
+            throw new Error('Option "content" does refer to an existing container.');
+        }
+
+        if (!options.slug) {
+            options.slug = $.gajus.contents.toSlug;
+        }
+
+        if (!options.offset) {
+            // @todo Must change when the window size is changed.
+            options.offset = $(window).height()/3;
+        }
+
+        return options;
     };
 
     /**
