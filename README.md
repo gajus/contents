@@ -11,8 +11,6 @@ Automatically generate table of contents for a given area of content.
 | `itemFormatter` | See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
-| `startLevel` | The lowest H tag that should be included. |
-| `maxDepth` | The max nesting depth relative to the `startLevel`. |
 
 ### Example
 
