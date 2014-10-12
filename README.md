@@ -7,28 +7,36 @@ Automatically generate table of contents for a given area of content.
 | Name | Description |
 | --- | --- |
 | `where` | Reference to the container that will hold the table of contents. |
-| `content` | `Reference to the content container. |
+| `content` | Reference to the content container. |
 | `itemFormatter` | See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
 
-## Events
-
-Contents will fire `change.gajus.contents` on the table of contents element when:
-
-1. User loads the page.
-2. User navigates to a new section of the page.
-
-The second parameter of the event callback has reference to the current and previous (if any) active heading and anchor.
-
 ### Example
 
-```js
-$.gajus
+```
+var contents;
+
+contents = $.gajus
     .contents({
         where: $('#toc'),
         content: $('article')
-    })
+    });
+```
+
+## Events
+
+Use the generated list element to lister and trigger events.
+
+### `change.gajus.contents`
+
+* The page is loaded.
+* User navigates to a new section of the page.
+
+The second parameter of the event callback has reference to the current and previous (if any) active heading and anchor.
+
+```js
+contents
     .on('change.gajus.contents', function (event, change) {
         if (change.previous) {
             change.previous.heading.removeClass('active-heading');
@@ -39,6 +47,26 @@ $.gajus
         change.current.anchor.addClass('active-anchor');
     });
 ```
+
+### `resize.gajus.contents`
+
+* The page is loaded.
+* In response to "resize" window event.
+* In response to "orientationchange" window event.
+
+This event is used to recalculate heading offset variables.
+
+```js
+contents
+    .on('resize.gajus.contents', function (event) {
+        
+    });
+```
+
+You can manually trigger `resize.gajus.contents` event, e.g. if you have programmatically interfered with the content.
+
+contents
+    .trigger('resize.gajus.contents');
 
 ## Markup
 

@@ -7,13 +7,18 @@
 
     $.gajus = $.gajus || {};
 
+    /**
+     * @return {jQuery} Table of contents element. Used as event proxy.
+     */
     $.gajus.contents = function (options) {
         var headings,
             list,
             offsetIndex,
-            lastHeading;
+            lastHeading,
+            calculateOffset;
         
         options = $.gajus.contents.options(options);
+        
         headings = $.gajus.contents.getHeadings(options.content);
 
         $.gajus.contents.giveId(headings, options.anchorFormatter);
@@ -22,7 +27,17 @@
 
         options.where.append(list);
 
-        offsetIndex = $.gajus.contents.offsetIndex(headings, options.offsetCalculator);
+        calculateOffset = function () {
+            offsetIndex = $.gajus.contents.offsetIndex(headings, options.offsetCalculator);
+
+            $(window).trigger('scroll');
+        };
+
+        calculateOffset();
+
+        list.on('resize.gajus.contents', calculateOffset);
+
+        $(window).on('resize orientationchange', calculateOffset);
 
         $(window).on('scroll', function () {
             var heading,
@@ -51,6 +66,8 @@
             }
         });
 
+        // This allows the script that constructs $.gajus.contents
+        // to catch the first scroll event.
         setTimeout(function () {
             list.trigger('scroll');
         }, 10);
