@@ -25,7 +25,7 @@
         "jquery": ">=1"
     },
     "name": "contents",
-    "description": "Table of contents (TOC) generator.",
+    "description": "Automatically generate table of contents for a given area of content.",
     "version": "0.0.1",
     "keywords": [
         "table of contents",

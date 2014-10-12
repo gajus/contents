@@ -1,6 +1,10 @@
 # Table of Contents (TOC) Generator
 
+[![Build Status](https://travis-ci.org/gajus/contents.png?branch=master)](https://travis-ci.org/gajus/contents)
+
 Automatically generate table of contents for a given area of content.
+
+[Interactive demo](http://gajus.com/sandbox/contents/demo/).
 
 ## Settings
 

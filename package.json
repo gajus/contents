@@ -1,7 +1,7 @@
 {
     "name": "contents",
     "title": "Contents",
-    "description": "Table of contents (TOC) generator.",
+    "description": "Automatically generate table of contents for a given area of content.",
     "version": "0.0.1",
     "private": true,
     "devDependencies": {
