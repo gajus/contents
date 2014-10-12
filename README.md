@@ -19,7 +19,7 @@ var contents;
 
 contents = $.gajus
     .contents({
-        where: $('#toc'),
+        where: $('#table-of-contents'),
         content: $('article')
     });
 ```
