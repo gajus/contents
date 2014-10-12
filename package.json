@@ -22,5 +22,8 @@
         "table of contents",
         "toc",
         "contents"
-    ]
+    ],
+    "scrips": {
+        "test": "gulp travis"
+    }
 }
