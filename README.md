@@ -24,9 +24,7 @@ var contents;
 contents = $.gajus
     .contents({
         where: $('#table-of-contents'),
-        content: $('article'),
-        startLevel: 2,
-        maxDepth: 2
+        content: $('article')
     });
 ```
 
