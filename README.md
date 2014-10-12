@@ -4,12 +4,13 @@ Automatically generate table of contents for a given area of content.
 
 ## Settings
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `where` | `jQuery` | Reference to the container that will hold the table of contents. |
-| `content` | `jQuery` | Reference to the content container. |
-| `slug` | `function (headingText)` | Function used to derive heading ID (anchor name). Must return `string`. Defaults to `$.gajus.contents.slug`. |
-| `offset` | `function ()` |  |
+| Name | Description |
+| --- | --- |
+| `where` | Reference to the container that will hold the table of contents. |
+| `content` | `Reference to the content container. |
+| `itemFormatter` | See [Item Formatter](#item-formatter). |
+| `anchorFormatter` | See [Anchor Name](#anchor-name). |
+| `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
 
 ## Events
 
@@ -63,7 +64,7 @@ The above content will generate the following table of contents:
 
         <ul>
             <li>
-                <a href="javascript">History</a>
+                <a href="history">History</a>
             </li>
             <li>
                 <a href="trademark">Trademark</a>
@@ -91,9 +92,11 @@ The above content will generate the following table of contents:
 </ul>
 ```
 
-### Item Interpreter
+### Item Formatter
 
-The default item interpreter implementation:
+Item formatter is used to represent each item in the list.
+
+The default item formatter implementation:
 
 1. Wraps text of each heading in a hyperlink element.
 2. Uses heading "id" attribute to link hyperlink to the heading anchor.
@@ -172,7 +175,7 @@ If there are multiple headings with the same name, e.g.
 <h2>Allow me to reiterate</h2>
 ```
 
-The mechanism responsible for ensuring that only unique IDs are assigned will suffix each value with an incremental index.
+The mechanism responsible for ensuring that only unique IDs are assigned will suffix each value with an incremental index:
 
 ```html
 <h2 id="allow-me-to-reiterate">Allow me to reiterate</h2>
@@ -180,4 +183,33 @@ The mechanism responsible for ensuring that only unique IDs are assigned will su
 <h2 id="allow-me-to-reiterate-2">Allow me to reiterate</h2>
 ```
 
-This action is performed after `anchorFormatter`.
+This operation is performed after `anchorFormatter`.
+
+## Offset Line of Sight
+
+The content is considered "in sight" when the heading is at or above the "line of sight". This line of sight can be either top of the page or an arbitrary offset.
+
+The default behavior is to calculate the line of sight as 1/3 of the window height.
+
+```
+/**
+ * @return {Number}
+ */
+$.gajus.contents.offsetIndex.offsetCalculator = function () {
+    return $(window).height() / 3;
+};
+```
+
+You can overwrite the function used to calculate the offset with the `offsetCalculator` setting:
+
+```js
+$.gajus
+    .contents({
+        offsetCalculator: function () {
+            // The heading must be at the most 20px from the top of the screen.
+            return 20;
+        }
+    });
+```
+
+The function to calculate the line of sight is called upon initiation and in response to window resize event.

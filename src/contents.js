@@ -18,11 +18,11 @@
 
         $.gajus.contents.giveId(headings, options.anchorFormatter);
 
-        list = $.gajus.contents.generateHeadingHierarchyList(headings);
+        list = $.gajus.contents.generateHeadingHierarchyList(headings, options.itemFormatter);
 
         options.where.append(list);
 
-        offsetIndex = $.gajus.contents.offsetIndex(headings, options.offset);
+        offsetIndex = $.gajus.contents.offsetIndex(headings, options.offsetCalculator);
 
         $(window).on('scroll', function () {
             var heading,
@@ -92,13 +92,20 @@
             }
         }
 
-        if (!options.anchorFormatter) {
+        if (options.anchorFormatter) {
+            if (typeof options.anchorFormatter !== 'function') {
+                throw new Error('Option "anchorFormatter" must be a function.');
+            }
+        } else {
             options.anchorFormatter = $.gajus.contents.anchorFormatter;
         }
 
-        if (!options.offset) {
-            // @todo Must change when the window size is changed.
-            options.offset = $(window).height()/3;
+        if (options.offsetCalculator) {
+            if (typeof options.offsetCalculator !== 'function') {
+                throw new Error('Option "offsetCalculator" must be a function.');
+            }
+        } else {
+            options.offsetCalculator = $.gajus.contents.offsetIndex.offsetCalculator;
         }
 
         return options;
@@ -301,13 +308,16 @@
      * The index must be manually updated each time that the window size changes.
      * 
      * @param {jQuery} headings Reference to the headings.
-     * @param {Number} deductOffset Number of pixels to move the offset up.
+     * @param {$.gajus.contents.offsetIndex.offsetCalculator} offsetCalculator Function used to calculate number of pixels to move the offset up.
      * @return {Array}
      */
-    $.gajus.contents.offsetIndex = function (headings, deductOffset) {
-        var index = [];
+    $.gajus.contents.offsetIndex = function (headings, offsetCalculator) {
+        var index = [],
+            deductOffset = 0;
 
-        deductOffset = deductOffset || 0;
+        if (offsetCalculator) {
+            deductOffset = offsetCalculator();
+        }
 
         headings.each(function () {
             var element = $(this),
@@ -332,6 +342,13 @@
             });
         });
         return index;
+    };
+
+    /**
+     * @return {Number}
+     */
+    $.gajus.contents.offsetIndex.offsetCalculator = function () {
+        return $(window).height() / 3;
     };
 
     /**

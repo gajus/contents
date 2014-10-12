@@ -68,8 +68,26 @@ describe('gc', function () {
         });
 
         describe('setting options.anchorFormatter', function () {
+            it('must throw an error if it is not a function', function () {
+                expect(function () {
+                    gc.options(optionsFactory({anchorFormatter: 'not a function'}))
+                }).toThrowError('Option "anchorFormatter" must be a function.');
+            });
+
             it('must default to $.gajus.contents.anchorFormatter', function () {
-                expect(gc.options(optionsFactory()).anchorFormatter).toEqual($.gajus.contents.anchorFormatter);
+                expect(gc.options(optionsFactory()).anchorFormatter).toEqual(gc.anchorFormatter);
+            });
+        });
+
+        describe('setting options.offsetCalculator', function () {
+            it('must throw an error if it is not a function', function () {
+                expect(function () {
+                    gc.options(optionsFactory({offsetCalculator: 'not a function'}))
+                }).toThrowError('Option "offsetCalculator" must be a function.');
+            });
+
+            it('must default to $.gajus.contents.offsetIndex.offsetCalculator', function () {
+                expect(gc.options(optionsFactory()).offsetCalculator).toEqual(gc.offsetIndex.offsetCalculator);
             });
         });
     });
@@ -251,13 +269,13 @@ describe('gc', function () {
             expect(offsetIndex).toEqual([0, 550, 1100, 1650]);
         });
 
-        it('must return the vertical heading offset minus the deductOffset', function () {
+        it('must return the vertical heading offset minus the value from offsetCalculator()', function () {
             var headings,
                 offsetIndex = []
 
             headings = gc.getHeadings($('body #vertical-offset'));
             
-            gc.offsetIndex(headings, 100).map(function (record) {
+            gc.offsetIndex(headings, function () { return 100; }).map(function (record) {
                 offsetIndex.push(record.offset);
             });
 
