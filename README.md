@@ -101,8 +101,8 @@ The default item interpreter implementation:
 
 ```js
 /**
- * @param {jQuery} li Reference to the li element representing the heading.
- * @param {jQuery} heading Reference to the corresponding heading element.
+ * @param {jQuery} li List element.
+ * @param {jQuery} heading Heading element.
  */
 $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, heading) {
     var hyperlink = $('<a>');
@@ -114,20 +114,70 @@ $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, head
 };
 ```
 
-You can overwrite the item formatting using `itemFormatter` setting:
+You can overwrite this behavior using a custom `itemFormatter` function:
 
 ```js
 $.gajus
     .contents({
-        itemFormatter: function () {}
+        itemFormatter: function (li, heading) {}
     });
 ```
 
 ### Anchor Name
 
-[..]
+The default implementation relies on each heading having an "id" attribute to enable anchor navigation. If heading does not have "id", `$.gajus.contents.anchorFormatter` will be used to derive the value from the heading text.
 
-slug: function (text) {
-            // Prefix each heading.
-            return 'heading-' + $.gajus.contents.slug(text);
-        }
+```js
+/**
+ * Format text into ID/anchor safe value.
+ *
+ * @see http://stackoverflow.com/a/1077111/368691
+ * @param {String} str Arbitrary string.
+ * @return {String}
+ */
+$.gajus.contents.anchorFormatter = function (str) {
+    return str
+        .toLowerCase()
+        .replace(/[ãàáäâ]/g, 'a')
+        .replace(/[ẽèéëê]/g, 'e')
+        .replace(/[ìíïî]/g, 'i')
+        .replace(/[õòóöô]/g, 'o')
+        .replace(/[ùúüû]/g, 'u')
+        .replace(/[ñ]/g, 'n')
+        .replace(/[ç]/g, 'c')
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9\-_]+/g, '-')
+        .replace(/\-+/g, '-')
+        .replace(/^\-|\-$/g, '')
+        .replace(/^[^a-z]+/g, '');
+};
+```
+
+You can overwrite this behavior using a custom `anchorFormatter` function:
+
+```js
+$.gajus
+    .contents({
+        anchorFormatter: function (str) {}
+    });
+```
+
+#### Solving ID Conflicts
+
+If there are multiple headings with the same name, e.g.
+
+```html
+<h2>Allow me to reiterate</h2>
+<h2>Allow me to reiterate</h2>
+<h2>Allow me to reiterate</h2>
+```
+
+The mechanism responsible for ensuring that only unique IDs are assigned will suffix each value with an incremental index.
+
+```html
+<h2 id="allow-me-to-reiterate">Allow me to reiterate</h2>
+<h2 id="allow-me-to-reiterate-1">Allow me to reiterate</h2>
+<h2 id="allow-me-to-reiterate-2">Allow me to reiterate</h2>
+```
+
+This action is performed after `anchorFormatter`.

@@ -67,17 +67,11 @@ describe('gc', function () {
             });
         });
 
-        describe('setting options.slug', function () {
-            it('must default to $.gajus.contents.slug', function () {
-                expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.slug);
+        describe('setting options.anchorFormatter', function () {
+            it('must default to $.gajus.contents.anchorFormatter', function () {
+                expect(gc.options(optionsFactory()).anchorFormatter).toEqual($.gajus.contents.anchorFormatter);
             });
         });
-
-        /*describe('setting options.slug', function () {
-            it('must default to $.gajus.contents.slug', function () {
-                expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.slug);
-            });
-        });*/
     });
 
     describe('.getHeadings()', function () {
@@ -127,10 +121,10 @@ describe('gc', function () {
             expect(gc.deriveId($('#derive-id h3:not([id])'))).toEqual('not-unique-2');
         });
 
-        it('must use custom slug filter when provided', function () {
-            var slugFilter = function () { return 'custom-filter'; };
+        it('must use custom anchor formatter when provided', function () {
+            var anchorFormatter = function () { return 'custom-formatter'; };
 
-            expect(gc.deriveId($('#derive-id h1'), slugFilter)).toEqual('custom-filter');
+            expect(gc.deriveId($('#derive-id h1'), anchorFormatter)).toEqual('custom-formatter');
         });
     });
 
@@ -187,29 +181,33 @@ describe('gc', function () {
         });
     });
 
-    describe('.slug()', function () {
+    describe('.anchorFormatter()', function () {
         it('must covert to lowercase', function () {
-            expect(gc.slug('FOO')).toEqual('foo');
+            expect(gc.anchorFormatter('FOO')).toEqual('foo');
         });
 
         it('must replace characters with diacritics to their ASCII counterparts', function () {
-            expect(gc.slug('ãàáäâẽèéëêìíïîõòóöôùúüûñç')).toEqual('aaaaaeeeeeiiiiooooouuuunc');
+            expect(gc.anchorFormatter('ãàáäâẽèéëêìíïîõòóöôùúüûñç')).toEqual('aaaaaeeeeeiiiiooooouuuunc');
         });
 
         it('must replace whitespace with a dash', function () {
-            expect(gc.slug('foo bar')).toEqual('foo-bar');
+            expect(gc.anchorFormatter('foo bar')).toEqual('foo-bar');
         });
 
         it('must replace sequences of characters outside /a-z0-9\-_/ with a dash', function () {
-            expect(gc.slug('a±!@#$%^&*b')).toEqual('a-b');
+            expect(gc.anchorFormatter('a±!@#$%^&*b')).toEqual('a-b');
         });
 
         it('must replace multiple dashes with a single dash', function () {
-            expect(gc.slug('a---b--c')).toEqual('a-b-c');
+            expect(gc.anchorFormatter('a---b--c')).toEqual('a-b-c');
         });
 
         it('must trim dashes from the beginning and end', function () {
-            expect(gc.slug('-a-')).toEqual('a');
+            expect(gc.anchorFormatter('---a---')).toEqual('a');
+        });
+
+        it('must strip characters outside a-z from the beginning of the string', function () {
+             expect(gc.anchorFormatter('123!@#foo')).toEqual('foo');
         });
     });
 

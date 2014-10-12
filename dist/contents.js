@@ -16,7 +16,7 @@
         options = $.gajus.contents.options(options);
         headings = $.gajus.contents.getHeadings(options.content);
 
-        $.gajus.contents.giveId(headings, options.slug);
+        $.gajus.contents.giveId(headings, options.anchorFormatter);
 
         list = $.gajus.contents.generateHeadingHierarchyList(headings);
 
@@ -92,8 +92,8 @@
             }
         }
 
-        if (!options.slug) {
-            options.slug = $.gajus.contents.slug;
+        if (!options.anchorFormatter) {
+            options.anchorFormatter = $.gajus.contents.anchorFormatter;
         }
 
         if (!options.offset) {
@@ -130,17 +130,17 @@
      * Derive URL save string from the heading text and use it for the "id" attribute.
      * 
      * @param {jQuery} element
-     * @param {Function} slugFilter
+     * @param {Function} anchorFormatter
      * @return {String} Unique ID derived from the heading text.
      */
-    $.gajus.contents.deriveId = function (element, slugFilter) {
+    $.gajus.contents.deriveId = function (element, anchorFormatter) {
         var text,
-            slug,
+            anchorName,
             id,
             i = 1;
 
-        if (!slugFilter) {
-            slugFilter = $.gajus.contents.slug;
+        if (!anchorFormatter) {
+            anchorFormatter = $.gajus.contents.anchorFormatter;
         }
 
         if (element.length != 1) {
@@ -157,12 +157,12 @@
             throw new Error('Must have text.');
         }
 
-        slug = slugFilter(text);
+        anchorName = anchorFormatter(text);
 
-        id = slug;
+        id = anchorName;
 
         while ($(document).find('#' + id).length) {
-            id = slug + '-' + (i++);
+            id = anchorName + '-' + (i++);
         }
 
         return id;
@@ -185,12 +185,13 @@
     };
 
     /**
-     * Make string url-safe.
+     * Format text into ID/anchor safe value.
      *
+     * @see http://stackoverflow.com/a/1077111/368691
      * @param {String} str Arbitrary string.
      * @return {String}
      */
-    $.gajus.contents.slug = function (str) {
+    $.gajus.contents.anchorFormatter = function (str) {
         return str
             .toLowerCase()
             .replace(/[ãàáäâ]/g, 'a')
@@ -203,12 +204,13 @@
             .replace(/\s+/g, '-')
             .replace(/[^a-z0-9\-_]+/g, '-')
             .replace(/\-+/g, '-')
-            .replace(/^\-|\-$/g, '');
+            .replace(/^\-|\-$/g, '')
+            .replace(/^[^a-z]+/g, '');
     };
 
     /**
      * @param {jQuery} headings Reference to the headings.
-     * @param {itemFormatter} itemFormatter
+     * @param {$.gajus.contents.generateHeadingHierarchyList.itemFormatter} itemFormatter
      * @return {jQuery}
      */
     $.gajus.contents.generateHeadingHierarchyList = function (headings, itemFormatter) {
@@ -265,8 +267,8 @@
     };
 
     /**
-     * @callback itemFormatter
-     * @param {jQuery} listItem List item.
+     * @param {jQuery} li List element.
+     * @param {jQuery} heading Heading element.
      */
     $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, heading) {
         var hyperlink = $('<a>');
