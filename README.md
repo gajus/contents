@@ -1,4 +1,4 @@
-# Table of Contents Generator
+# Table of Contents (TOC) Generator
 
 Automatically generate table of contents for a given area of content.
 
@@ -21,9 +21,9 @@ $.gajus
     });
 ```
 
-## Table of contents
+## Markup
 
-Table of contents is a list element. The list is nested to represent the heading hierarchy, e.g.
+Table of contents is a list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink, e.g.
 
 ```html
 <h1>JavaScript</h1>
@@ -41,25 +41,33 @@ The above content will generate the following table of contents:
 ```html
 <ul>
     <li>
-        JavaScript
+        <a href="javascript">JavaScript</a>
 
         <ul>
-            <li>History</li>
-            <li>Trademark</li>
+            <li><a href="javascript">History</a></li>
+            <li><a href="trademark">Trademark</a></li>
             <li>
-                Features
+                <a href="features">Features</a>
 
                 <ul>
-                    <li>Imperative and structured</li>
-                    <li>Dynamic</li>
-                    <li>Functional</li>
+                    <li><a href="imperative-and-structured">Imperative and structured</a></li>
+                    <li><a href="dynamic">Dynamic</a></li>
+                    <li><a href="functional">Functional</a></li>
                 </ul>
             </li>
-            <li>Syntax</li>
+            <li><a href="syntax">Syntax</a></li>
         </ul>
     </li>
 </ul>
 ```
+
+### Item Interpreter
+
+[..]
+
+### Anchor Name
+
+[..]
 
 ## Events
 
