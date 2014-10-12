@@ -125,6 +125,22 @@
             options.offsetCalculator = $.gajus.contents.offsetIndex.offsetCalculator;
         }
 
+        if (options.startLevel) {
+            if (typeof options.startLevel !== 'number' || ~~options.startLevel !== options.startLevel || options.startLevel < 1 || options.startLevel > 6) {
+                throw new Error('Invalid "startLevel" must be a whole number between 1 and 6.');
+            }
+        } else {
+            options.startLevel = 1;
+        }
+
+        if (options.maxDepth) {
+            if (typeof options.maxDepth !== 'number' || ~~options.maxDepth !== options.maxDepth || options.maxDepth < 1 || options.maxDepth > 6) {
+                throw new Error('Invalid "maxDepth" must be a whole number between 1 and 6.');
+            }
+        } else {
+            options.maxDepth = 6;
+        }
+
         return options;
     };
 

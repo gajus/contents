@@ -90,6 +90,34 @@ describe('gc', function () {
                 expect(gc.options(optionsFactory()).offsetCalculator).toEqual(gc.offsetIndex.offsetCalculator);
             });
         });
+
+        describe('setting options.startLevel', function () {
+            it('must throw an error if it is not a whole number between 1 and 6', function () {
+                [0.5, -1, 7].forEach(function (startLevel) {
+                    expect(function () {
+                        gc.options(optionsFactory({startLevel: startLevel}));
+                    }).toThrowError('Invalid "startLevel" must be a whole number between 1 and 6.');
+                });
+            });
+
+            it('must default to 1', function () {
+                expect(gc.options(optionsFactory()).startLevel).toEqual(1);
+            });
+        });
+
+        describe('setting options.maxDepth', function () {
+            it('must throw an error if it is not a whole number between 1 and 6', function () {
+                [0.5, -1, 7].forEach(function (maxDepth) {
+                    expect(function () {
+                        gc.options(optionsFactory({maxDepth: maxDepth}));
+                    }).toThrowError('Invalid "maxDepth" must be a whole number between 1 and 6.');
+                });
+            });
+
+            it('must default to 6', function () {
+                expect(gc.options(optionsFactory()).maxDepth).toEqual(6);
+            });
+        });
     });
 
     describe('.getHeadings()', function () {

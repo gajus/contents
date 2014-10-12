@@ -11,6 +11,8 @@ Automatically generate table of contents for a given area of content.
 | `itemFormatter` | See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
+| `startLevel` | The lowest H tag that should be included. |
+| `maxDepth` | The max nesting depth relative to the `startLevel`. |
 
 ### Example
 
@@ -20,7 +22,9 @@ var contents;
 contents = $.gajus
     .contents({
         where: $('#table-of-contents'),
-        content: $('article')
+        content: $('article'),
+        startLevel: 2,
+        maxDepth: 2
     });
 ```
 
