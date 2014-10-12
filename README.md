@@ -14,7 +14,7 @@ Automatically generate table of contents for a given area of content.
 
 ### Example
 
-```
+```js
 var contents;
 
 contents = $.gajus
