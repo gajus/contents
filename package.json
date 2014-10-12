@@ -1,19 +1,26 @@
 {
-  "name": "contents",
-  "private": true,
-  "dependencies": {
-    "jquery": "^1"
-  },
-  "devDependencies": {
-    "karma": "^0.12.22",
-    "karma-jasmine": "~0.2.2",
-    "gulp": "^3.8.7",
-    "gulp-util": "^3.0.0",
-    "gulp-uglify": "^0.3.1",
-    "gulp-rename": "^1.2.0",
-    "gulp-header": "^1.0.5",
-    "del": "^0.1.2",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-html2js-preprocessor": "^0.1.0"
-  }
+    "name": "contents",
+    "title": "Contents",
+    "description": "Table of contents (TOC) generator.",
+    "version": "0.0.1",
+    "private": true,
+    "devDependencies": {
+        "karma": "^0.12.22",
+        "karma-jasmine": "~0.2.2",
+        "gulp": "^3.8.7",
+        "gulp-util": "^3.0.0",
+        "gulp-uglify": "^0.3.1",
+        "gulp-rename": "^1.2.0",
+        "gulp-header": "^1.0.5",
+        "gulp-jshint": "^1.8.5",
+        "jshint-stylish": "^1.0.0",
+        "del": "^0.1.2",
+        "karma-phantomjs-launcher": "^0.1.4",
+        "karma-html2js-preprocessor": "^0.1.0"
+    },
+    "keywords": [
+        "table of contents",
+        "toc",
+        "contents"
+    ]
 }

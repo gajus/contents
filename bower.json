@@ -1,11 +1,12 @@
 {
-    "name": "contents",
-    "version": "0.0.0",
     "main": "dist/contents.min.js",
     "license": "BSD-3-Clause",
     "dependencies": {
         "jquery": ">=1"
     },
+    "version": "0.0.1",
+    "name": "contents",
+    "description": "Table of contents (TOC) generator.",
     "keywords": [
         "table of contents",
         "toc",

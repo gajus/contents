@@ -5,32 +5,48 @@ var pkg = require('./package.json'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
     header = require('gulp-header'),
+    jshint = require('gulp-jshint'),
+    fs = require('fs'),
     del = require('del');
 
-gulp.task('clean', function (cb) {
+gulp.task('clean', ['lint'], function (cb) {
     del(['dist'], cb);
 });
 
-gulp.task('version', function () {
-    // @todo Update jQuery/bower json version and dependencies
+gulp.task('lint', function () {
+    return gulp
+        .src('./src/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('distribute', ['clean'],function () {
-    return gulp
+gulp.task('distribute', ['clean'], function (cb) {
+    var bower = require('./bower.json'),
+        jquery = require('./contents.jquery.json');
+
+    gulp
         .src('./src/contents.js')
         .pipe(gulp.dest('./dist/'))
         .pipe(uglify())
         .pipe(rename('contents.min.js'))
-        .pipe(header('/**\n* @version <%= pkg.version %>\n* @link https://github.com/gajus/contents for the canonical source repository\n* @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause\n*/\n', {pkg: pkg}))
+        .pipe(header('/**\n* @version <%= version %>\n* @link https://github.com/gajus/contents for the canonical source repository\n* @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause\n*/\n', {version: pkg.version}))
         .pipe(gulp.dest('./dist/'))
         .on('error', gutil.log);
-});
 
-gulp.task('travis', ['default'], function (cb) {
-    karma.start({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-    }, cb);
+    bower.name = pkg.name;
+    bower.description = pkg.description;
+    bower.version = pkg.version;
+    bower.keywords = pkg.keywords;
+
+    jquery.name = pkg.name;
+    jquery.description = pkg.description
+    jquery.version = pkg.version;
+    jquery.keywords = pkg.keywords;
+    jquery.title = pkg.title;;
+
+    fs.writeFile('./bower.json', JSON.stringify(bower, null, 4), function () {
+        fs.writeFile('./contents.jquery.json', JSON.stringify(jquery, null, 4), cb);
+    });
 });
 
 gulp.task('watch', function () {
