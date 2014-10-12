@@ -87,7 +87,7 @@
         }
 
         if (!options.slug) {
-            options.slug = $.gajus.contents.toSlug;
+            options.slug = $.gajus.contents.slug;
         }
 
         if (!options.offset) {
@@ -134,7 +134,7 @@
             i = 1;
 
         if (!slugFilter) {
-            slugFilter = $.gajus.contents.toSlug;
+            slugFilter = $.gajus.contents.slug;
         }
 
         if (element.length != 1) {
@@ -184,7 +184,7 @@
      * @param {String} str Arbitrary string.
      * @return {String}
      */
-    $.gajus.contents.toSlug = function (str) {
+    $.gajus.contents.slug = function (str) {
         return str
             .toLowerCase()
             .replace(/[ãàáäâ]/g, 'a')

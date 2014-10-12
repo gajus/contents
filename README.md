@@ -2,13 +2,32 @@
 
 Automatically generate table of contents for a given area of content.
 
+## Settings
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `where` | `jQuery` | Reference to the container that will hold the table of contents. |
+| `content` | `jQuery` | Reference to the content container. |
+| `slug` | `function (headingText) {}` | Function used to derive heading ID (anchor name). Defaults to `$.gajus.contents.slug`. |
+| 
+
+## Events
+
+Contents will fire `change.gajus.contents` on the table of contents element when:
+
+1. User loads the page.
+2. User navigates to a new section of the page.
+
+The second parameter of the event callback has reference to the current and previous (if any) active heading and anchor.
+
+### Example
+
 ```js
 $.gajus
     .contents({
-        // Reference to the container that will hold the table of contents.
         where: $('#toc'),
-        // Reference to the content container.
         content: $('article')
+    }
     })
     .on('change.gajus.contents', function (event, change) {
         if (change.previous) {
@@ -44,18 +63,30 @@ The above content will generate the following table of contents:
         <a href="javascript">JavaScript</a>
 
         <ul>
-            <li><a href="javascript">History</a></li>
-            <li><a href="trademark">Trademark</a></li>
+            <li>
+                <a href="javascript">History</a>
+            </li>
+            <li>
+                <a href="trademark">Trademark</a>
+            </li>
             <li>
                 <a href="features">Features</a>
 
                 <ul>
-                    <li><a href="imperative-and-structured">Imperative and structured</a></li>
-                    <li><a href="dynamic">Dynamic</a></li>
-                    <li><a href="functional">Functional</a></li>
+                    <li>
+                        <a href="imperative-and-structured">Imperative and structured</a>
+                    </li>
+                    <li>
+                        <a href="dynamic">Dynamic</a>
+                    </li>
+                    <li>
+                        <a href="functional">Functional</a>
+                    </li>
                 </ul>
             </li>
-            <li><a href="syntax">Syntax</a></li>
+            <li>
+                <a href="syntax">Syntax</a>
+            </li>
         </ul>
     </li>
 </ul>
@@ -69,11 +100,7 @@ The above content will generate the following table of contents:
 
 [..]
 
-## Events
-
-Contents will fire `change.gajus.contents` on the table of contents element when:
-
-1. User loads the page.
-2. User navigates to a new section of the page.
-
-The second parameter of the event callback has reference to the current and previous (if any) active heading and anchor.
+slug: function (text) {
+            // Prefix each heading.
+            return 'heading-' + $.gajus.contents.slug(text);
+        }

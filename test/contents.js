@@ -60,10 +60,16 @@ describe('gc', function () {
         });
 
         describe('setting options.slug', function () {
-            it('must default to $.gajus.contents.toSlug', function () {
-                expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.toSlug);
+            it('must default to $.gajus.contents.slug', function () {
+                expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.slug);
             });
         });
+
+        /*describe('setting options.slug', function () {
+            it('must default to $.gajus.contents.slug', function () {
+                expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.slug);
+            });
+        });*/
     });
 
     describe('.getHeadings()', function () {
@@ -173,29 +179,29 @@ describe('gc', function () {
         });
     });
 
-    describe('.toSlug()', function () {
+    describe('.slug()', function () {
         it('must covert to lowercase', function () {
-            expect(gc.toSlug('FOO')).toEqual('foo');
+            expect(gc.slug('FOO')).toEqual('foo');
         });
 
         it('must replace characters with diacritics to their ASCII counterparts', function () {
-            expect(gc.toSlug('ãàáäâẽèéëêìíïîõòóöôùúüûñç')).toEqual('aaaaaeeeeeiiiiooooouuuunc');
+            expect(gc.slug('ãàáäâẽèéëêìíïîõòóöôùúüûñç')).toEqual('aaaaaeeeeeiiiiooooouuuunc');
         });
 
         it('must replace whitespace with a dash', function () {
-            expect(gc.toSlug('foo bar')).toEqual('foo-bar');
+            expect(gc.slug('foo bar')).toEqual('foo-bar');
         });
 
         it('must replace sequences of characters outside /a-z0-9\-_/ with a dash', function () {
-            expect(gc.toSlug('a±!@#$%^&*b')).toEqual('a-b');
+            expect(gc.slug('a±!@#$%^&*b')).toEqual('a-b');
         });
 
         it('must replace multiple dashes with a single dash', function () {
-            expect(gc.toSlug('a---b--c')).toEqual('a-b-c');
+            expect(gc.slug('a---b--c')).toEqual('a-b-c');
         });
 
         it('must trim dashes from the beginning and end', function () {
-            expect(gc.toSlug('-a-')).toEqual('a');
+            expect(gc.slug('-a-')).toEqual('a');
         });
     });
 
