@@ -26,6 +26,7 @@ gulp.task('distribute', ['clean'], function (cb) {
 
     gulp
         .src('./src/contents.js')
+        .pipe(header('/**\n* @version <%= version %>\n* @link https://github.com/gajus/contents for the canonical source repository\n* @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause\n*/\n', {version: pkg.version}))
         .pipe(gulp.dest('./dist/'))
         .pipe(uglify())
         .pipe(rename('contents.min.js'))

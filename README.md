@@ -30,7 +30,7 @@ contents = $.gajus
 
 Use the generated list element to lister and trigger events.
 
-### `change.gajus.contents`
+### `change.contents.gajus`
 
 * The page is loaded.
 * User navigates to a new section of the page.
@@ -39,7 +39,7 @@ The second parameter of the event callback has reference to the current and prev
 
 ```js
 contents
-    .on('change.gajus.contents', function (event, change) {
+    .on('change.contents.gajus', function (event, change) {
         if (change.previous) {
             change.previous.heading.removeClass('active-heading');
             change.previous.anchor.removeClass('active-anchor');
@@ -50,7 +50,7 @@ contents
     });
 ```
 
-### `resize.gajus.contents`
+### `resize.contents.gajus`
 
 * The page is loaded.
 * In response to "resize" window event.
@@ -60,15 +60,15 @@ This event is used to recalculate heading offset variables.
 
 ```js
 contents
-    .on('resize.gajus.contents', function (event) {
+    .on('resize.contents.gajus', function (event) {
         
     });
 ```
 
-You can manually trigger `resize.gajus.contents` event, e.g. if you have programmatically interfered with the content.
+You can manually trigger `resize.contents.gajus` event, e.g. if you have programmatically interfered with the content.
 
 contents
-    .trigger('resize.gajus.contents');
+    .trigger('resize.contents.gajus');
 
 ## Markup
 

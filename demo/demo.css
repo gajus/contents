@@ -1,0 +1,55 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+body {
+  font: normal 16px/24px 'Helvetica Neue', Helvetica, Arial, freesans, sans-serif; }
+
+.example {
+  max-width: 860px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #000; }
+  .example .body {
+    background: #fff;
+    padding: 40px; }
+  .example h1, .example h2, .example h3, .example h4 {
+    font-size: 30px;
+    line-height: 40px;
+    margin: 10px;
+    font-weight: bold; }
+  .example h2, .example h3, .example h4 {
+    font-size: 20px;
+    line-height: 30px;
+    margin-top: 40px; }
+  .example h3, .example h4 {
+    font-size: 16px;
+    line-height: 24px; }
+  .example p {
+    margin: 10px; }
+
+#plain {
+  margin: 40px 40px 40px 440px; }
+  #plain ol {
+    counter-reset: section;
+    list-style-type: none; }
+  #plain li:before {
+    counter-increment: section;
+    content: counters(section, '.') '. '; }
+  #plain .table-of-contents {
+    position: fixed;
+    left: 40px;
+    top: 40px;
+    overflow: hidden;
+    width: 380px; }
+    #plain .table-of-contents > ol {
+      background: #FFF8DC;
+      border: 1px solid #E0DCBF;
+      padding: 10px; }
+    #plain .table-of-contents a {
+      color: #0000ee;
+      text-decoration: none; }
+    #plain .table-of-contents li.active-anchor > a {
+      color: #f00; }
+  #plain .active-heading {
+    color: #f00; }

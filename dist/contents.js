@@ -1,7 +1,8 @@
 /**
- * @link https://github.com/gajus/contents for the canonical source repository
- * @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
- */
+* @version 0.0.1
+* @link https://github.com/gajus/contents for the canonical source repository
+* @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
+*/
 (function ($) {
     'use strict';
 
@@ -14,8 +15,7 @@
         var headings,
             list,
             offsetIndex,
-            lastHeading,
-            calculateOffset;
+            lastHeading;
         
         options = $.gajus.contents.options(options);
         
@@ -27,21 +27,23 @@
 
         options.where.append(list);
 
-        calculateOffset = function () {
+        list.on('resize.contents.gajus', function (event, data) {
             offsetIndex = $.gajus.contents.offsetIndex(headings, options.offsetCalculator);
 
             $(window).trigger('scroll');
-        };
+        });
 
-        calculateOffset();
+        $(window).on('resize orientationchange', $.gajus.contents.throttle(function () {
+            list.trigger('resize.contents.gajus');
+        }, 100));
 
-        list.on('resize.gajus.contents', calculateOffset);
-
-        $(window).on('resize orientationchange', calculateOffset);
-
-        $(window).on('scroll', function () {
+        $(window).on('scroll', $.gajus.contents.throttle(function () {
             var heading,
                 changeEvent;
+
+            if (!offsetIndex) {
+                return;
+            }
 
             heading = $.gajus.contents.getInOffsetIndex($.gajus.contents.scrollTop(), offsetIndex).element;
 
@@ -64,15 +66,42 @@
 
                 lastHeading = heading;
             }
-        });
+        }, 100));
 
         // This allows the script that constructs $.gajus.contents
         // to catch the first scroll event.
         setTimeout(function () {
-            list.trigger('scroll');
+            list.trigger('resize.contents.gajus');
         }, 10);
 
         return list;
+    };
+
+    /**
+     * @see https://remysharp.com/2010/07/21/throttling-function-calls
+     */
+    $.gajus.contents.throttle = function (fn, threshhold, scope) {
+        var last,
+            deferTimer;
+
+        threshhold = threshhold || 250;
+        
+        return function () {
+            var context = scope || this,
+                now = +new Date(),
+                args = arguments;
+            
+            if (last && now < last + threshhold) {
+                clearTimeout(deferTimer);
+                deferTimer = setTimeout(function () {
+                    last = now;
+                    fn.apply(context, args);
+                }, threshhold);
+            } else {
+                last = now;
+                fn.apply(context, args);
+            }
+        };
     };
 
     /**
@@ -238,7 +267,7 @@
      * @return {jQuery}
      */
     $.gajus.contents.generateHeadingHierarchyList = function (headings, itemFormatter) {
-        var rootList = $('<ul>'),
+        var rootList = $('<ol>'),
             list = rootList,
             lastListInLevelIndex = [],
             lastListInLevelOrLower,
@@ -275,11 +304,12 @@
             if (!lastLevel || lastLevel === level) {
                 list.append(li);
             } else if (lastLevel < level) {
-                list = $('<ul>');
+                list = $('<ol>');
                 list.append(li);
                 lastListItem.append(list);
             } else {
-                lastListInLevelOrLower(level).append(li);
+                list = lastListInLevelOrLower(level);
+                list.append(li);
             }
             
             lastListInLevelIndex[level] = list;

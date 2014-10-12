@@ -165,14 +165,25 @@ describe('gc', function () {
             var headings = gc.getHeadings($('#generate-heading-hierarchy-list-flat')),
                 list = gc.generateHeadingHierarchyList(headings, function () {});
 
-            expect(list.prop('outerHTML')).toEqual('<ul><li></li><li></li><li></li></ul>');
+            expect(list.prop('outerHTML')).toEqual('<ol><li></li><li></li><li></li></ol>');
         });
 
         it('must represent a multidimensional heading hierarchy', function () {
             var headings = gc.getHeadings($('#generate-heading-hierarchy-list-multidimensional')),
-                list = gc.generateHeadingHierarchyList(headings, function () {});
+                list = gc.generateHeadingHierarchyList(headings, function () {
 
-            expect(list.prop('outerHTML')).toEqual('<ul><li><ul><li><ul><li></li><li></li></ul></li><li><ul><li><ul><li></li></ul></li><li></li></ul></li></ul></li></ul>');
+                });
+
+            expect(list.prop('outerHTML')).toEqual('<ol><li><ol><li><ol><li></li></ol></li></ol></li></ol>');
+        });
+
+        it('must represent a multidimensional heading hierarchy', function () {
+            var headings = gc.getHeadings($('#generate-heading-hierarchy-list-multidimensional-reverse')),
+                list = gc.generateHeadingHierarchyList(headings, function (li, heading) {
+                    li.text(heading.text());
+                });
+
+            expect(list.prop('outerHTML')).toEqual('<ol><li>1 a<ol><li>2 b<ol><li>3 c</li><li>3 d</li></ol></li><li>2 e</li><li>2 f</li></ol></li></ol>');
         });
 
         it('must provide callback to evaluate each list item', function () {
@@ -182,7 +193,7 @@ describe('gc', function () {
                     li.text(i++);
                 });
 
-            expect(list.prop('outerHTML')).toEqual('<ul><li>0</li><li>1</li><li>2</li></ul>');
+            expect(list.prop('outerHTML')).toEqual('<ol><li>0</li><li>1</li><li>2</li></ol>');
         });
 
         describe('default item interpreter', function () {
@@ -194,7 +205,7 @@ describe('gc', function () {
                 
                 list = gc.generateHeadingHierarchyList(headings);
 
-                expect(list.prop('outerHTML')).toEqual('<ul><li><a href="#foo">generate heading hierarchy list flat foo</a></li><li><a href="#foo">generate heading hierarchy list flat bar</a></li><li><a href="#foo">generate heading hierarchy list flat tar</a></li></ul>');
+                expect(list.prop('outerHTML')).toEqual('<ol><li><a href="#foo">generate heading hierarchy list flat foo</a></li><li><a href="#foo">generate heading hierarchy list flat bar</a></li><li><a href="#foo">generate heading hierarchy list flat tar</a></li></ol>');
             });
         });
     });
