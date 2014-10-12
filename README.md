@@ -191,7 +191,7 @@ The content is considered "in sight" when the heading is at or above the "line o
 
 The default behavior is to calculate the line of sight as 1/3 of the window height.
 
-```
+```js
 /**
  * @return {Number}
  */
