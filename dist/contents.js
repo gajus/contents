@@ -86,6 +86,12 @@
             throw new Error('Option "content" does not refer to an existing element.');
         }
 
+        if (options.itemFormatter) {
+            if (typeof options.itemFormatter !== 'function') {
+                throw new Error('Option "itemFormatter" must be a function.');
+            }
+        }
+
         if (!options.slug) {
             options.slug = $.gajus.contents.slug;
         }
@@ -201,16 +207,11 @@
     };
 
     /**
-     * @callback itemInterpreter
-     * @param {jQuery} listItem List item.
-     */
-
-    /**
      * @param {jQuery} headings Reference to the headings.
-     * @param {itemInterpreter} itemInterpreter
+     * @param {itemFormatter} itemFormatter
      * @return {jQuery}
      */
-    $.gajus.contents.generateHeadingHierarchyList = function (headings, itemInterpreter) {
+    $.gajus.contents.generateHeadingHierarchyList = function (headings, itemFormatter) {
         var rootList = $('<ul>'),
             list = rootList,
             lastListInLevelIndex = [],
@@ -219,15 +220,8 @@
             lastLevel;
 
 
-        if (!itemInterpreter) {
-            itemInterpreter = function (li, heading) {
-                var hyperlink = $('<a>');
-
-                hyperlink.text(heading.text());
-                hyperlink.attr('href', '#' + heading.attr('id'));
-
-                li.append(hyperlink);
-            };
+        if (!itemFormatter) {
+            itemFormatter = $.gajus.contents.generateHeadingHierarchyList.itemFormatter;
         }
 
         lastListInLevelOrLower = function (level) {
@@ -248,7 +242,7 @@
 
             li.data('gajus.contents.heading', heading[0]);
 
-            itemInterpreter(li, heading);
+            itemFormatter(li, heading);
             
             lastListInLevelIndex = lastListInLevelIndex.slice(0, level + 1);
             
@@ -270,7 +264,18 @@
         return rootList;
     };
 
-    $.gajus.contents._scrollTop = null;
+    /**
+     * @callback itemFormatter
+     * @param {jQuery} listItem List item.
+     */
+    $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, heading) {
+        var hyperlink = $('<a>');
+
+        hyperlink.text(heading.text());
+        hyperlink.attr('href', '#' + heading.attr('id'));
+
+        li.append(hyperlink);
+    };
 
     /**
      * Returns the number of pixels that the document has already been scrolled vertically.
@@ -283,6 +288,11 @@
     $.gajus.contents.scrollTop = function () {
         return $.gajus.contents._scrollTop ? $.gajus.contents._scrollTop : $(window).scrollTop();
     };
+
+    /**
+     * @var {Number} Used to overwrite $.gajus.contents.scrollTop() value in testing environment.
+     */
+    $.gajus.contents._scrollTop = null;
 
     /**
      * List headings and their vertical offset.

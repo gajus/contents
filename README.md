@@ -8,8 +8,8 @@ Automatically generate table of contents for a given area of content.
 | --- | --- | --- |
 | `where` | `jQuery` | Reference to the container that will hold the table of contents. |
 | `content` | `jQuery` | Reference to the content container. |
-| `slug` | `function (headingText) {}` | Function used to derive heading ID (anchor name). Defaults to `$.gajus.contents.slug`. |
-| 
+| `slug` | `function (headingText)` | Function used to derive heading ID (anchor name). Must return `string`. Defaults to `$.gajus.contents.slug`. |
+| `offset` | `function ()` |  |
 
 ## Events
 
@@ -27,7 +27,6 @@ $.gajus
     .contents({
         where: $('#toc'),
         content: $('article')
-    }
     })
     .on('change.gajus.contents', function (event, change) {
         if (change.previous) {
@@ -94,7 +93,35 @@ The above content will generate the following table of contents:
 
 ### Item Interpreter
 
-[..]
+The default item interpreter implementation:
+
+1. Wraps text of each heading in a hyperlink element.
+2. Uses heading "id" attribute to link hyperlink to the heading anchor.
+3. Appends the hyperlink to the list.
+
+```js
+/**
+ * @param {jQuery} li Reference to the li element representing the heading.
+ * @param {jQuery} heading Reference to the corresponding heading element.
+ */
+$.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, heading) {
+    var hyperlink = $('<a>');
+
+    hyperlink.text(heading.text());
+    hyperlink.attr('href', '#' + heading.attr('id'));
+
+    li.append(hyperlink);
+};
+```
+
+You can overwrite the item formatting using `itemFormatter` setting:
+
+```js
+$.gajus
+    .contents({
+        itemFormatter: function () {}
+    });
+```
 
 ### Anchor Name
 

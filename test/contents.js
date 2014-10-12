@@ -59,6 +59,14 @@ describe('gc', function () {
             });
         });
 
+        describe('setting options.itemFormatter', function () {
+            it('must throw an error if it is not a function', function () {
+                expect(function () {
+                    gc.options(optionsFactory({itemFormatter: 'not a function'}))
+                }).toThrowError('Option "itemFormatter" must be a function.');
+            });
+        });
+
         describe('setting options.slug', function () {
             it('must default to $.gajus.contents.slug', function () {
                 expect(gc.options(optionsFactory()).slug).toEqual($.gajus.contents.slug);
