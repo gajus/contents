@@ -8,6 +8,7 @@ Automatically generate table of contents for a given area of content.
 
 - [Demo](#demo)
 - [Settings](#settings)
+- [Comparison Table](#comparison-table)
 - [Content Index](#content-index)
 - [Events](#events)
 - [Markup](#markup)
@@ -34,6 +35,15 @@ Automatically generate table of contents for a given area of content.
 | `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
 
+## Comparison Table
+
+| Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
+| --- | --- | --- | --- |
+| Markup using nested `<ol>` | ✓ | - | - |
+| Smooth scrolling | - | ✓ | ✓ |
+| Forward and back button support | ✓ | - | ✓ |
+| Requires 3rd party libraries | No | No | jQueryUI Widget Factory |
+| Size | 5.075 kb | 2.581 kb | 7.246 kb |
 
 ## Content Index
 
