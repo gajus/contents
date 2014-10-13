@@ -11,8 +11,9 @@ Automatically generate table of contents for a given area of content.
 | Name | Description |
 | --- | --- |
 | `where` | Reference to the container that will hold the table of contents. |
-| `content` | Reference to the content container. Either `content` or `index` property must be set. See [Index](#index). |
-| `index` | Reference to the headings. Either `content` or `index` property must be set. See [Index](#index). |
+| `content` | Reference to the content container. |
+| `index` | Reference to the headings. |
+| | Either `content` or `index` property must be set.  See [Index](#index). |
 | `itemFormatter` | See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
