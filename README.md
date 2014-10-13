@@ -8,9 +8,13 @@ Automatically generate table of contents for a given area of content.
 
 - [Demo](#demo)
 - [Settings](#settings)
+    - [Example](#example)
 - [Content Index](#content-index)
 - [Events](#events)
 - [Markup](#markup)
+    - [Item Formatter](#item-formatter)
+    - [Anchor Name](#anchor-name)
+    - [Solving ID Conflicts](#solving-id-conflicts)
 - [Offset Line of Sight](#offset-line-of-sight)
 
 

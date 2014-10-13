@@ -4,7 +4,7 @@
 
 Automatically generate table of contents for a given area of content.
 
-[toc]
+[toc 4]
 
 ## Demo
 
