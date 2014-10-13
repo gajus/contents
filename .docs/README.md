@@ -32,7 +32,7 @@ Automatically generate table of contents for a given area of content.
 | Requires 3rd party libraries | No | No | jQueryUI Widget Factory |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
 
-<sup>1</sup> test
+<sup>1</sup> You can implement smooth scrolling using either of the existing libraries, e.g. [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
 ## Content Index
 
