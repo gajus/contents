@@ -19,7 +19,7 @@
         
         options = $.gajus.contents.options(options);
         
-        headings = $.gajus.contents.getHeadings(options.content);
+        headings = options.index || $.gajus.contents.getHeadings(options.content);
 
         $.gajus.contents.giveId(headings, options.anchorFormatter);
 
@@ -135,12 +135,18 @@
             throw new Error('Option "where" refers to more than one element.');
         }
 
-        if (!options.content) {
-            throw new Error('Option "content" is not set.');
-        } else if (!(options.content instanceof jQuery)) {
-            throw new Error('Option "content" is not a jQuery object.');
-        } else if (!options.content.length) {
-            throw new Error('Option "content" does not refer to an existing element.');
+        if (options.index && options.content) {
+            throw new Error('Cannot set "index" and "content" options together.');
+        } else if (options.index) {
+            if (!(options.index instanceof jQuery)) {
+                throw new Error('Option "index" is not a jQuery object.');
+            }
+        } else if (options.content) {
+            if (!(options.content instanceof jQuery)) {
+                throw new Error('Option "content" is not a jQuery object.');
+            }
+        } else {
+            throw new Error('Must set either "index" or "content" option.');
         }
 
         if (options.itemFormatter) {
@@ -175,19 +181,7 @@
      * @return {jQuery} References to all of the headings within the target.
      */
     $.gajus.contents.getHeadings = function (target) {
-        var headings;
-
-        if (!target.length) {
-            throw new Error('Target element does not exist.');
-        }
-
-        headings = target.find('h1, h2, h3, h4, h5, h6');
-
-        if (!headings.length) {
-            throw new Error('Target element does not contain heading elements.');
-        }
-
-        return headings;
+        return target.find('h1, h2, h3, h4, h5, h6');
     };
 
     /**

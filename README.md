@@ -11,7 +11,8 @@ Automatically generate table of contents for a given area of content.
 | Name | Description |
 | --- | --- |
 | `where` | Reference to the container that will hold the table of contents. |
-| `content` | Reference to the content container. |
+| `content` | Reference to the content container. Either `content` or `index` property must be set. See [Index](#index). |
+| `index` | Reference to the headings. Either `content` or `index` property must be set. See [Index](#index). |
 | `itemFormatter` | See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
@@ -19,12 +20,30 @@ Automatically generate table of contents for a given area of content.
 ### Example
 
 ```js
-var contents;
-
-contents = $.gajus
+$.gajus
     .contents({
         where: $('#table-of-contents'),
         content: $('article')
+    });
+```
+
+## Index
+
+The default behavior is to index all headings (H1-H6) in the `content` container:
+
+```js
+$.gajus
+    .contents({
+        content: $('main')
+    });
+```
+
+You can use your own selector to identify headings:
+
+```js
+$.gajus
+    .contents({
+        index: $('h2, h3')
     });
 ```
 
@@ -40,7 +59,10 @@ Use the generated list element to lister and trigger events.
 The second parameter of the event callback has reference to the current and previous (if any) active heading and anchor.
 
 ```js
-contents
+$.gajus
+    .contents({
+        // [..]
+    })
     .on('change.contents.gajus', function (event, change) {
         if (change.previous) {
             change.previous.heading.removeClass('active-heading');

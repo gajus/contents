@@ -45,17 +45,25 @@ describe('gc', function () {
             });
         });
 
+        it('must throw an error if you set "index" and "content" options together', function () {
+            expect(function () {
+                gc.options(optionsFactory({content: {}, index: {}}))
+            }).toThrowError('Cannot set "index" and "content" options together.');
+        });
+
+        describe('setting options.index', function () {
+            it('must throw an error if it is not a jQuery object', function () {
+                expect(function () {
+                    gc.options(optionsFactory({content: null, index: {}}))
+                }).toThrowError('Option "index" is not a jQuery object.');
+            });
+        });
+
         describe('setting options.content', function () {
             it('must throw an error if it is not a jQuery object', function () {
                 expect(function () {
                     gc.options(optionsFactory({content: {}}))
                 }).toThrowError('Option "content" is not a jQuery object.');
-            });
-
-            it('must throw an error if it refers to a non existing element', function () {
-                expect(function () {
-                    gc.options(optionsFactory({content: $('#not-existing-element')}))
-                }).toThrowError('Option "content" does not refer to an existing element.');
             });
         });
 
@@ -95,18 +103,6 @@ describe('gc', function () {
     // describe('.throttle()', function () {});
 
     describe('.getHeadings()', function () {
-        it('must throw an error if target does not exist', function () {
-            expect(function () {
-                gc.getHeadings($('#does-not-exist'))
-            }).toThrowError('Target element does not exist.');
-        });
-
-        it('must throw an error if target does contain heading elements.', function () {
-            expect(function () {
-                gc.getHeadings($('#get-headings-no-heading-elements'))
-            }).toThrowError('Target element does not contain heading elements.');
-        });
-
         it('must read all headings H1-H6 from the target area', function () {
             var headings = gc.getHeadings($('#get-headings'));
             
