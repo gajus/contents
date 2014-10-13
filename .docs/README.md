@@ -9,6 +9,7 @@ Automatically generate table of contents for a given area of content.
 ## Demo
 
 * [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
+* [Blog](http://gajus.com/blog/2/the-definitive-guide-to-the-javascript-generators) using table of contents.
 
 ## Comparison Table
 
