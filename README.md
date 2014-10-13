@@ -31,8 +31,8 @@ Automatically generate table of contents for a given area of content.
 | `index` | Reference to the headings. |
 | | Either `content` or `index` property must be set.  See [Content Index](#content-index). |
 | `itemFormatter` | (optional) Used to represent each item in the table of contents and format the corresponding heading. See [Item Formatter](#item-formatter). |
-| `anchorFormatter` | (optional) Function to translate heading text into anchor name. See [Anchor Name](#anchor-name). |
-| `offsetCalculator` | (optional) Function to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
+| `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
+| `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
 
 ## Content Index
 
@@ -148,13 +148,10 @@ The above content will generate the following table of contents:
 
 `itemFormatter` is used to represent each item in the table of contents and format the corresponding heading.
 
-The default item formatter implementation:
+The default item formatter implementation will:
 
-1. Generates
-
-1. Wraps text of each heading in a hyperlink element.
-2. Uses heading "id" attribute to link hyperlink to the heading anchor.
-3. Appends the hyperlink to the list.
+1. Generate a hyperlink for each item in the list using the "id" of the heading element.
+2. Turn each heading into a hyperlink with self-reference.
 
 ```js
 /**
@@ -173,7 +170,7 @@ $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, head
 
 ### Anchor Name
 
-The default implementation relies on each heading having an "id" attribute to enable anchor navigation. If heading does not have an "id", `$.gajus.contents.anchorFormatter` will be used to derive the value from the heading text.
+The default implementation relies on each heading having an "id" attribute to enable anchor navigation. If heading does not have an "id", `$.gajus.contents.anchorFormatter` will be used to derive the anchor name from the heading text.
 
 ```js
 /**
