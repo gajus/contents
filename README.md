@@ -40,10 +40,12 @@ Automatically generate table of contents for a given area of content.
 | Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
 | --- | --- | --- | --- |
 | Markup using nested `<ol>` | ✓ | - | - |
-| Smooth scrolling | - | ✓ | ✓ |
+| Smooth scrolling | -<sup>1</sup> | ✓ | ✓ |
 | Forward and back button support | ✓ | - | ✓ |
 | Requires 3rd party libraries | No | No | jQueryUI Widget Factory |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
+
+<sup>1</sup> test
 
 ## Content Index
 
