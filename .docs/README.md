@@ -28,6 +28,7 @@ Automatically generate table of contents for a given area of content.
 | Number of test cases | 44 | 14 | 10 |
 | Required 3rd party libraries | jQuery | jQuery | jQuery, jQueryUI |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
+| GitHub Stars | 3 | 307 | 435 |
 
 ## Settings
 
