@@ -10,18 +10,6 @@ Automatically generate table of contents for a given area of content.
 
 * [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
 
-## Settings
-
-| Name | Description |
-| --- | --- |
-| `where` | Reference to the container that will hold the table of contents. |
-| `content` | Reference to the content container. |
-| `index` | Reference to the headings. |
-| | Either `content` or `index` property must be set.  See [Content Index](#content-index). |
-| `itemFormatter` | (optional) Used to represent each item in the table of contents and format the corresponding heading. See [Item Formatter](#item-formatter). |
-| `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
-| `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
-
 ## Comparison Table
 
 | Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
@@ -39,6 +27,18 @@ Automatically generate table of contents for a given area of content.
 | Number of test cases | 44 | 14 | 10 |
 | Required 3rd party libraries | - | - | jQueryUI |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
+
+## Settings
+
+| Name | Description |
+| --- | --- |
+| `where` | Reference to the container that will hold the table of contents. |
+| `content` | Reference to the content container. |
+| `index` | Reference to the headings. |
+| | Either `content` or `index` property must be set.  See [Content Index](#content-index). |
+| `itemFormatter` | (optional) Used to represent each item in the table of contents and format the corresponding heading. See [Item Formatter](#item-formatter). |
+| `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
+| `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
 
 <sup>1</sup> You can implement smooth scrolling using either of the existing libraries, e.g. [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
