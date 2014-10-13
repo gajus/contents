@@ -74,14 +74,12 @@ $.gajus
 
 ## Events
 
-Use the generated list element to lister and trigger events.
+| Event | Description |
+| --- | --- |
+| `change.contents.gajus` | Triggered when the page is loaded and when user navigates to a new section of the page. |
+| `resize.contents.gajus` | Triggered when the page is loaded and in response to "resize" and "orientationchange" window events. |
 
-### `change.contents.gajus`
-
-* The page is loaded.
-* User navigates to a new section of the page.
-
-The second parameter of the event callback has reference to the current and previous (if any) active heading and anchor.
+Use the generated list element to listen and trigger events, e.g.
 
 ```js
 $.gajus
@@ -97,31 +95,24 @@ $.gajus
         change.current.heading.addClass('active-heading');
         change.current.anchor.addClass('active-anchor');
     });
-```
-
-### `resize.contents.gajus`
-
-* The page is loaded.
-* In response to "resize" window event.
-* In response to "orientationchange" window event.
-
-This event is used to recalculate heading offset variables.
-
-```js
-contents
     .on('resize.contents.gajus', function (event) {
         
     });
 ```
 
-You can manually trigger `resize.contents.gajus` event, e.g. if you have programmatically interfered with the content.
+You must trigger `resize.contents.gajus` event after programmatically changing the content or the presentation of content, e.g.
 
-contents
+```js
+$.gajus
+    .contents({
+        // [..]
+    })
     .trigger('resize.contents.gajus');
+```
 
 ## Markup
 
-Table of contents is a list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink, e.g.
+Table of contents is an ordered list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink, e.g.
 
 ```html
 <h1>JavaScript</h1>
@@ -137,43 +128,43 @@ Table of contents is a list element. The list is nested to represent the heading
 The above content will generate the following table of contents:
 
 ```html
-<ul>
+<ol>
     <li>
-        <a href="javascript">JavaScript</a>
+        <a href="#javascript">JavaScript</a>
 
-        <ul>
+        <ol>
             <li>
-                <a href="history">History</a>
+                <a href="#history">History</a>
             </li>
             <li>
-                <a href="trademark">Trademark</a>
+                <a href="#trademark">Trademark</a>
             </li>
             <li>
-                <a href="features">Features</a>
+                <a href="#features">Features</a>
 
-                <ul>
+                <ol>
                     <li>
-                        <a href="imperative-and-structured">Imperative and structured</a>
+                        <a href="#imperative-and-structured">Imperative and structured</a>
                     </li>
                     <li>
-                        <a href="dynamic">Dynamic</a>
+                        <a href="#dynamic">Dynamic</a>
                     </li>
                     <li>
-                        <a href="functional">Functional</a>
+                        <a href="#functional">Functional</a>
                     </li>
-                </ul>
+                </ol>
             </li>
             <li>
-                <a href="syntax">Syntax</a>
+                <a href="#syntax">Syntax</a>
             </li>
-        </ul>
+        </ol>
     </li>
-</ul>
+</ol>
 ```
 
 ### Item Formatter
 
-Item formatter is used to represent each item in the list.
+`itemFormatter` is used to represent each item in the table of contents.
 
 The default item formatter implementation:
 
@@ -196,18 +187,20 @@ $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, head
 };
 ```
 
-You can overwrite this behavior using a custom `itemFormatter` function:
+You can define your own `itemFormatter` function:
 
 ```js
 $.gajus
     .contents({
-        itemFormatter: function (li, heading) {}
+        itemFormatter: function (li, heading) {
+
+        }
     });
 ```
 
 ### Anchor Name
 
-The default implementation relies on each heading having an "id" attribute to enable anchor navigation. If heading does not have "id", `$.gajus.contents.anchorFormatter` will be used to derive the value from the heading text.
+The default implementation relies on each heading having an "id" attribute to enable anchor navigation. If heading does not have an "id", `$.gajus.contents.anchorFormatter` will be used to derive the value from the heading text.
 
 ```js
 /**
@@ -235,7 +228,7 @@ $.gajus.contents.anchorFormatter = function (str) {
 };
 ```
 
-You can overwrite this behavior using a custom `anchorFormatter` function:
+You can define your own `anchorFormatter` function:
 
 ```js
 $.gajus
@@ -244,7 +237,7 @@ $.gajus
     });
 ```
 
-#### Solving ID Conflicts
+### Solving ID Conflicts
 
 If there are multiple headings with the same name, e.g.
 
@@ -291,4 +284,4 @@ $.gajus
     });
 ```
 
-The function to calculate the line of sight is called upon initiation and in response to window resize event.
+The function to calculate the line of sight is called upon initiation and in response to `resize.contents.gajus` event.
