@@ -120,6 +120,8 @@
             throw new Error('Missing setup options.');
         }
 
+        // @todo Issue a warning about unknown properties.
+
         if (!options.where) {
             throw new Error('Option "where" is not set.');
         } else if (!(options.where instanceof jQuery)) {
@@ -148,6 +150,8 @@
             if (typeof options.itemFormatter !== 'function') {
                 throw new Error('Option "itemFormatter" must be a function.');
             }
+        } else {
+            options.itemFormatter = $.gajus.contents.itemFormatter;
         }
 
         if (options.anchorFormatter) {
@@ -156,6 +160,12 @@
             }
         } else {
             options.anchorFormatter = $.gajus.contents.anchorFormatter;
+        }
+
+        if (options.headingFormatter) {
+            if (typeof options.headingFormatter !== 'function') {
+                throw new Error('Option "headingFormatter" must be a function.');
+            }
         }
 
         if (options.offsetCalculator) {
@@ -263,7 +273,7 @@
 
     /**
      * @param {jQuery} headings Reference to the headings.
-     * @param {$.gajus.contents.generateHeadingHierarchyList.itemFormatter} itemFormatter
+     * @param {$.gajus.contents.itemFormatter} itemFormatter
      * @return {jQuery}
      */
     $.gajus.contents.generateHeadingHierarchyList = function (headings, itemFormatter) {
@@ -274,10 +284,7 @@
             lastListItem,
             lastLevel;
 
-
-        if (!itemFormatter) {
-            itemFormatter = $.gajus.contents.generateHeadingHierarchyList.itemFormatter;
-        }
+        console.log(itemFormatter);
 
         lastListInLevelOrLower = function (level) {
             while (level > 0) {
@@ -324,7 +331,7 @@
      * @param {jQuery} li List element.
      * @param {jQuery} heading Heading element.
      */
-    $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, heading) {
+    $.gajus.contents.itemFormatter = function (li, heading) {
         var hyperlink = $('<a>');
 
         hyperlink.text(heading.text());

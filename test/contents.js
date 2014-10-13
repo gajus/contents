@@ -73,6 +73,10 @@ describe('gc', function () {
                     gc.options(optionsFactory({itemFormatter: 'not a function'}))
                 }).toThrowError('Option "itemFormatter" must be a function.');
             });
+
+            it('must default to $.gajus.contents.anchorFormatter', function () {
+                expect(gc.options(optionsFactory()).itemFormatter).toEqual(gc.itemFormatter);
+            });
         });
 
         describe('setting options.anchorFormatter', function () {
@@ -84,6 +88,14 @@ describe('gc', function () {
 
             it('must default to $.gajus.contents.anchorFormatter', function () {
                 expect(gc.options(optionsFactory()).anchorFormatter).toEqual(gc.anchorFormatter);
+            });
+        });
+
+        describe('setting options.headingFormatter', function () {
+            it('must throw an error if it is not a function', function () {
+                expect(function () {
+                    gc.options(optionsFactory({headingFormatter: 'not a function'}))
+                }).toThrowError('Option "headingFormatter" must be a function.');
             });
         });
 
@@ -194,7 +206,7 @@ describe('gc', function () {
             expect(list.prop('outerHTML')).toEqual('<ol><li>0</li><li>1</li><li>2</li></ol>');
         });
 
-        describe('default item interpreter', function () {
+        /*describe('default item interpreter', function () {
             it('must represent each item using a hyperlink', function () {
                 var headings = gc.getHeadings($('#generate-heading-hierarchy-list-flat')),
                     list;
@@ -205,7 +217,7 @@ describe('gc', function () {
 
                 expect(list.prop('outerHTML')).toEqual('<ol><li><a href="#foo">generate heading hierarchy list flat foo</a></li><li><a href="#foo">generate heading hierarchy list flat bar</a></li><li><a href="#foo">generate heading hierarchy list flat tar</a></li></ol>');
             });
-        });
+        });*/
     });
 
     describe('.anchorFormatter()', function () {

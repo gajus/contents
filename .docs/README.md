@@ -8,7 +8,7 @@ Automatically generate table of contents for a given area of content.
 
 ## Demo
 
-[Interactive demo](http://gajus.com/sandbox/contents/demo/).
+* [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
 
 ## Settings
 
@@ -18,25 +18,9 @@ Automatically generate table of contents for a given area of content.
 | `content` | Reference to the content container. |
 | `index` | Reference to the headings. |
 | | Either `content` or `index` property must be set.  See [Content Index](#content-index). |
-| `itemFormatter` | (optional) Function to format the anchor element in the table of contents. See [Item Formatter](#item-formatter). |
+| `itemFormatter` | (optional) Used to represent each item in the table of contents and format the corresponding heading. See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | (optional) Function to translate heading text into anchor name. See [Anchor Name](#anchor-name). |
-| `headingFormatter` | (optional) Function to format indexed heading elements. See [Heading Formatter](#heading-formatter). |
 | `offsetCalculator` | (optional) Function to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
-
-The settings are read when initiating the contents:
-
-```js
-$.gajus
-    .contents({
-        where: $('#table-of-contents'),
-        content: $('article'),
-        // index: $('article').find('h2, h3, h4, h5'),
-        itemFormatter: function () {}
-        anchorFormatter: function () {}
-        headingFormatter: function () {}
-        offsetCalculator: function () {}
-    });
-```
 
 ## Content Index
 
@@ -55,16 +39,6 @@ You can use your own selector to identify headings:
 $.gajus
     .contents({
         index: $('h2, h3')
-    });
-```
-
-In combination with `itemFormatter` and `anchorFormatter`, `index` can be used to index other element types:
-
-```js
-$.gajus
-    .contents({
-        index: $('hgroup'),
-
     });
 ```
 
@@ -160,9 +134,11 @@ The above content will generate the following table of contents:
 
 ### Item Formatter
 
-`itemFormatter` is used to represent each item in the table of contents.
+`itemFormatter` is used to represent each item in the table of contents and format the corresponding heading.
 
 The default item formatter implementation:
+
+1. Generates
 
 1. Wraps text of each heading in a hyperlink element.
 2. Uses heading "id" attribute to link hyperlink to the heading anchor.
@@ -181,17 +157,6 @@ $.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, head
 
     li.append(hyperlink);
 };
-```
-
-You can define your own `itemFormatter` function:
-
-```js
-$.gajus
-    .contents({
-        itemFormatter: function (li, heading) {
-
-        }
-    });
 ```
 
 ### Anchor Name
@@ -222,15 +187,6 @@ $.gajus.contents.anchorFormatter = function (str) {
         .replace(/^\-|\-$/g, '')
         .replace(/^[^a-z]+/g, '');
 };
-```
-
-You can define your own `anchorFormatter` function:
-
-```js
-$.gajus
-    .contents({
-        anchorFormatter: function (str) {}
-    });
 ```
 
 #### Solving ID Conflicts
@@ -266,18 +222,6 @@ The default behavior is to calculate the line of sight as 1/3 of the window heig
 $.gajus.contents.offsetIndex.offsetCalculator = function () {
     return $(window).height() / 3;
 };
-```
-
-You can overwrite the function used to calculate the offset with the `offsetCalculator` setting:
-
-```js
-$.gajus
-    .contents({
-        offsetCalculator: function () {
-            // The heading must be at the most 20px from the top of the screen.
-            return 20;
-        }
-    });
 ```
 
 The function to calculate the line of sight is called upon initiation and in response to `resize.contents.gajus` event.
