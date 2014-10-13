@@ -42,10 +42,15 @@ Automatically generate table of contents for a given area of content.
 | Markup using nested `<ol>` | ✓ | - | - |
 | Smooth scrolling | -<sup>1</sup> | ✓ | ✓ |
 | Forward and back button support | ✓ | - | ✓ |
-| Requires 3rd party libraries | No | No | jQueryUI Widget Factory |
+| Expendable anchor name formatter | ✓ | ✓ | ✓ |
+| Can have multiple on a page | ✓ | ✓ | ✓ |
+| Number of tests | 44 | 14 | 10 |
+| Required 3rd party libraries | - | - | jQueryUI Widget Factory |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
 
 <sup>1</sup> You can implement smooth scrolling using either of the existing libraries, e.g. [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+
+Last updated: 2014-10-13.
 
 ## Content Index
 
