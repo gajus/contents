@@ -18,18 +18,23 @@ Automatically generate table of contents for a given area of content.
 | `content` | Reference to the content container. |
 | `index` | Reference to the headings. |
 | | Either `content` or `index` property must be set.  See [Content Index](#content-index). |
-| `itemFormatter` | See [Item Formatter](#item-formatter). |
-| `anchorFormatter` | See [Anchor Name](#anchor-name). |
-| `headingFormatter` | See [Heading Formatter](#heading-formatter). |
-| `offsetCalculator` | See [Offset Line of Sight](#offset-line-of-sight). |
+| `itemFormatter` | (optional) Function to format the anchor element in the table of contents. See [Item Formatter](#item-formatter). |
+| `anchorFormatter` | (optional) Function to translate heading text into anchor name. See [Anchor Name](#anchor-name). |
+| `headingFormatter` | (optional) Function to format indexed heading elements. See [Heading Formatter](#heading-formatter). |
+| `offsetCalculator` | (optional) Function to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
 
-### Example
+The settings are read when initiating the contents:
 
 ```js
 $.gajus
     .contents({
         where: $('#table-of-contents'),
-        content: $('article')
+        content: $('article'),
+        // index: $('article').find('h2, h3, h4, h5'),
+        itemFormatter: function () {}
+        anchorFormatter: function () {}
+        headingFormatter: function () {}
+        offsetCalculator: function () {}
     });
 ```
 
@@ -228,7 +233,7 @@ $.gajus
     });
 ```
 
-### Solving ID Conflicts
+#### Solving ID Conflicts
 
 If there are multiple headings with the same name, e.g.
 
