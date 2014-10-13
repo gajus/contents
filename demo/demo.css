@@ -8,11 +8,16 @@ body {
 .example {
   max-width: 860px;
   overflow: hidden;
-  position: relative;
-  border: 1px solid #000; }
+  position: relative; }
+  .example .description {
+    background: #eee;
+    border: 1px solid #999;
+    padding: 10px;
+    margin: 0 0 20px 0; }
   .example .body {
     background: #fff;
-    padding: 40px; }
+    padding: 40px;
+    border: 1px solid #000; }
   .example h1, .example h2, .example h3, .example h4 {
     font-size: 30px;
     line-height: 40px;

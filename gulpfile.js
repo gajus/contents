@@ -50,15 +50,15 @@ gulp.task('distribute', ['clean'], function (cb) {
     });
 });
 
-gulp.task('watch', function () {
-    gulp.watch('./src/contents.js', ['default']);
-});
-
 gulp.task('travis', ['default'], function (cb) {
     karma.start({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true
     }, cb);
+});
+
+gulp.task('watch', function () {
+    gulp.watch('./src/contents.js', ['default']);
 });
 
 gulp.task('default', ['distribute']);

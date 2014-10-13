@@ -7,10 +7,14 @@ body {
 }
 
 .example {
-    max-width: 860px; overflow: hidden; position: relative; border: 1px solid #000;
+    max-width: 860px; overflow: hidden; position: relative;
+
+    .description {
+        background: #eee; border: 1px solid #999; padding: 10px; margin: 0 0 20px 0;
+    }
 
     .body {
-        background: #fff; padding: 40px;
+        background: #fff; padding: 40px; border: 1px solid #000;
     }
 
     h1,

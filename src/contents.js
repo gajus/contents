@@ -73,28 +73,39 @@
     };
 
     /**
-     * @see https://remysharp.com/2010/07/21/throttling-function-calls
+     * @callback throttled
+     * @param {...*} var_args
      */
-    $.gajus.contents.throttle = function (fn, threshhold, scope) {
+
+    /**
+     * Creates and returns a new, throttled version of the passed function, that, when invoked repeatedly,
+     * will only actually call the original function at most once per every wait milliseconds.
+     * 
+     * @see https://remysharp.com/2010/07/21/throttling-function-calls
+     * @param {throttled} throttled
+     * @param {Number} threshold Number of milliseconds between firing the throttled function.
+     * @param {Object} context The value of "this" provided for the call to throttled.
+     */
+    $.gajus.contents.throttle = function (throttled, threshold, context) {
         var last,
             deferTimer;
 
-        threshhold = threshhold || 250;
+        threshold = threshold || 250;
+        context = context || {};
         
         return function () {
-            var context = scope || this,
-                now = +new Date(),
+            var now = +new Date(),
                 args = arguments;
             
-            if (last && now < last + threshhold) {
+            if (last && now < last + threshold) {
                 clearTimeout(deferTimer);
                 deferTimer = setTimeout(function () {
                     last = now;
-                    fn.apply(context, args);
-                }, threshhold);
+                    throttled.apply(context, args);
+                }, threshold);
             } else {
                 last = now;
-                fn.apply(context, args);
+                throttled.apply(context, args);
             }
         };
     };

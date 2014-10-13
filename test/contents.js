@@ -92,6 +92,8 @@ describe('gc', function () {
         });
     });
 
+    // describe('.throttle()', function () {});
+
     describe('.getHeadings()', function () {
         it('must throw an error if target does not exist', function () {
             expect(function () {
@@ -105,7 +107,7 @@ describe('gc', function () {
             }).toThrowError('Target element does not contain heading elements.');
         });
 
-        it('must read all headings from the target area', function () {
+        it('must read all headings H1-H6 from the target area', function () {
             var headings = gc.getHeadings($('#get-headings'));
             
             expect(headings.length).toEqual(6);

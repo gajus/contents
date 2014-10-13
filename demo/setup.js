@@ -15,7 +15,7 @@ $(function () {
         $('.example').each(function () {
             var example = $(this);
 
-            example.append(template.clone());
+            example.find('.main').append(template.clone());
 
             example.trigger('ready.example');
         });
