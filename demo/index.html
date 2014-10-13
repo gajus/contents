@@ -1,21 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <link rel="stylesheet" href="./setup/demo.css">
+
     <script src="./../bower_components/jquery/dist/jquery.js"></script>
     <script src="./../dist/contents.js"></script>
-    <script src="./setup.js"></script>
-    <script src="./plain.js"></script>
-    
-    <link rel="stylesheet" href="./demo.css">
+    <script src="./setup/setup.js"></script>
+
+    <script>
+    $(function () {
+        $('body').on('example.contents.gajus', function () {
+            $.gajus
+                .contents({
+                    where: $('#table-of-contents'),
+                    index: $('h2, h3, h4, h5, h6')
+                })
+                .on('resize.gajus.contents', function () {
+                    console.log('resize.gajus.contents');
+                })
+                .on('change.gajus.contents', function (event, change) {
+                    console.groupCollapsed('change.gajus.contents');
+
+                    $('#table-of-contents li').removeClass('active-child');
+
+                    if (change.previous) {
+                        change.previous.heading.removeClass('active-heading');
+                        change.previous.anchor.removeClass('active-anchor');
+                    }
+
+                    change.current.heading.addClass('active-heading');
+                    change.current.anchor.addClass('active-anchor');
+
+                    change.current.anchor.parents('li').addClass('active-child');
+
+                    console.log('change.previous', change.previous);
+                    console.log('change.current', change.current);
+
+                    console.groupEnd();
+                });
+        });
+    });
+    </script>
 </head>
 <body>
-    <div class="example" id="plain">
-        <div class="table-of-contents"></div>
-        <div class="main">
-            <div class="description">
-                <p>Open the <code>console.log</code> to view the associated events.</p>
-            </div>
+    <div id="table-of-contents"></div>
+    <div id="main">
+        <div class="description">
+            <p>Open the <code>console.log</code> to view the associated events.</p>
         </div>
     </div>
 </body>

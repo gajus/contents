@@ -4,16 +4,7 @@
 
 Automatically generate table of contents for a given area of content.
 
-## Contents
-
-- [Demo](#demo)
-- [Settings](#settings)
-- [Index](#index)
-- [Events](#events)
-- [Markup](#markup)
-- [Offset Line of Sight](#offset-line-of-sight)
-
-
+[toc]
 
 ## Demo
 

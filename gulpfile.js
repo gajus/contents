@@ -7,7 +7,8 @@ var pkg = require('./package.json'),
     header = require('gulp-header'),
     jshint = require('gulp-jshint'),
     fs = require('fs'),
-    del = require('del');
+    del = require('del'),
+    exec = require('child_process').exec;
 
 gulp.task('clean', ['lint'], function (cb) {
     del(['dist'], cb);
@@ -57,8 +58,13 @@ gulp.task('travis', ['default'], function (cb) {
     }, cb);
 });
 
+gulp.task('readme', function () {
+    exec('ruby ./.docs/github_toc.rb ./.docs/README.md ./README.md', {cwd: __dirname});
+});
+
 gulp.task('watch', function () {
     gulp.watch('./src/contents.js', ['default']);
+    gulp.watch('./.docs/README.md', ['readme']);
 });
 
 gulp.task('default', ['distribute']);
