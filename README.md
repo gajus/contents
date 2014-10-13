@@ -44,11 +44,12 @@ Automatically generate table of contents for a given area of content.
 | Forward and back button support | ✓ | - | ✓ |
 | While-scrolling update of state | ✓ | - | ✓ |
 | Events | ✓ | - | - |
-| Window resize | ✓ | ✓ | ✓ |
+| Reflect window resize | ✓ | ✓ | ✓ |
 | Extendable item formatter | ✓ | - | - |
 | Extendable anchor name formatter | ✓ | ✓ | ✓ |
+| Dynamically "eye-sight" offset | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
-| Number of tests | 44 | 14 | 10 |
+| Number of test cases | 44 | 14 | 10 |
 | Required 3rd party libraries | - | - | jQueryUI |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
 
