@@ -8,6 +8,7 @@ Automatically generate table of contents for a given area of content.
 
 - [Demo](#demo)
 - [Settings](#settings)
+- [Comparison](#comparison)
 - [Content Index](#content-index)
 - [Events](#events)
 - [Markup](#markup)
@@ -33,6 +34,11 @@ Automatically generate table of contents for a given area of content.
 | `itemFormatter` | (optional) Used to represent each item in the table of contents and format the corresponding heading. See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
+
+## Comparison
+
+| Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
+| Smooth scrolling | - | ✓ | ✓ |
 
 ## Content Index
 

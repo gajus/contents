@@ -22,6 +22,11 @@ Automatically generate table of contents for a given area of content.
 | `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
 
+## Comparison
+
+| Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
+| Smooth scrolling | - | ✓ | ✓ |
+
 ## Content Index
 
 The default behavior is to index all headings (H1-H6) in the `content` container:
