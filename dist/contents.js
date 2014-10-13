@@ -289,8 +289,6 @@
             lastListItem,
             lastLevel;
 
-        console.log(itemFormatter);
-
         lastListInLevelOrLower = function (level) {
             while (level > 0) {
                 if (lastListInLevelIndex[level]) {
@@ -336,13 +334,18 @@
      * @param {jQuery} li List element.
      * @param {jQuery} heading Heading element.
      */
-    $.gajus.contents.itemFormatter = function (li, heading) {
-        var hyperlink = $('<a>');
+    $.gajus.contents.itemFormatter = function (li, heading, anchorName) {
+        var headingLink = $('<a>'),
+            listlink = $('<a>');
 
-        hyperlink.text(heading.text());
-        hyperlink.attr('href', '#' + heading.attr('id'));
+        listlink.text(heading.text());
+        listlink.attr('href', '#' + heading.attr('id'));
 
-        li.append(hyperlink);
+        li.append(listlink);
+
+        headingLink.attr('href', '#' + heading.attr('id'));
+
+        heading.wrapInner(headingLink);
     };
 
     /**

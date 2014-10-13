@@ -151,20 +151,25 @@ The above content will generate the following table of contents:
 The default item formatter implementation will:
 
 1. Generate a hyperlink for each item in the list using the "id" of the heading element.
-2. Turn each heading into a hyperlink with self-reference.
+2. Turn each heading into a hyperlink with a self-reference.
 
 ```js
 /**
  * @param {jQuery} li List element.
  * @param {jQuery} heading Heading element.
  */
-$.gajus.contents.generateHeadingHierarchyList.itemFormatter = function (li, heading) {
-    var hyperlink = $('<a>');
+$.gajus.contents.itemFormatter = function (li, heading, anchorName) {
+    var headingLink = $('<a>'),
+        listlink = $('<a>');
 
-    hyperlink.text(heading.text());
-    hyperlink.attr('href', '#' + heading.attr('id'));
+    listlink.text(heading.text());
+    listlink.attr('href', '#' + heading.attr('id'));
 
-    li.append(hyperlink);
+    li.append(listlink);
+
+    headingLink.attr('href', '#' + heading.attr('id'));
+
+    heading.wrapInner(headingLink);
 };
 ```
 
