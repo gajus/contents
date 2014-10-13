@@ -44,7 +44,7 @@ gulp.task('distribute', ['clean'], function (cb) {
     jquery.description = pkg.description
     jquery.version = pkg.version;
     jquery.keywords = pkg.keywords;
-    jquery.title = pkg.title;;
+    jquery.title = pkg.title;
 
     fs.writeFile('./bower.json', JSON.stringify(bower, null, 4), function () {
         fs.writeFile('./contents.jquery.json', JSON.stringify(jquery, null, 4), cb);
