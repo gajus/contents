@@ -25,6 +25,7 @@ Automatically generate table of contents for a given area of content.
 ## Comparison
 
 | Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
+| --- |
 | Smooth scrolling | - | ✓ | ✓ |
 
 ## Content Index
