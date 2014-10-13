@@ -17,7 +17,7 @@ Automatically generate table of contents for a given area of content.
 | `where` | Reference to the container that will hold the table of contents. |
 | `content` | Reference to the content container. |
 | `index` | Reference to the headings. |
-| | Either `content` or `index` property must be set.  See [Index](#index). |
+| | Either `content` or `index` property must be set.  See [Content Index](#content-index). |
 | `itemFormatter` | See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | See [Anchor Name](#anchor-name). |
 | `headingFormatter` | See [Heading Formatter](#heading-formatter). |
@@ -33,7 +33,7 @@ $.gajus
     });
 ```
 
-## Index
+## Content Index
 
 The default behavior is to index all headings (H1-H6) in the `content` container:
 
