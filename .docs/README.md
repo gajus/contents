@@ -6,7 +6,23 @@ Automatically generate table of contents for a given area of content.
 
 [toc 3]
 
-## Examples
+## Integration Examples
+
+### Quick Start
+
+To generate a table of contents:
+
+```js
+$.gajus
+    .contents({
+        where: $('#table-of-contents'),
+        content: $('main')
+    });
+```
+
+The above will generate a table of contents for headings in `main`. Table of contents is an (`<ol>`) element; it will be appended to `#table-of-contents` container.
+
+### Examples
 
 * [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
 * [Smooth scrolling](http://gajus.com/sandbox/contents/demo/) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
@@ -34,7 +50,7 @@ The code for all of the examples is in the [example](./example/) folder.
 
 Last updated: Tue Oct 14 10:31:52 2014 UTC.
 
-<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [examples](#examples) section of the page for smooth scrolling implementation using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [integration examples](#integration-examples) section of the page for smooth scrolling implementation using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
 ## Download
 
