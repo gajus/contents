@@ -6,10 +6,12 @@ Automatically generate table of contents for a given area of content.
 
 [toc 3]
 
-## Demo
+## Examples
 
 * [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
-* [Blog](http://gajus.com/blog/2/the-definitive-guide-to-the-javascript-generators) using table of contents.
+* [Smooth scrolling](http://gajus.com/sandbox/contents/demo/)
+
+The code for all of the examples is in the [example](./example/) folder.
 
 ## Comparison Table
 
@@ -30,6 +32,23 @@ Automatically generate table of contents for a given area of content.
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
 | GitHub Stars | 3 | 307 | 435 |
 
+Last updated: Tue Oct 14 10:31:52 2014 UTC.
+
+<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See (examples)[#examples] section of the page for smooth scrolling implementation using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+
+## Download
+
+Using [Bower](http://bower.io/):
+
+```sh
+bower install contents
+```
+
+The old-fashioned way, download either of the following files:
+
+* https://raw.githubusercontent.com/gajus/contents/master/dist/contents.min.js
+* https://raw.githubusercontent.com/gajus/contents/master/dist/contents.js
+
 ## Settings
 
 | Name | Description |
@@ -41,10 +60,6 @@ Automatically generate table of contents for a given area of content.
 | `itemFormatter` | (optional) Used to represent each item in the table of contents and format the corresponding heading. See [Item Formatter](#item-formatter). |
 | `anchorFormatter` | (optional) Used to derive the anchor name from the heading text. See [Anchor Name](#anchor-name). |
 | `offsetCalculator` | (optional) Used to calculate the "line of sight". See [Offset Line of Sight](#offset-line-of-sight). |
-
-<sup>1</sup> You can implement smooth scrolling using either of the existing libraries, e.g. [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
-
-Last updated: 2014-10-13.
 
 ## Content Index
 
@@ -70,8 +85,9 @@ $.gajus
 
 | Event | Description |
 | --- | --- |
-| `change.contents.gajus` | Triggered when the page is loaded and when user navigates to a new section of the page. |
-| `resize.contents.gajus` | Triggered when the page is loaded and in response to "resize" and "orientationchange" window events. |
+| `ready.gajus.contents` | Triggered once after the table of contents has been generated. |
+| `resize.gajus.contents` | Triggered when the page is loaded and in response to "resize" and "orientationchange" window events. |
+| `change.gajus.contents` | Triggered when the page is loaded and when user navigates to a new section of the page. |
 
 Use the generated list element to listen and trigger events, e.g.
 
@@ -80,7 +96,7 @@ $.gajus
     .contents({
         // [..]
     })
-    .on('change.contents.gajus', function (event, change) {
+    .on('change.gajus.contents', function (event, change) {
         if (change.previous) {
             change.previous.heading.removeClass('active-heading');
             change.previous.anchor.removeClass('active-anchor');
@@ -89,19 +105,19 @@ $.gajus
         change.current.heading.addClass('active-heading');
         change.current.anchor.addClass('active-anchor');
     });
-    .on('resize.contents.gajus', function (event) {
+    .on('resize.gajus.contents', function (event) {
         
     });
 ```
 
-You must trigger `resize.contents.gajus` event after programmatically changing the content or the presentation of content, e.g.
+You must trigger `resize.gajus.contents` event after programmatically changing the content or the presentation of content, e.g.
 
 ```js
 $.gajus
     .contents({
         // [..]
     })
-    .trigger('resize.contents.gajus');
+    .trigger('resize.gajus.contents');
 ```
 
 ## Markup

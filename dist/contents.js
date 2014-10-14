@@ -15,7 +15,8 @@
         var headings,
             list,
             offsetIndex,
-            lastHeading;
+            lastHeading,
+            ready = false;
         
         options = $.gajus.contents.options(options);
         
@@ -27,14 +28,14 @@
 
         options.where.append(list);
 
-        list.on('resize.contents.gajus', function (event, data) {
+        list.on('resize.gajus.contents', function (event, data) {
             offsetIndex = $.gajus.contents.offsetIndex(headings, options.offsetCalculator);
 
             $(window).trigger('scroll');
         });
 
         $(window).on('resize orientationchange', $.gajus.contents.throttle(function () {
-            list.trigger('resize.contents.gajus');
+            list.trigger('resize.gajus.contents');
         }, 100));
 
         $(window).on('scroll', $.gajus.contents.throttle(function () {
@@ -66,12 +67,16 @@
 
                 lastHeading = heading;
             }
+
+            if (!ready) {
+                list.trigger('ready.gajus.contents');
+            }
         }, 100));
 
         // This allows the script that constructs $.gajus.contents
         // to catch the first scroll event.
         setTimeout(function () {
-            list.trigger('resize.contents.gajus');
+            list.trigger('resize.gajus.contents');
         }, 10);
 
         return list;
