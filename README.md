@@ -62,7 +62,7 @@ The code for all of the examples is in the [example](./example/) folder.
 | Number of test cases | 44 | 14 | 10 |
 | Required 3rd party libraries | jQuery | jQuery | jQuery, jQueryUI |
 | Size | 5.075 kb | 2.581 kb | 7.246 kb |
-| GitHub Stars | 3 | 307 | 435 |
+| GitHub Stars | 21 | 307 | 435 |
 
 Last updated: Tue Oct 14 10:31:52 2014 UTC.
 
