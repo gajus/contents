@@ -40,8 +40,8 @@ The above will generate a table of contents for headings in `main`. Table of con
 
 ### Examples
 
-* [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
-* [Smooth scrolling](http://gajus.com/sandbox/contents/demo/) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+* [Table of contents](http://gajus.com/sandbox/contents/example/) for the Wikipedia article about JavaScript.
+* [Smooth scrolling](http://gajus.com/sandbox/contents/example/smooth-scrolling.html) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
 The code for all of the examples is in the [example](./example/) folder.
 
