@@ -23,7 +23,9 @@ Automatically generate table of contents for a given area of content.
 ## Examples
 
 * [Table of contents](http://gajus.com/sandbox/contents/demo/) for the Wikipedia article about JavaScript.
-* [Smooth scrolling](http://gajus.com/sandbox/contents/demo/)
+* [Smooth scrolling](http://gajus.com/sandbox/contents/demo/) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+
+The code for all of the examples is in the [example](./example/) folder.
 
 ## Comparison Table
 
@@ -46,7 +48,7 @@ Automatically generate table of contents for a given area of content.
 
 Last updated: Tue Oct 14 10:31:52 2014 UTC.
 
-<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See (examples)[#examples] section of the page for smooth scrolling implementation using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [examples](#examples) section of the page for smooth scrolling implementation using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
 ## Download
 
@@ -97,7 +99,7 @@ $.gajus
 
 | Event | Description |
 | --- | --- |
-| `ready.gajus.contents` | Triggered after the table of contents has been generated. |
+| `ready.gajus.contents` | Triggered once after the table of contents has been generated. |
 | `resize.gajus.contents` | Triggered when the page is loaded and in response to "resize" and "orientationchange" window events. |
 | `change.gajus.contents` | Triggered when the page is loaded and when user navigates to a new section of the page. |
 
