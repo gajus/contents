@@ -42,11 +42,10 @@ The code for all of the examples is in the [example](./example/) folder.
 | While-scrolling update of state | ✓ | - | ✓ |
 | Events | ✓ | - | - |
 | Reflect window resize | ✓ | ✓ | ✓ |
-| Extendable item formatter | ✓ | - | - |
-| Extendable anchor name formatter | ✓ | ✓ | ✓ |
+| Overwrite markup and navigation | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
 | Required 3rd party libraries | jQuery | jQuery | jQuery, jQueryUI |
-| Size | 3.875 kb | 2.581 kb | 7.246 kb |
+| Size | 3.552 kb | 2.581 kb | 7.246 kb |
 | GitHub Stars | 28 | 307 | 435 |
 
 Last updated: Wed Oct 15 14:06:12 2014 UTC.
