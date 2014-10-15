@@ -6,19 +6,20 @@ var pkg = require('./package.json'),
     rename = require('gulp-rename'),
     header = require('gulp-header'),
     jshint = require('gulp-jshint'),
+    jsdoc = require('gulp-jsdoc'),
     fs = require('fs'),
     del = require('del'),
     exec = require('child_process').exec;
-
-gulp.task('clean', ['lint'], function (cb) {
-    del(['dist'], cb);
-});
 
 gulp.task('lint', function () {
     return gulp
         .src('./src/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('clean', ['lint'], function (cb) {
+    del(['dist'], cb);
 });
 
 gulp.task('distribute', ['clean'], function (cb) {
@@ -59,12 +60,12 @@ gulp.task('travis', ['default'], function (cb) {
 });
 
 gulp.task('readme', function () {
-    exec('ruby ./.docs/github_toc.rb ./.docs/README.md ./README.md', {cwd: __dirname});
+    exec('ruby ./.readme/github_toc.rb ./.readme/README.md ./README.md', {cwd: __dirname});
 });
 
 gulp.task('watch', function () {
     gulp.watch('./src/contents.js', ['default']);
-    gulp.watch('./.docs/README.md', ['readme']);
+    gulp.watch('./.readme/README.md', ['readme']);
 });
 
 gulp.task('default', ['distribute']);

@@ -1,362 +1,175 @@
-var gc = $.gajus.contents;
+var gc = gajus.contents;
 
-describe('gc', function () {
+describe('DOM dependent method', function () {
     beforeEach(function () {
         $('body').html($.parseHTML(__html__['test/fixture/page.html']));
     });
-
-    describe('.options()', function () {
-        var optionsFactory;
-
-        optionsFactory = function (overwrite) {
-            var options;
-
-            options = $.extend({
-                where: $('#options .options-toc'),
-                content: $('#options .content')
-            }, overwrite);
-
-            return options;
-        };
-
-        it('must throw an error if options parameter is not provided', function () {
+    describe('.id()', function () {
+        it('must use the formatId function', function () {
+            expect(gc.id('', function () { return 'ok'; })).toEqual('ok');
+        });
+        it('must throw an error if formattedId is invalid', function () {
             expect(function () {
-                gc.options()
-            }).toThrowError('Missing setup options.');
+                expect(gc.id('', function () { return '-ok'; }));
+            }).toThrowError('Invalid ID.');
         });
-
-        describe('setting options.where', function () {
-            it('must throw an error if it is not a jQuery object', function () {
-                expect(function () {
-                    gc.options(optionsFactory({where: {}}))
-                }).toThrowError('Option "where" is not a jQuery object.');
-            });
-
-            it('must throw an error if it refers to a non existing element', function () {
-                expect(function () {
-                    gc.options(optionsFactory({where: $('#not-existing-element')}))
-                }).toThrowError('Option "where" does not refer to an existing element.');
-            });
-
-            it('must throw an error if it refers to more than one element', function () {
-                expect(function () {
-                    gc.options(optionsFactory({where: $('#options div')}))
-                }).toThrowError('Option "where" refers to more than one element.');
-            });
+        it('must derive a unique ID', function () {
+            expect(gc.id('id-not-unique')).toEqual('id-not-unique-1');
         });
-
-        it('must throw an error if you set "index" and "content" options together', function () {
-            expect(function () {
-                gc.options(optionsFactory({content: {}, index: {}}))
-            }).toThrowError('Cannot set "index" and "content" options together.');
+    });
+    describe('.level()', function () {
+        it('must derive level for heading element', function () {
+            expect(gc.level($('<h1>'))).toEqual(1);
         });
-
-        describe('setting options.index', function () {
-            it('must throw an error if it is not a jQuery object', function () {
-                expect(function () {
-                    gc.options(optionsFactory({content: null, index: {}}))
-                }).toThrowError('Option "index" is not a jQuery object.');
+        describe('when element is not heading', function () {
+            it('must use gajus.contents.level data attribute', function () {
+                expect(gc.level($('<foo>').data('gajus.contents.level', 2))).toEqual(2);
             });
-        });
-
-        describe('setting options.content', function () {
-            it('must throw an error if it is not a jQuery object', function () {
-                expect(function () {
-                    gc.options(optionsFactory({content: {}}))
-                }).toThrowError('Option "content" is not a jQuery object.');
-            });
-        });
-
-        describe('setting options.itemFormatter', function () {
-            it('must throw an error if it is not a function', function () {
-                expect(function () {
-                    gc.options(optionsFactory({itemFormatter: 'not a function'}))
-                }).toThrowError('Option "itemFormatter" must be a function.');
-            });
-
-            it('must default to $.gajus.contents.anchorFormatter', function () {
-                expect(gc.options(optionsFactory()).itemFormatter).toEqual(gc.itemFormatter);
-            });
-        });
-
-        describe('setting options.anchorFormatter', function () {
-            it('must throw an error if it is not a function', function () {
-                expect(function () {
-                    gc.options(optionsFactory({anchorFormatter: 'not a function'}))
-                }).toThrowError('Option "anchorFormatter" must be a function.');
-            });
-
-            it('must default to $.gajus.contents.anchorFormatter', function () {
-                expect(gc.options(optionsFactory()).anchorFormatter).toEqual(gc.anchorFormatter);
-            });
-        });
-
-        describe('setting options.headingFormatter', function () {
-            it('must throw an error if it is not a function', function () {
-                expect(function () {
-                    gc.options(optionsFactory({headingFormatter: 'not a function'}))
-                }).toThrowError('Option "headingFormatter" must be a function.');
-            });
-        });
-
-        describe('setting options.offsetCalculator', function () {
-            it('must throw an error if it is not a function', function () {
-                expect(function () {
-                    gc.options(optionsFactory({offsetCalculator: 'not a function'}))
-                }).toThrowError('Option "offsetCalculator" must be a function.');
-            });
-
-            it('must default to $.gajus.contents.offsetIndex.offsetCalculator', function () {
-                expect(gc.options(optionsFactory()).offsetCalculator).toEqual(gc.offsetIndex.offsetCalculator);
+            it('must default to 1', function () {
+                expect(gc.level($('<foo>'))).toEqual(1);
             });
         });
     });
-
-    // describe('.throttle()', function () {});
-
-    describe('.getHeadings()', function () {
-        it('must read all headings H1-H6 from the target area', function () {
-            var headings = gc.getHeadings($('#get-headings'));
-            
-            expect(headings.length).toEqual(6);
+    describe('.link()', function () {
+        var guide,
+            article;
+        beforeEach(function () {
+            guide = $('#link .guide');
+            article = $('#link .article');
+            gc.link(guide, article);
+        });
+        it('must give article an id', function () {
+            expect(article.attr('id')).toEqual('foo');
+        });
+        it('must wrap article content in a hyperlink', function () {
+            expect(article.html()).toEqual('<a href="#foo">foo</a>');
+        });
+        it('must append a hyperlink to the guide', function () {
+            expect(guide.html()).toEqual('<a href="#foo">foo</a>');
         });
     });
-
-    describe('.deriveId()', function () {
-        it('must throw an error if target does not exist or refers to more than one element', function () {
-            expect(function () {
-                gc.deriveId($('#derive-id h3'));
-            }).toThrowError('Must reference a single element.');
+    describe('.indexOffset()', function () {
+        var offsetIndex;
+        beforeEach(function () {
+            offsetIndex = gc.indexOffset($('#index_offset div'));
         });
-
-        it('must throw an error if target element does not have text', function () {
-            expect(function () {
-                gc.deriveId($('#derive-id h2'));
-            }).toThrowError('Must have text.');
-        });
-
-        it('must throw an error if target element already has an ID', function () {
-            expect(function () {
-                gc.deriveId($('#derive-id #not-unique'));
-            }).toThrowError('Already has an ID.');
-        });
-
-        it('must return the given ID', function () {
-            expect(gc.deriveId($('#derive-id h1'))).toEqual('derive-id-foo');
-        });
-
-        it('must derive a unique id', function () {
-            expect(gc.deriveId($('#derive-id h3:not([id])'))).toEqual('not-unique-2');
-        });
-
-        it('must use custom anchor formatter when provided', function () {
-            var anchorFormatter = function () { return 'custom-formatter'; };
-
-            expect(gc.deriveId($('#derive-id h1'), anchorFormatter)).toEqual('custom-formatter');
+        it('must return vertical offset of all elements', function () {
+            expect(offsetIndex).toEqual([0, 100, 200]);
         });
     });
-
-    describe('.giveId()', function () {
-        it('must give ID to all elements that do not have it already', function () {
-            var ids = [];
-
-            gc.giveId(gc.getHeadings($('#give-id')));
-
-            $('#give-id').children().each(function () {
-                ids.push($(this).attr('id'));
-            });
-
-            expect(ids).toEqual(['give-id-foo-special', 'give-id-bar', 'give-id-baz']);
-        });
-    });
-
-    describe('.generateHeadingHierarchyList()', function () {
+    describe('.makeList()', function () {
         it('must represent a flat structure', function () {
-            var headings = gc.getHeadings($('#generate-heading-hierarchy-list-flat')),
-                list = gc.generateHeadingHierarchyList(headings, function () {});
+            var list = gc.makeList($('#make_list-flat p'), function () {});
 
             expect(list.prop('outerHTML')).toEqual('<ol><li></li><li></li><li></li></ol>');
         });
-
-        it('must represent a multidimensional heading hierarchy', function () {
-            var headings = gc.getHeadings($('#generate-heading-hierarchy-list-multidimensional')),
-                list = gc.generateHeadingHierarchyList(headings, function () {
-
-                });
+        it('must represent an increasing hierarchy', function () {
+            var list = gc.makeList($('#make_list-increasing_hierarchy').find('h1, h2, h3'), function () {});
 
             expect(list.prop('outerHTML')).toEqual('<ol><li><ol><li><ol><li></li></ol></li></ol></li></ol>');
         });
+        it('must represent a decreasing hierarchy', function () {
+            var list = gc.makeList($('#make_list-decreasing_hierarchy').find('h1, h2, h3'), function () {});
 
-        it('must represent a multidimensional heading hierarchy', function () {
-            var headings = gc.getHeadings($('#generate-heading-hierarchy-list-multidimensional-reverse')),
-                list = gc.generateHeadingHierarchyList(headings, function (li, heading) {
-                    li.text(heading.text());
-                });
-
-            expect(list.prop('outerHTML')).toEqual('<ol><li>1 a<ol><li>2 b<ol><li>3 c</li><li>3 d</li></ol></li><li>2 e</li><li>2 f</li></ol></li></ol>');
-        });
-
-        it('must provide callback to evaluate each list item', function () {
-            var headings = gc.getHeadings($('#generate-heading-hierarchy-list-flat')),
-                i = 0,
-                list = gc.generateHeadingHierarchyList(headings, function (li) {
-                    li.text(i++);
-                });
-
-            expect(list.prop('outerHTML')).toEqual('<ol><li>0</li><li>1</li><li>2</li></ol>');
-        });
-
-        /*describe('default item interpreter', function () {
-            it('must represent each item using a hyperlink', function () {
-                var headings = gc.getHeadings($('#generate-heading-hierarchy-list-flat')),
-                    list;
-
-                headings.attr('id', 'foo');
-                
-                list = gc.generateHeadingHierarchyList(headings);
-
-                expect(list.prop('outerHTML')).toEqual('<ol><li><a href="#foo">generate heading hierarchy list flat foo</a></li><li><a href="#foo">generate heading hierarchy list flat bar</a></li><li><a href="#foo">generate heading hierarchy list flat tar</a></li></ol>');
-            });
-        });*/
-    });
-
-    describe('.anchorFormatter()', function () {
-        it('must covert to lowercase', function () {
-            expect(gc.anchorFormatter('FOO')).toEqual('foo');
-        });
-
-        it('must replace characters with diacritics to their ASCII counterparts', function () {
-            expect(gc.anchorFormatter('ãàáäâẽèéëêìíïîõòóöôùúüûñç')).toEqual('aaaaaeeeeeiiiiooooouuuunc');
-        });
-
-        it('must replace whitespace with a dash', function () {
-            expect(gc.anchorFormatter('foo bar')).toEqual('foo-bar');
-        });
-
-        it('must replace sequences of characters outside /a-z0-9\-_/ with a dash', function () {
-            expect(gc.anchorFormatter('a±!@#$%^&*b')).toEqual('a-b');
-        });
-
-        it('must replace multiple dashes with a single dash', function () {
-            expect(gc.anchorFormatter('a---b--c')).toEqual('a-b-c');
-        });
-
-        it('must trim dashes from the beginning and end', function () {
-            expect(gc.anchorFormatter('---a---')).toEqual('a');
-        });
-
-        it('must strip characters outside a-z from the beginning of the string', function () {
-             expect(gc.anchorFormatter('123!@#foo')).toEqual('foo');
-        });
-    });
-
-    describe('.scrollTop()', function () {
-        it('must return $(window).scrollTop()', function () {
-            expect(gc.scrollTop()).toEqual($(window).scrollTop());
-        });
-
-        describe('when gc._scrollTop is set', function () {
-            beforeEach(function () {
-                gc._scrollTop = -1;
-            });
-
-            it('must return gc._scrollTop', function () {
-                expect(gc.scrollTop()).toEqual(gc._scrollTop);
-            });
-            
-            afterEach(function () {
-                gc._scrollTop = undefined;
-            });
+            expect(list.prop('outerHTML')).toEqual('<ol><li><ol><li><ol><li></li></ol></li><li></li></ol></li></ol>');
         });
     });
 });
 
-describe('gc', function () {
-    beforeEach(function () {
-        $('body').html($.parseHTML(__html__['test/fixture/offset.html']));
+describe('DOM independent method', function () {
+    describe('.getIndexOfClosestValue()', function () {
+        it('must throw an error when the haystack is empty', function () {
+            expect(function () {
+                gc.getIndexOfClosestValue(1, []);
+            }).toThrowError('Haystack must be not empty.');
+        });
+        it('must return index of the first value when haystack length is 1', function () {
+            expect(gc.getIndexOfClosestValue(1, [100])).toEqual(0);
+        });
+        it('must round down to the nearest value', function () {
+            expect(gc.getIndexOfClosestValue(12, [1, 10, 20])).toEqual(1);
+        });
+        it('must return index of the exact value', function () {
+            expect(gc.getIndexOfClosestValue(10, [1, 10, 20])).toEqual(1);
+        });
+        it('must round up to the nearest value', function () {
+            expect(gc.getIndexOfClosestValue(8, [1, 10, 20])).toEqual(1);
+        });
+    });
+    describe('.formatId()', function () {
+        it('must covert to lowercase', function () {
+            expect(gc.formatId('FOO')).toEqual('foo');
+        });
+
+        it('must replace characters with diacritics to their ASCII counterparts', function () {
+            expect(gc.formatId('ãàáäâẽèéëêìíïîõòóöôùúüûñç')).toEqual('aaaaaeeeeeiiiiooooouuuunc');
+        });
+
+        it('must replace whitespace with a dash', function () {
+            expect(gc.formatId('foo bar')).toEqual('foo-bar');
+        });
+
+        it('must replace sequences of characters outside /a-z0-9\-_/ with a dash', function () {
+            expect(gc.formatId('a±!@#$%^&*b')).toEqual('a-b');
+        });
+
+        it('must replace multiple dashes with a single dash', function () {
+            expect(gc.formatId('a---b--c')).toEqual('a-b-c');
+        });
+
+        it('must trim dashes from the beginning and end', function () {
+            expect(gc.formatId('---a---')).toEqual('a');
+        });
+
+        it('must strip characters outside a-z from the beginning of the string', function () {
+             expect(gc.formatId('123!@#foo')).toEqual('foo');
+        });
+    });
+});
+
+describe('.config()', function () {
+    var configFactory;
+
+    configFactory = function (overwrite) {
+        var config;
+
+        config = $.extend({
+            contents: $('#config .contents')
+        }, overwrite);
+
+        return function () {
+            return gc.config(config);
+        };
+    };
+
+    it('must throw an error if an unknown property is provided', function () {
+        expect(configFactory({unknown: null}))
+            .toThrowError('Unknown configuration property.');
     });
 
-    describe('.offsetIndex()', function () {
-        it('must return the vertical heading offset', function () {
-            var headings,
-                offsetIndex = []
-
-            headings = gc.getHeadings($('body #vertical-offset'));
-            
-            gc.offsetIndex(headings).map(function (record) {
-                offsetIndex.push(record.offset);
-            });
-
-            expect(offsetIndex).toEqual([0, 550, 1100, 1650]);
+    describe('setting config.contents', function () {
+        it('must throw an error if it is not set', function () {
+            expect(configFactory({contents: null}))
+                .toThrowError('Option "contents" is not set.');
         });
-
-        it('must return the vertical heading offset minus the value from offsetCalculator()', function () {
-            var headings,
-                offsetIndex = []
-
-            headings = gc.getHeadings($('body #vertical-offset'));
-            
-            gc.offsetIndex(headings, function () { return 100; }).map(function (record) {
-                offsetIndex.push(record.offset);
-            });
-
-            expect(offsetIndex).toEqual([-100, 450, 1000, 1550]);
+        it('must throw an error if it is not a jQuery object', function () {
+            expect(configFactory({contents: {}}))
+                .toThrowError('Option "contents" is not a jQuery object.');
         });
-
-        it('must return the vertical heading offset including padding', function () {
-            var headings,
-                offsetIndex = []
-
-            headings = gc.getHeadings($('body #vertical-offset-padding'));
-            
-            gc.offsetIndex(headings).map(function (record) {
-                offsetIndex.push(record.offset);
-            });
-
-            expect(offsetIndex).toEqual([000, 650, 1300, 1950]);
-        });
-
-        /*it('must return the vertical heading offset including margin', function () {
-            var headings,
-                offsetIndex = []
-
-            headings = gc.getHeadings($('body #vertical-offset-margin'));
-
-            gc.offsetIndex(headings).map(function (record) {
-                offsetIndex.push(record.offset);
-            });
-
-            //expect(offsetIndex).toEqual([500, 1050, 1700, 2350]);
-        });*/
     });
-
-    describe('.getInOffsetIndex()', function () {
-        var offsetIndex;
-
-        beforeEach(function () {
-            offsetIndex = gc.offsetIndex(gc.getHeadings($('body #get-in-offset-index')));
+    describe('setting config.articles', function () {
+        it('must throw an error if it is not a jQuery object', function () {
+            expect(configFactory({articles: {}}))
+                .toThrowError('Option "articles" is not a jQuery object.');
         });
-
-        it('must return the first offsetIndex record when the scrollTop is smaller than the offset of the first record', function () {
-            expect(gc.getInOffsetIndex(offsetIndex[0].offset - 100, offsetIndex).element.index()).toEqual(0);
+    });
+    describe('setting config.link', function () {
+        it('must throw an error if it is not a function', function () {
+            expect(configFactory({link: 'not a function'}))
+                .toThrowError('Option "link" must be a function.');
         });
-
-        it('must return the first offsetIndex record when the scrollTop is equal to the offset of the first record', function () {
-            expect(gc.getInOffsetIndex(offsetIndex[0].offset, offsetIndex).element.index()).toEqual(0);
-        });
-
-        it('must return the first offsetIndex record when the scrollTop is greater than the offset of the first record and lesser than the second record offset', function () {
-            var testValue = offsetIndex[0].offset + 100;
-
-            if (testValue > offsetIndex[1].offset) {
-                throw new Error('Invalid fixture.');
-            }
-
-            expect(gc.getInOffsetIndex(testValue, offsetIndex).element.index()).toEqual(0);
-        });
-
-        it('must return the last offsetIndex record when the scrollTop is greater than the offset of the last record', function () {
-            expect(gc.getInOffsetIndex(offsetIndex[offsetIndex.length - 1].offset + 100, offsetIndex).element.index()).toEqual(offsetIndex.length - 1);
+        it('must default to gajus.contents.link', function () {
+            expect(configFactory()().link).toEqual(gc.link);
         });
     });
 });

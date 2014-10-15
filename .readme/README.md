@@ -5,22 +5,7 @@
 
 Automatically generate table of contents for a given area of content.
 
-## Contents
-
-- [Integration Examples](#integration-examples)
-    - [Quick Start](#quick-start)
-    - [Examples](#examples)
-- [Comparison Table](#comparison-table)
-- [Download](#download)
-- [Settings](#settings)
-- [Content Indexing](#content-indexing)
-    - [Hierarchy](#hierarchy)
-- [Bonding](#bonding)
-    - [Article ID](#article-id)
-- [Markup](#markup)
-- [Events](#events)
-
-
+[toc 3]
 
 ## Integration Examples
 

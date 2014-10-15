@@ -4,267 +4,178 @@
 * @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
 */
 (function ($) {
-    'use strict';
+    var gajus;
 
-    $.gajus = $.gajus || {};
+    gajus = window.gajus = window.gajus || {};
 
     /**
-     * @return {jQuery} Table of contents element. Used as event proxy.
+     * @param {object} config
+     * @return {jQuery} Table of contents element.
      */
-    $.gajus.contents = function (options) {
-        var headings,
+    gajus.contents = function (config) {
+        var /**
+             * @var {jQuery} Reference to the table of contents root element (<ol>).
+             */
             list,
-            offsetIndex,
-            lastHeading,
-            ready = false;
+            listGuides;
         
-        options = $.gajus.contents.options(options);
-        
-        headings = options.index || $.gajus.contents.getHeadings(options.content);
+        config = gajus.contents.config(config);
 
-        $.gajus.contents.giveId(headings, options.anchorFormatter);
+        list = gajus.contents.makeList(config.articles);
+        listGuides = list.find('li');
 
-        list = $.gajus.contents.generateHeadingHierarchyList(headings, options.itemFormatter);
-
-        options.where.append(list);
-
-        list.on('resize.gajus.contents', function (event, data) {
-            offsetIndex = $.gajus.contents.offsetIndex(headings, options.offsetCalculator);
-
-            $(window).trigger('scroll');
+        listGuides.each(function (i) {
+            config.link($(this), config.articles.eq(i));
         });
 
-        $(window).on('resize orientationchange', $.gajus.contents.throttle(function () {
-            list.trigger('resize.gajus.contents');
-        }, 100));
+        config.contents.append(list);        
 
-        $(window).on('scroll', $.gajus.contents.throttle(function () {
-            var heading,
-                changeEvent;
+        (function () {
+            var ready,
+                lastArticleIndex,
+                /**
+                 * @var {Array}
+                 */
+                articleOffsetIndex;
 
-            if (!offsetIndex) {
-                return;
-            }
+            list.on('resize.gajus.contents', function (event, data) {
+                var windowHeight = $(window).height();
 
-            heading = $.gajus.contents.getInOffsetIndex($.gajus.contents.scrollTop(), offsetIndex).element;
+                articleOffsetIndex = gajus.contents.indexOffset(config.articles);
 
-            if (lastHeading !== heading) {
-                changeEvent = {};
-                
-                changeEvent.current = {
-                    heading: heading,
-                    anchor: list.find('li').filter(function () { return $(this).data('gajus.contents.heading') === heading[0]; })
-                };
+                if (!ready) {
+                    ready = true;
 
-                if (lastHeading) {
-                    changeEvent.previous = {
-                        heading: lastHeading,
-                        anchor: list.find('li').filter(function () { return $(this).data('gajus.contents.heading') === lastHeading[0]; })
-                    };
+                    $(window).on('scroll', gajus.contents.throttle(function () {
+                        var articleIndex,
+                            changeEvent;
+
+                        articleIndex = gajus.contents.getIndexOfClosestValue($(window).scrollTop() + windowHeight * 0.2, articleOffsetIndex);
+
+                        if (articleIndex !== lastArticleIndex) {
+                            changeEvent = {};
+
+                            changeEvent.current = {
+                                article: config.articles.eq(articleIndex),
+                                guide: listGuides.eq(articleIndex)
+                            };
+
+                            if (lastArticleIndex !== undefined) {
+                                changeEvent.previous = {
+                                    article: config.articles.eq(lastArticleIndex),
+                                    guide: listGuides.eq(lastArticleIndex)
+                                };
+                            }
+
+                            list.trigger('change.gajus.contents', changeEvent);
+
+                            lastArticleIndex = articleIndex;
+                        }
+
+                        
+                    }, 100));
+
+                    list.trigger('ready.gajus.contents');
                 }
 
-                list.trigger('change.gajus.contents', changeEvent);
+                $(window).trigger('scroll');
+            });
 
-                lastHeading = heading;
-            }
+            $(window).on('resize orientationchange', gajus.contents.throttle(function () {
+                list.trigger('resize.gajus.contents');
+            }, 100));
 
-            if (!ready) {
-                list.trigger('ready.gajus.contents');
-            }
-        }, 100));
-
-        // This allows the script that constructs $.gajus.contents
-        // to catch the first scroll event.
-        setTimeout(function () {
-            list.trigger('resize.gajus.contents');
-        }, 10);
+            // This allows the script that constructs gajus.contents
+            // to catch the first resize and scroll events.
+            setTimeout(function () {
+                list.trigger('resize.gajus.contents');
+            }, 10);
+        } ());
 
         return list;
     };
 
     /**
-     * @callback throttled
-     * @param {...*} var_args
-     */
-
-    /**
-     * Creates and returns a new, throttled version of the passed function, that, when invoked repeatedly,
-     * will only actually call the original function at most once per every wait milliseconds.
+     * Interpret execution configuration.
      * 
-     * @see https://remysharp.com/2010/07/21/throttling-function-calls
-     * @param {throttled} throttled
-     * @param {Number} threshold Number of milliseconds between firing the throttled function.
-     * @param {Object} context The value of "this" provided for the call to throttled.
-     */
-    $.gajus.contents.throttle = function (throttled, threshold, context) {
-        var last,
-            deferTimer;
-
-        threshold = threshold || 250;
-        context = context || {};
-        
-        return function () {
-            var now = +new Date(),
-                args = arguments;
-            
-            if (last && now < last + threshold) {
-                clearTimeout(deferTimer);
-                deferTimer = setTimeout(function () {
-                    last = now;
-                    throttled.apply(context, args);
-                }, threshold);
-            } else {
-                last = now;
-                throttled.apply(context, args);
-            }
-        };
-    };
-
-    /**
-     * Interpret execution options.
-     * 
+     * @param {Object} config
      * @return {Object}
      */
-    $.gajus.contents.options = function (options) {
-        if (!options) {
-            throw new Error('Missing setup options.');
-        }
+    gajus.contents.config = function (config) {
+        var properties = ['contents', 'articles', 'link'];
 
-        // @todo Issue a warning about unknown properties.
+        config = config || {};
 
-        if (!options.where) {
-            throw new Error('Option "where" is not set.');
-        } else if (!(options.where instanceof jQuery)) {
-            throw new Error('Option "where" is not a jQuery object.');
-        } else if (!options.where.length) {
-            throw new Error('Option "where" does not refer to an existing element.');
-        } else if (options.where.length > 1) {
-            throw new Error('Option "where" refers to more than one element.');
-        }
-
-        if (options.index && options.content) {
-            throw new Error('Cannot set "index" and "content" options together.');
-        } else if (options.index) {
-            if (!(options.index instanceof jQuery)) {
-                throw new Error('Option "index" is not a jQuery object.');
-            }
-        } else if (options.content) {
-            if (!(options.content instanceof jQuery)) {
-                throw new Error('Option "content" is not a jQuery object.');
-            }
-        } else {
-            throw new Error('Must set either "index" or "content" option.');
-        }
-
-        if (options.itemFormatter) {
-            if (typeof options.itemFormatter !== 'function') {
-                throw new Error('Option "itemFormatter" must be a function.');
-            }
-        } else {
-            options.itemFormatter = $.gajus.contents.itemFormatter;
-        }
-
-        if (options.anchorFormatter) {
-            if (typeof options.anchorFormatter !== 'function') {
-                throw new Error('Option "anchorFormatter" must be a function.');
-            }
-        } else {
-            options.anchorFormatter = $.gajus.contents.anchorFormatter;
-        }
-
-        if (options.headingFormatter) {
-            if (typeof options.headingFormatter !== 'function') {
-                throw new Error('Option "headingFormatter" must be a function.');
-            }
-        }
-
-        if (options.offsetCalculator) {
-            if (typeof options.offsetCalculator !== 'function') {
-                throw new Error('Option "offsetCalculator" must be a function.');
-            }
-        } else {
-            options.offsetCalculator = $.gajus.contents.offsetIndex.offsetCalculator;
-        }
-
-        return options;
-    };
-
-    /**
-     * Get all the heading elements within the target element(s).
-     * 
-     * @param {jQuery} target Reference to the body of the document.
-     * @return {jQuery} References to all of the headings within the target.
-     */
-    $.gajus.contents.getHeadings = function (target) {
-        return target.find('h1, h2, h3, h4, h5, h6');
-    };
-
-    /**
-     * Derive URL save string from the heading text and use it for the "id" attribute.
-     * 
-     * @param {jQuery} element
-     * @param {Function} anchorFormatter
-     * @return {String} Unique ID derived from the heading text.
-     */
-    $.gajus.contents.deriveId = function (element, anchorFormatter) {
-        var text,
-            anchorName,
-            id,
-            i = 1;
-
-        if (!anchorFormatter) {
-            anchorFormatter = $.gajus.contents.anchorFormatter;
-        }
-
-        if (element.length != 1) {
-            throw new Error('Must reference a single element.');
-        }
-
-        if (element.attr('id')) {
-            throw new Error('Already has an ID.');
-        }
-
-        text = element.text();
-
-        if (!text.length) {
-            throw new Error('Must have text.');
-        }
-
-        anchorName = anchorFormatter(text);
-
-        id = anchorName;
-
-        while ($(document).find('#' + id).length) {
-            id = anchorName + '-' + (i++);
-        }
-
-        return id;
-    };
-
-    /**
-     * Ensure that each element has an ID.
-     *
-     * @param {jQuery} elements
-     * @param {Function} slugFilter
-     */
-    $.gajus.contents.giveId = function (elements, slugFilter) {
-        elements.each(function () {
-            var element = $(this);
-
-            if (!element.attr('id')) {
-                element.attr('id', $.gajus.contents.deriveId(element, slugFilter));
+        $.each(config, function (name) {
+            if (properties.indexOf(name) === -1) {
+                throw new Error('Unknown configuration property.');
             }
         });
+
+        if (!config.contents) {
+            throw new Error('Option "contents" is not set.');
+        } else if (!(config.contents instanceof jQuery)) {
+            throw new Error('Option "contents" is not a jQuery object.');
+        }
+
+        if (config.articles) {
+            if (!(config.articles instanceof jQuery)) {
+                throw new Error('Option "articles" is not a jQuery object.');
+            }
+        } else {
+            config.articles = $('body').find('h1, h2, h3, h4, h5, h6');          
+        }
+
+        if (config.link) {
+            if (typeof config.link !== 'function') {
+                throw new Error('Option "link" must be a function.');
+            }
+        } else {
+            config.link = gajus.contents.link;
+        }
+
+        return config;
     };
 
     /**
-     * Format text into ID/anchor safe value.
-     *
-     * @see http://stackoverflow.com/a/1077111/368691
-     * @param {String} str Arbitrary string.
+     * Derive a unique ID from article name.
+     * 
+     * @param {String} articleName
+     * @param {Function} formatId
      * @return {String}
      */
-    $.gajus.contents.anchorFormatter = function (str) {
+    gajus.contents.id = function (articleName, formatId) {
+        var formattedId,
+            assignedId,
+            i = 1;
+
+        if (!formatId) {
+            formatId = gajus.contents.formatId;
+        }
+
+        formattedId = formatId(articleName);
+
+        if (!formattedId.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
+            throw new Error('Invalid ID.');
+        }
+
+        assignedId = formattedId;
+
+        while ($(document).find('#' + assignedId).length) {
+            assignedId = formattedId + '-' + (i++);
+        }
+
+        return assignedId;
+    };
+
+    /**
+     * Format text into an ID/anchor safe value.
+     *
+     * @see http://stackoverflow.com/a/1077111/368691
+     * @param {String} str
+     * @return {String}
+     */
+    gajus.contents.formatId = function (str) {
         return str
             .toLowerCase()
             .replace(/[ãàáäâ]/g, 'a')
@@ -282,11 +193,10 @@
     };
 
     /**
-     * @param {jQuery} headings Reference to the headings.
-     * @param {$.gajus.contents.itemFormatter} itemFormatter
+     * @param {jQuery} articles
      * @return {jQuery}
      */
-    $.gajus.contents.generateHeadingHierarchyList = function (headings, itemFormatter) {
+    gajus.contents.makeList = function (articles) {
         var rootList = $('<ol>'),
             list = rootList,
             lastListInLevelIndex = [],
@@ -305,14 +215,12 @@
             throw new Error('Invalid markup.');
         };
             
-        headings.each(function () {
-            var heading = $(this),
-                level = parseInt(heading.prop('tagName').slice(1), 10),
+        articles.each(function () {
+            var article = $(this),
+                level,
                 li = $('<li>');
 
-            li.data('gajus.contents.heading', heading[0]);
-
-            itemFormatter(li, heading);
+            level = gajus.contents.level(article);
             
             lastListInLevelIndex = lastListInLevelIndex.slice(0, level + 1);
             
@@ -336,106 +244,143 @@
     };
 
     /**
-     * @param {jQuery} li List element.
-     * @param {jQuery} heading Heading element.
-     */
-    $.gajus.contents.itemFormatter = function (li, heading, anchorName) {
-        var headingLink = $('<a>'),
-            listlink = $('<a>');
-
-        listlink.text(heading.text());
-        listlink.attr('href', '#' + heading.attr('id'));
-
-        li.append(listlink);
-
-        headingLink.attr('href', '#' + heading.attr('id'));
-
-        heading.wrapInner(headingLink);
-    };
-
-    /**
-     * Returns the number of pixels that the document has already been scrolled vertically.
-     * Used to control the $(window).scrollTop() value in the BDD environment.
-     * viewportSize (http://phantomjs.org/api/webpage/property/viewport-size.html)
-     * cannot be controlled consistently in all browsers.
+     * Extract element level used to construct list hierarchy, e.g. <h1> is 1, <h2> is 2.
+     * When element is not a heading, use gajus.contents.level data attribute. Default to 1.
      *
+     * @param {jQuery} element
      * @return {Number}
      */
-    $.gajus.contents.scrollTop = function () {
-        return $.gajus.contents._scrollTop ? $.gajus.contents._scrollTop : $(window).scrollTop();
+    gajus.contents.level = function (element) {
+        var tagName = element.prop('tagName').toLowerCase();
+
+        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
+            return parseInt(tagName.slice(1), 10);
+        }
+        
+        return element.data('gajus.contents.level') || 1;
     };
 
     /**
-     * @var {Number} Used to overwrite $.gajus.contents.scrollTop() value in testing environment.
+     * This function is called after the table of contents is generated.
+     * It is called for each article in the index.
+     * Used to represent article in the table of contents and to setup navigation.
+     * 
+     * @param {jQuery} guide An element in the table of contents representing an article.
+     * @param {jQuery} article The represented content element.
      */
-    $.gajus.contents._scrollTop = null;
+    gajus.contents.link = function (guide, article) {
+        var guideLink = $('<a>'),
+            articleLink = $('<a>'),
+            articleName = article.text(),
+            articleId = article.attr('id') || gajus.contents.id(articleName);
+
+        guideLink
+            .text(articleName)
+            .attr('href', '#' + articleId)
+            .prependTo(guide);
+
+        articleLink
+            .attr('href', '#' + articleId);
+
+        article
+            .attr('id', articleId)
+            .wrapInner(articleLink);
+    };
 
     /**
-     * List headings and their vertical offset.
-     * The index must be manually updated each time that the window size changes.
+     * Produce a list of scrollY values for each element.
      * 
-     * @param {jQuery} headings Reference to the headings.
-     * @param {$.gajus.contents.offsetIndex.offsetCalculator} offsetCalculator Function used to calculate number of pixels to move the offset up.
+     * @param {jQuery} articles
      * @return {Array}
      */
-    $.gajus.contents.offsetIndex = function (headings, offsetCalculator) {
-        var index = [],
-            deductOffset = 0;
+    gajus.contents.indexOffset = function (elements) {
+        var scrollYIndex = [];
 
-        if (offsetCalculator) {
-            deductOffset = offsetCalculator();
-        }
+        elements.each(function () {
+            var offset = $(this).offset().top;
 
-        headings.each(function () {
-            var element = $(this),
-                realOffset = element.offset().top,
-                offset = realOffset;
-
-            //if (element.css('marginTop')) {
-            //    offset -= parseInt(element.css('marginTop'), 10);
-            //}
-
-            offset -= deductOffset;
             // Round to nearest multiple of 5 (either up or down).
             // The deductOffset usually comes from $(window).height()/3
             // element.offset().top itself might produce a float values.
             // This is done for readability and testing.
             offset = 5*(Math.round(offset/5));
 
-            index.push({
-                element: element,
-                offset: offset,
-                realOffset: realOffset
-            });
+            scrollYIndex.push(offset);
         });
-        return index;
+
+        return scrollYIndex;
     };
 
     /**
-     * @return {Number}
+     * Find the nearest value to the needle in the haystack and return the value index.
+     * 
+     * @see http://stackoverflow.com/a/26366951/368691
+     * @param {Number} needle
+     * @param {Array} haystack
+     * @return {jQuery}
      */
-    $.gajus.contents.offsetIndex.offsetCalculator = function () {
-        return $(window).height() / 3;
-    };
-
-    /**
-     * @param {Number} scrollTop Refers to a derived value from $.gajus.contents.scrollTop.
-     * @param {Array} offsetIndex List of all headings and their vertical offset.
-     * @return {jQuery} The nearest match heading reference.
-     */
-    $.gajus.contents.getInOffsetIndex = function (scrollTop, offsetIndex) {
-        var i = 0;
-
-        if (offsetIndex[0].offset > scrollTop) {
-            return offsetIndex[0];
+    gajus.contents.getIndexOfClosestValue = function (needle, haystack) {
+        var closestValueIndex = 0,
+            lastClosestValueIndex,
+            i = 0,
+            j = haystack.length;
+        
+        if (!j) {
+            throw new Error('Haystack must be not empty.');
         }
 
-        while (i < offsetIndex.length) {
-            if (scrollTop >= offsetIndex[i].offset && (!offsetIndex[i + 1] || scrollTop < offsetIndex[i + 1].offset)) {
-                return offsetIndex[i];
+        while (i < j) {
+            if (Math.abs(needle - haystack[closestValueIndex]) > Math.abs(haystack[i] - needle)) {
+                closestValueIndex = i;
             }
-
+            
+            if (closestValueIndex === lastClosestValueIndex) {
+                break;
+            }
+            
+            lastClosestValueIndex = closestValueIndex;
+            
             i++;
         }
+
+        return closestValueIndex;
+    };
+
+    /**
+     * @callback throttled
+     * @param {...*} var_args
+     */
+
+    /**
+     * Creates and returns a new, throttled version of the passed function, that, when invoked repeatedly,
+     * will only actually call the original function at most once per every wait milliseconds.
+     * 
+     * @see https://remysharp.com/2010/07/21/throttling-function-calls
+     * @param {throttled} throttled
+     * @param {Number} threshold Number of milliseconds between firing the throttled function.
+     * @param {Object} context The value of "this" provided for the call to throttled.
+     */
+    gajus.contents.throttle = function (throttled, threshold, context) {
+        var last,
+            deferTimer;
+
+        threshold = threshold || 250;
+        context = context || {};
+        
+        return function () {
+            var now = +new Date(),
+                args = arguments;
+            
+            if (last && now < last + threshold) {
+                clearTimeout(deferTimer);
+                deferTimer = setTimeout(function () {
+                    last = now;
+                    throttled.apply(context, args);
+                }, threshold);
+            } else {
+                last = now;
+                throttled.apply(context, args);
+            }
+        };
     };
 } (jQuery));

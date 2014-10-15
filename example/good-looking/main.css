@@ -1,0 +1,143 @@
+body, main, aside, article, ul, ol, li, h1, h2, h3, hr, p {
+  display: block;
+  margin: 0;
+  padding: 0; }
+
+body {
+  font: normal 16px/24px 'Helvetica Neue', Helvetica, Arial, freesans, sans-serif;
+  background: #F8F9FA; }
+
+aside {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 360px; }
+  aside li {
+    display: block;
+    z-index: 10; }
+    aside li a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: #666;
+      border: 1px solid #D9E0E2;
+      background: #fff;
+      width: 280px;
+      position: relative; }
+  aside > ol > li ol {
+    margin: 10px 0 10px 20px; }
+    aside > ol > li ol a {
+      border-bottom: none; }
+    aside > ol > li ol li:last-child a {
+      border-bottom: 1px solid #D9E0E2; }
+  aside > ol {
+    padding: 20px; }
+    aside > ol > li.active > a, aside > ol > li.active-child > a {
+      background: #EF4836;
+      color: #fff; }
+    aside > ol > li.active > a::after {
+      content: '•';
+      font-size: 45px;
+      line-height: 45px;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      color: #fff; }
+    aside > ol > li li.active > a::after, aside > ol > li li.active-child > a::after {
+      content: '•';
+      font-size: 45px;
+      line-height: 45px;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      color: #EF4836; }
+    aside > ol:hover > li.active > a, aside > ol:hover > li.active-child > a {
+      background: #666; }
+    aside > ol:hover > li li.active > a::after, aside > ol:hover > li li.active-child > a::after {
+      color: #666; }
+    aside > ol > li:hover > a {
+      background: #EF4836 !important;
+      color: #fff; }
+    aside > ol > li li:hover > a::after {
+      content: '•';
+      font-size: 45px;
+      line-height: 45px;
+      position: absolute;
+      right: 10px;
+      top: 0;
+      color: #EF4836 !important; }
+    aside > ol li.active ol, aside > ol li.active-child ol, aside > ol li:hover ol {
+      opacity: 1; }
+    aside > ol ol {
+      opacity: 0.5; }
+  aside > ol > li {
+    counter-reset: drink; }
+    aside > ol > li li a::before {
+      counter-increment: drink;
+      content: counter(drink) '. '; }
+
+main {
+  margin: 0 0 0 340px;
+  padding: 0 20px; }
+  main hr {
+    border: none;
+    height: 1px; }
+
+article {
+  width: 680px;
+  min-height: 930px;
+  box-sizing: border-box;
+  margin: 50px auto;
+  background: #fff;
+  border: 1px solid #D9E0E2;
+  overflow: hidden;
+  padding: 60px 100px;
+  font: 16px/22px Merriweather, 'times new roman', serif; }
+  article h1, article h2 {
+    text-align: center; }
+    article h1 a, article h2 a {
+      color: #FF3C1F;
+      text-decoration: none; }
+  article h1 {
+    margin: 0 0 20px 0;
+    font-size: 30px;
+    line-height: 40px;
+    font-weight: 700;
+    counter-reset: drink;
+    text-transform: uppercase; }
+  article h2 {
+    padding: 20px 0 0 0;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 30px; }
+    article h2::before {
+      counter-increment: drink;
+      content: counter(drink) '.';
+      font-size: 25px;
+      font-weight: 300; }
+  article p {
+    margin: 20px 0; }
+  article img {
+    display: block;
+    margin: 40px auto;
+    max-width: 100%; }
+  article .serving {
+    text-align: center;
+    font-weight: 300; }
+    article .serving::before {
+      content: '('; }
+    article .serving::after {
+      content: ')'; }
+  article .ingredients {
+    margin: 20px; }
+    article .ingredients li {
+      list-style: none; }
+  article .making {
+    text-indent: 20px; }
+
+#source {
+  color: #666;
+  margin: 20px;
+  text-align: center; }
+  #source a {
+    color: inherit; }
