@@ -26,7 +26,7 @@ The above will generate a table of contents for all of the headings in the docum
 
 * [Good looking](http://gajus.com/sandbox/contents/example/good-looking/) example.
 * [Basic](http://gajus.com/sandbox/contents/example/basic/) table of contents.
-* [Smooth scrolling](http://gajus.com/sandbox/contents/example/smooth-scrolling.html) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
+* [Smooth scrolling](http://gajus.com/sandbox/contents/example/smooth-scrolling/) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
 The code for all of the examples is in the [example](./example/) folder.
 
