@@ -50,7 +50,7 @@ The code for all of the examples is in the [example](./example/) folder.
 
 Last updated: Thu Oct 16 09:53:22 2014 UTC.
 
-<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [Integration Examples][].
+<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [Integration Examples][#integration-examples].
 
 ## Download
 

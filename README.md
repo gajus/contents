@@ -35,7 +35,7 @@ gajus
     });
 ```
 
-The above will generate a table of contents for all of the headings in the document. Table of contents is an (`<ol>`) element; it will be appended to `#contents` container (See [Markup][]).
+The above will generate a table of contents for all of the headings in the document. Table of contents is an (`<ol>`) element; it will be appended to `#contents` container (See [Markup][#markup]).
 
 ### Examples
 
@@ -61,11 +61,11 @@ The code for all of the examples is in the [example](./example/) folder.
 | Can have multiple on a page | ✓ | ✓ | ✓ |
 | Required 3rd party libraries | jQuery | jQuery | jQuery, jQueryUI |
 | Size | 3.552 kb | 2.581 kb | 7.246 kb |
-| GitHub Stars | 28 | 307 | 435 |
+| GitHub Stars | 36 | 307 | 435 |
 
-Last updated: Wed Oct 15 14:06:12 2014 UTC.
+Last updated: Thu Oct 16 09:53:22 2014 UTC.
 
-<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [Integration Examples][].
+<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [Integration Examples][#integration-examples].
 
 ## Download
 
@@ -85,8 +85,8 @@ The old-fashioned way, download either of the following files:
 | Name | Description |
 | --- | --- |
 | `contents` | Reference to the container that will hold the table of contents. |
-| `articles` | (optional) The default behavior is to index all headings (H1-H6) in the document. See [Content Indexing][]. |
-| `link` | (optional) Used to represent article in the table of contents and to setup navigation. See [Bonding][]. |
+| `articles` | (optional) The default behavior is to index all headings (H1-H6) in the document. See [Content Indexing][#content-indexing]. |
+| `link` | (optional) Used to represent article in the table of contents and to setup navigation. See [Bonding][#bonding]. |
 
 ## Content Indexing
 
@@ -103,7 +103,7 @@ gajus
 
 ### Hierarchy
 
-`articles` will be used to make the table of contents. `articles` have level of importance. The level of importance determines list nesting (see [Markup][]). For HTML headings, the level of importance is derived from the tag name (`<h[1-6]>`). To set your own level of importance, use `gajus.contents.level` data attribute, e.g.
+`articles` will be used to make the table of contents. `articles` have level of importance. The level of importance determines list nesting (see [Markup][#markup]). For HTML headings, the level of importance is derived from the tag name (`<h[1-6]>`). To set your own level of importance, use `gajus.contents.level` data attribute, e.g.
 
 ```js
 $('main').find('.summary').data('gajus.contents.level', 4);
@@ -204,7 +204,7 @@ The default `link` implementation will use `gajus.contents.id` to give each arti
 
 ## Markup
 
-Table of contents is an ordered list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink (See [Bonding][]), e.g.
+Table of contents is an ordered list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink (See [Bonding][#bonding]), e.g.
 
 ```html
 <h1>JavaScript</h1>
