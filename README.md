@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/gajus/contents.png?branch=master)](https://travis-ci.org/gajus/contents)
 [![Bower version](https://badge.fury.io/bo/contents.svg)](http://badge.fury.io/bo/contents)
+[![Tweet Button](./.readme/tweet-button.png)](#JavaScript library to generate table of contents (TOC) for a given area of content. https://github.com/gajus/contents via @kuizinas)
 
 Automatically generate table of contents for a given area of content.
 
