@@ -33,25 +33,33 @@ The code for all of the examples is in the [example](./example/) folder.
 
 [Raise an issue](https://github.com/gajus/contents/issues) if you are missing an example.
 
-## Comparison Table
+## Similar Libraries
 
 | Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
 | --- | --- | --- | --- |
 | Markup using nested `<ol>` | ✓ | - | - |
-| Smooth scrolling | -<sup>1</sup> | ✓ | ✓ |
+| [Smooth scrolling](#smooth-scrolling) | - | ✓ | ✓ |
 | Forward and back button support | ✓ | - | ✓ |
-| While-scrolling update of state | ✓ | - | ✓ |
-| Events | ✓ | - | - |
-| Reflect window resize | ✓ | ✓ | ✓ |
+| [Events](#events) | ✓ | - | - |
+| [Efficient `scroll` event](#window-resize-and-scroll-event-handling) | ✓ | ✓ | - |
+| [Reflect window resize](#window-resize-and-scroll-event-handling) | ✓ | - | ✓ |
 | Overwrite markup and navigation | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
 | Required 3rd party libraries | jQuery | jQuery | jQuery, jQueryUI |
 | Size | 3.552 kb | 2.581 kb | 7.246 kb |
-| GitHub Stars | 36 | 307 | 435 |
+| GitHub Stars | 51 | 307 | 435 |
 
-Last updated: Thu Oct 16 09:53:22 2014 UTC.
+Last updated: Fri Oct 17 08:04:50 2014 UTC.
 
-<sup>1</sup> You can implement smooth scrolling using either of the existing libraries. See [Integration Examples](#integration-examples).
+### Smooth Scrolling
+
+You can implement smooth scrolling using either of the existing libraries. See [Integration Examples](#integration-examples).
+
+### Window Resize and `scroll` Event Handling
+
+The library will index `offsetTop` of all articles. This index is used to reflect the [change event](#events). The index is built upon loading the page, and in response to `window.onresize` and [`ready.gajus.contents`](#events) events.
+
+Reading `offsetTop` causes a [reflow](http://gent.ilcore.com/2011/03/how-not-to-trigger-layout-in-webkit.html). Therefore, this should not be done while scrolling.
 
 ## Download
 
