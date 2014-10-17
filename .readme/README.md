@@ -80,7 +80,7 @@ The old-fashioned way, download either of the following files:
 | --- | --- |
 | `contents` | Reference to the container that will hold the table of contents. |
 | `articles` | (optional) The default behavior is to index all headings (H1-H6) in the document. See [Content Indexing](#content-indexing). |
-| `link` | (optional) Used to represent article in the table of contents and to setup navigation. See [Bonding](#bonding). |
+| `link` | (optional) Used to represent article in the table of contents and to setup navigation. See [Linking](#linking). |
 
 ## Content Indexing
 
@@ -110,7 +110,7 @@ gajus
 
 When level of importance cannot be determined, it defaults to 1.
 
-## Bonding
+## Linking
 
 `link` method is used to represent article in the table of contents and to setup navigation. This method is called once for each article after the list of the table of contents is generated.
 
@@ -198,7 +198,7 @@ The default `link` implementation will use `gajus.contents.id` to give each arti
 
 ## Markup
 
-Table of contents is an ordered list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink (See [Bonding](#bonding)), e.g.
+Table of contents is an ordered list element. The list is nested to represent the heading hierarchy. The default behavior is to represent each heading using a hyperlink (See [Linking](#linking)), e.g.
 
 ```html
 <h1>JavaScript</h1>
