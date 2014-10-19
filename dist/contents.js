@@ -1,5 +1,5 @@
 /**
-* @version 1.0.1
+* @version 1.0.2
 * @link https://github.com/gajus/contents for the canonical source repository
 * @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
 */
@@ -10,8 +10,6 @@ var gajus,
 window.gajus = window.gajus || {};
 
 gajus = window.gajus;
-
-gajus.contents
 
 /**
  * @param {object} config

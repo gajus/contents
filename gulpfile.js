@@ -56,7 +56,7 @@ gulp.task('readme', function () {
 });
 
 gulp.task('watch', function () {
-    gulp.watch('./src/*', ['default']);
+    gulp.watch(['./src/*', './package.json'], ['default']);
     gulp.watch('./.readme/README.md', ['readme']);
 });
 

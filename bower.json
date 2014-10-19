@@ -4,7 +4,7 @@
     "dependencies": {
         "jquery": ">=1"
     },
-    "version": "1.0.1",
+    "version": "1.0.2",
     "name": "contents",
     "description": "Automatically generate table of contents for a given area of content.",
     "keywords": [

@@ -5,8 +5,6 @@ window.gajus = window.gajus || {};
 
 gajus = window.gajus;
 
-gajus.contents
-
 /**
  * @param {object} config
  * @return {jQuery} Table of contents element.
