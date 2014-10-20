@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="./../basic/main.css">
+    <link rel="stylesheet" href="./../plain/main.css">
 
     <script src="./../../bower_components/jquery/dist/jquery.js"></script>
     <script src="./../../bower_components/jquery-smooth-scroll/jquery.smooth-scroll.js"></script>
+
     <script src="./../../dist/contents.js"></script>
 
     <script>
     $(function () {
-        gajus
+        var contents = gajus
             .contents({
-                contents: $('#contents')
-            })
-            .on('ready.contents.gajus', function () {
-                $('a').smoothScroll();
+                contents: $('#contents')[0]
             });
+        contents.eventProxy.on('ready', function () {
+            $('a').smoothScroll();
+        });
     });
     </script>
 </head>
