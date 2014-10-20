@@ -70,11 +70,11 @@ The code for all of the examples is in the [example](./example/) folder.
 | [Reflect window resize](#window-resize-and-scroll-event-handling) | ✓ | - | ✓ |
 | Overwrite markup and navigation | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
-| [Required 3rd party libraries](required-3rd-party-libraries) | - | jQuery | jQuery, jQueryUI |
+| [Required 3rd party libraries](required-rd-party-libraries) | - | jQuery | jQuery, jQueryUI |
 | Size | 5.000 kb | 2.581 kb | 7.246 kb |
 | GitHub Stars | 71 | 307 | 435 |
 
-Last updated: Sun Oct 19 21:01:25 2014 UTC.
+Last updated: Mon Oct 20 13:27:31 2014 UTC.
 
 ### Required 3rd Party Libraries
 
