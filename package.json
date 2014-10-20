@@ -2,7 +2,7 @@
   "name": "contents",
   "title": "Contents",
   "description": "Automatically generate table of contents for a given area of content.",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "private": true,
   "devDependencies": {
     "karma": "^0.12.22",
