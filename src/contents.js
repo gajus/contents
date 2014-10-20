@@ -1,95 +1,111 @@
-var gajus,
-    _ = {};
-
-window.gajus = window.gajus || {};
-
-gajus = window.gajus;
+var Sister = require('sister'),
+    contents;
 
 /**
  * @param {object} config
- * @return {jQuery} Table of contents element.
+ * @return {object}
  */
-gajus.contents = function (config) {
-    var /**
-         * @var {jQuery} Reference to the table of contents root element (<ol>).
-         */
-        list,
-        listGuides;
-    
-    config = gajus.contents.config(config);
+contents = function (config) {
+    var list,
+        emitter;
 
-    list = gajus.contents.makeList(config.articles);
-    listGuides = list.find('li');
+    config = contents.config(config);
 
-    listGuides.each(function (i) {
-        config.link($(this), config.articles.eq(i));
+    list = contents.makeList(config.articles);
+
+    contents.forEach(list.querySelectorAll('li'), function (guide, i) {
+        config.link(guide, config.articles[i]);
     });
 
-    config.contents.append(list);        
+    config.contents.appendChild(list);
 
-    (function () {
-        var ready,
-            lastArticleIndex,
-            /**
-             * @var {Array}
-             */
-            articleOffsetIndex;
+    emitter = contents.bind(list, config);
 
-        list.on('resize.gajus.contents', function (event, data) {
-            var windowHeight = $(window).height();
+    return {
+        list: list,
+        eventProxy: emitter
+    };
+};
 
-            articleOffsetIndex = gajus.contents.indexOffset(config.articles);
+/**
+ * @param {HTMLElement} Table of contents root element (<ol>).
+ * @param {object} config Result of contents.config.
+ * @return {object} Result of contents.eventEmitter.
+ */
+contents.bind = function (list, config) {
+    var emitter = Sister(),
+        windowHeight,
+        /**
+         * @var {Array}
+         */
+        articleOffsetIndex,
+        lastArticleIndex,
+        guides = list.querySelectorAll('li');
 
-            if (!ready) {
-                ready = true;
+    emitter.on('resize', function () {
+        windowHeight = contents.windowHeight();
+        articleOffsetIndex = contents.indexOffset(config.articles);
 
-                $(window).on('scroll', gajus.contents.throttle(function () {
-                    var articleIndex,
-                        changeEvent;
+        emitter.trigger('scroll');
+    });
 
-                    articleIndex = gajus.contents.getIndexOfClosestValue($(window).scrollTop() + windowHeight * 0.2, articleOffsetIndex);
+    emitter.on('scroll', function () {
+        var articleIndex,
+            changeEvent;
 
-                    if (articleIndex !== lastArticleIndex) {
-                        changeEvent = {};
+        articleIndex = contents.getIndexOfClosestValue(contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
 
-                        changeEvent.current = {
-                            article: config.articles.eq(articleIndex),
-                            guide: listGuides.eq(articleIndex)
-                        };
+        if (articleIndex !== lastArticleIndex) {
+            changeEvent = {};
 
-                        if (lastArticleIndex !== undefined) {
-                            changeEvent.previous = {
-                                article: config.articles.eq(lastArticleIndex),
-                                guide: listGuides.eq(lastArticleIndex)
-                            };
-                        }
+            changeEvent.current = {
+                article: config.articles[articleIndex],
+                guide: guides[articleIndex]
+            };
 
-                        list.trigger('change.gajus.contents', changeEvent);
-
-                        lastArticleIndex = articleIndex;
-                    }
-
-                    
-                }, 100));
-
-                list.trigger('ready.gajus.contents');
+            if (lastArticleIndex !== undefined) {
+                changeEvent.previous = {
+                    article: config.articles[lastArticleIndex],
+                    guide: guides[lastArticleIndex]
+                };
             }
 
-            $(window).trigger('scroll');
-        });
+            emitter.trigger('change', changeEvent);
 
-        $(window).on('resize orientationchange', gajus.contents.throttle(function () {
-            list.trigger('resize.gajus.contents');
+            lastArticleIndex = articleIndex;
+        }
+    });
+
+    // This allows the script that constructs Contents
+    // to catch the first ready, resize and scroll events.
+    setTimeout(function () {
+        emitter.trigger('resize');
+        emitter.trigger('ready');
+
+        window.addEventListener('resize', contents.throttle(function () {
+            emitter.trigger('resize');
         }, 100));
 
-        // This allows the script that constructs gajus.contents
-        // to catch the first resize and scroll events.
-        setTimeout(function () {
-            list.trigger('resize.gajus.contents');
-        }, 10);
-    } ());
+        window.addEventListener('scroll', contents.throttle(function () {
+            emitter.trigger('scroll');
+        }, 100));
+    }, 10);
 
-    return list;
+    return emitter;
+};
+
+/**
+ * @return {Number}
+ */
+contents.windowHeight = function () {
+    return window.innerHeight || document.documentElement.clientHeight;
+};
+
+/**
+ * @return {Number}
+ */
+contents.windowScrollY = function () {
+    return window.pageYOffset || document.documentElement.scrollTop;
 };
 
 /**
@@ -98,12 +114,12 @@ gajus.contents = function (config) {
  * @param {Object} config
  * @return {Object}
  */
-gajus.contents.config = function (config) {
+contents.config = function (config) {
     var properties = ['contents', 'articles', 'link'];
 
     config = config || {};
 
-    $.each(config, function (name) {
+    contents.forEach(Object.keys(config), function (name) {
         if (properties.indexOf(name) === -1) {
             throw new Error('Unknown configuration property.');
         }
@@ -111,16 +127,16 @@ gajus.contents.config = function (config) {
 
     if (!config.contents) {
         throw new Error('Option "contents" is not set.');
-    } else if (!(config.contents instanceof jQuery)) {
-        throw new Error('Option "contents" is not a jQuery object.');
+    } else if (!(config.contents instanceof HTMLElement)) {
+        throw new Error('Option "contents" is not an HTMLElement object.');
     }
-
+    
     if (config.articles) {
-        if (!(config.articles instanceof jQuery)) {
-            throw new Error('Option "articles" is not a jQuery object.');
+        if (!config.articles.length || !(config.articles[0] instanceof HTMLElement)) {
+            throw new Error('Option "articles" is not a collection of HTMLElement objects.');
         }
     } else {
-        config.articles = $('body').find('h1, h2, h3, h4, h5, h6');          
+        config.articles = document.querySelectorAll('h1, h2, h3, h4, h5, h6');        
     }
 
     if (config.link) {
@@ -128,26 +144,27 @@ gajus.contents.config = function (config) {
             throw new Error('Option "link" must be a function.');
         }
     } else {
-        config.link = gajus.contents.link;
+        config.link = contents.link;
     }
 
     return config;
 };
 
 /**
- * Derive a unique ID from article name.
+ * Derive ID from articleName using formatId.
+ * Ensure that ID is unique across the document.
  * 
  * @param {String} articleName
  * @param {Function} formatId
  * @return {String}
  */
-gajus.contents.id = function (articleName, formatId) {
+contents.id = function (articleName, formatId) {
     var formattedId,
         assignedId,
         i = 1;
 
     if (!formatId) {
-        formatId = gajus.contents.formatId;
+        formatId = contents.formatId;
     }
 
     formattedId = formatId(articleName);
@@ -158,7 +175,7 @@ gajus.contents.id = function (articleName, formatId) {
 
     assignedId = formattedId;
 
-    while ($(document).find('#' + assignedId).length) {
+    while (document.querySelector('#' + assignedId)) {
         assignedId = formattedId + '-' + (i++);
     }
 
@@ -172,7 +189,7 @@ gajus.contents.id = function (articleName, formatId) {
  * @param {String} str
  * @return {String}
  */
-gajus.contents.formatId = function (str) {
+contents.formatId = function (str) {
     return str
         .toLowerCase()
         .replace(/[ãàáäâ]/g, 'a')
@@ -190,11 +207,11 @@ gajus.contents.formatId = function (str) {
 };
 
 /**
- * @param {jQuery} articles
- * @return {jQuery}
+ * @param {NodeList} articles
+ * @return {HTMLElement}
  */
-gajus.contents.makeList = function (articles) {
-    var rootList = $('<ol>'),
+contents.makeList = function (articles) {
+    var rootList = document.createElement('ol'),
         list = rootList,
         lastListInLevelIndex = [],
         lastListInLevelOrLower,
@@ -211,25 +228,24 @@ gajus.contents.makeList = function (articles) {
         
         throw new Error('Invalid markup.');
     };
-        
-    articles.each(function () {
-        var article = $(this),
-            level,
-            li = $('<li>');
 
-        level = gajus.contents.level(article);
+    contents.forEach(articles, function (article) {
+        var level,
+            li = document.createElement('li');
+
+        level = contents.level(article);
         
         lastListInLevelIndex = lastListInLevelIndex.slice(0, level + 1);
         
         if (!lastLevel || lastLevel === level) {
-            list.append(li);
+            list.appendChild(li);
         } else if (lastLevel < level) {
-            list = $('<ol>');
-            list.append(li);
-            lastListItem.append(list);
+            list = document.createElement('ol');
+            list.appendChild(li);
+            lastListItem.appendChild(list);
         } else {
             list = lastListInLevelOrLower(level);
-            list.append(li);
+            list.appendChild(li);
         }
         
         lastListInLevelIndex[level] = list;
@@ -242,19 +258,27 @@ gajus.contents.makeList = function (articles) {
 
 /**
  * Extract element level used to construct list hierarchy, e.g. <h1> is 1, <h2> is 2.
- * When element is not a heading, use gajus.contents.level data attribute. Default to 1.
+ * When element is not a heading, use contents.level data attribute. Default to 1.
  *
- * @param {jQuery} element
+ * @param {HTMLElement} element
  * @return {Number}
  */
-gajus.contents.level = function (element) {
-    var tagName = element.prop('tagName').toLowerCase();
+contents.level = function (element) {
+    var tagName = element.tagName.toLowerCase();
 
     if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
         return parseInt(tagName.slice(1), 10);
     }
-    
-    return element.data('gajus.contents.level') || 1;
+
+    if (element.dataset['gajus.contents.level'] !== undefined) {
+        return parseInt(element.dataset['gajus.contents.level'], 10);
+    }
+
+    if (jQuery && jQuery.data(element, 'gajus.contents.level') !== undefined) {
+        return jQuery.data(element, 'gajus.contents.level');
+    }
+
+    return 1;
 };
 
 /**
@@ -262,48 +286,55 @@ gajus.contents.level = function (element) {
  * It is called for each article in the index.
  * Used to represent article in the table of contents and to setup navigation.
  * 
- * @param {jQuery} guide An element in the table of contents representing an article.
- * @param {jQuery} article The represented content element.
+ * @param {HTMLElement} guide An element in the table of contents representing an article.
+ * @param {HTMLElement} article The represented content element.
  */
-gajus.contents.link = function (guide, article) {
-    var guideLink = $('<a>'),
-        articleLink = $('<a>'),
-        articleName = article.text(),
-        articleId = article.attr('id') || gajus.contents.id(articleName);
+contents.link = function (guide, article) {
+    var guideLink = document.createElement('a'),
+        articleLink = document.createElement('a'),
+        articleName = article.innerText,
+        articleId = article.id || contents.id(articleName);
 
-    guideLink
-        .text(articleName)
-        .attr('href', '#' + articleId)
-        .prependTo(guide);
+    article.id = articleId;
 
-    articleLink
-        .attr('href', '#' + articleId);
+    articleLink.href = '#' + articleId;
 
-    article
-        .attr('id', articleId)
-        .wrapInner(articleLink);
+    while (article.childNodes.length) {
+        articleLink.appendChild(article.childNodes[0], articleLink);
+    }
+
+    article.appendChild(articleLink);
+
+    guideLink.appendChild(document.createTextNode(articleName));
+    guideLink.href = '#' + articleId;
+    guide.insertBefore(guideLink, guide.firstChild);
 };
 
 /**
- * Produce a list of scrollY values for each element.
+ * Produce a list of offset values for each element.
  * 
- * @param {jQuery} articles
+ * @param {NodeList} articles
  * @return {Array}
  */
-gajus.contents.indexOffset = function (elements) {
-    var scrollYIndex = [];
+contents.indexOffset = function (elements) {
+    var scrollYIndex = [],
+        i = 0,
+        j = elements.length,
+        element,
+        offset;
 
-    elements.each(function () {
-        var offset = $(this).offset().top;
+    while (i < j) {
+        element = elements[i++];
 
-        // Round to nearest multiple of 5 (either up or down).
-        // The deductOffset usually comes from $(window).height()/3
-        // element.offset().top itself might produce a float values.
-        // This is done for readability and testing.
+        offset = element.offsetTop;
+
+        // element.offsetTop might produce a float value.
+        // Round to the nearest multiple of 5 (either up or down).
+        // This is done to help readability and testing.
         offset = 5*(Math.round(offset/5));
 
         scrollYIndex.push(offset);
-    });
+    }
 
     return scrollYIndex;
 };
@@ -314,9 +345,9 @@ gajus.contents.indexOffset = function (elements) {
  * @see http://stackoverflow.com/a/26366951/368691
  * @param {Number} needle
  * @param {Array} haystack
- * @return {jQuery}
+ * @return {Number}
  */
-gajus.contents.getIndexOfClosestValue = function (needle, haystack) {
+contents.getIndexOfClosestValue = function (needle, haystack) {
     var closestValueIndex = 0,
         lastClosestValueIndex,
         i = 0,
@@ -344,20 +375,20 @@ gajus.contents.getIndexOfClosestValue = function (needle, haystack) {
 };
 
 /**
- * @callback throttled
+ * @callback throttleCallback
  * @param {...*} var_args
  */
 
 /**
  * Creates and returns a new, throttled version of the passed function, that, when invoked repeatedly,
- * will only actually call the original function at most once per every wait milliseconds.
+ * will only call the original function at most once per every wait milliseconds.
  * 
  * @see https://remysharp.com/2010/07/21/throttling-function-calls
- * @param {throttled} throttled
+ * @param {throttleCallback} throttled
  * @param {Number} threshold Number of milliseconds between firing the throttled function.
  * @param {Object} context The value of "this" provided for the call to throttled.
  */
-gajus.contents.throttle = function (throttled, threshold, context) {
+contents.throttle = function (throttled, threshold, context) {
     var last,
         deferTimer;
 
@@ -380,3 +411,28 @@ gajus.contents.throttle = function (throttled, threshold, context) {
         }
     };
 };
+
+/**
+ * @callback forEachCallback
+ * @param {Number} index
+ */
+
+/**
+ * Iterates over elements of a collection, executing the callback for each element.
+ * 
+ * @param {Number} n The number of times to execute the callback.
+ * @param {forEachCallback} callback
+ */
+contents.forEach = function (collection, callback) {
+    var i = 0,
+        j = collection.length;
+
+    while (i < j) {
+        callback(collection[i], i);
+
+        i++;
+    }
+};
+
+window.gajus = window.gajus || {};
+window.gajus.contents = contents;

@@ -5,7 +5,6 @@ var pkg = require('./package.json'),
     rename = require('gulp-rename'),
     header = require('gulp-header'),
     jshint = require('gulp-jshint'),
-    jsdoc = require('gulp-jsdoc'),
     browserify = require('gulp-browserify'),
     fs = require('fs'),
     del = require('del'),
@@ -47,6 +46,7 @@ gulp.task('version', ['bundle'], function () {
     bower.description = pkg.description;
     bower.version = pkg.version;
     bower.keywords = pkg.keywords;
+    bower.license = pkg.license;
 
     fs.writeFile('./bower.json', JSON.stringify(bower, null, 4));
 });

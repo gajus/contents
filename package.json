@@ -18,7 +18,7 @@
     "del": "^0.1.2",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-html2js-preprocessor": "^0.1.0",
-    "lodash.throttle": "^2.4.1"
+    "sister": "^1.0.0"
   },
   "keywords": [
     "table of contents",
@@ -27,5 +27,6 @@
   ],
   "scrips": {
     "test": "gulp travis"
-  }
+  },
+  "license": "BSD-3-Clause"
 }

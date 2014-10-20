@@ -1,8 +1,8 @@
 # Table of Contents (TOC) Generator
 
 [![Build Status](https://travis-ci.org/gajus/contents.png?branch=master)](https://travis-ci.org/gajus/contents)
-[![Bower version](https://badge.fury.io/bo/contents.svg?1)](http://badge.fury.io/bo/contents)
-[![Tweet Button](./.readme/tweet-button.png?1)](https://twitter.com/intent/tweet?text=%23JavaScript%20library%20to%20generate%20table%20of%20contents%20for%20a%20given%20area%20of%20content.&url=https://github.com/gajus/contents&via=kuizinas)
+[![Bower version](https://badge.fury.io/bo/contents.svg)](http://badge.fury.io/bo/contents)
+[![Tweet Button](./.readme/tweet-button.png)](https://twitter.com/intent/tweet?text=%23JavaScript%20library%20to%20generate%20table%20of%20contents%20for%20a%20given%20area%20of%20content.&url=https://github.com/gajus/contents&via=kuizinas)
 
 Automatically generate table of contents for a given area of content.
 
@@ -17,16 +17,23 @@ To generate a table of contents:
 ```js
 gajus
     .contents({
-        contents: $('#contents')
+        contents: document.querySelector('#contents')
+        // If you are using jQuery:
+        // contents: $('#contents')[0]
     });
 ```
 
 The above will generate a table of contents for all of the headings in the document. Table of contents is an (`<ol>`) element; it will be appended to `#contents` container (See [Markup](#markup)).
 
+The result of the `gajus.contents()` is an object with `list` (the generated `<ol>` element) and [`eventProxy`](#events) properties.
+
 ### Examples
 
 * [Good looking](http://gajus.com/sandbox/contents/example/good-looking/) example.
-* [Basic](http://gajus.com/sandbox/contents/example/basic/) table of contents.
+* [Plain](http://gajus.com/sandbox/contents/example/plain/) table of contents not using jQuery.
+* [Events](http://gajus.com/sandbox/contents/example/events/) table of contents with all events logged in the `console.log`.
+* [Obtain Generated List Element](http://gajus.com/sandbox/contents/example/list-element/).
+* [jQuery](http://gajus.com/sandbox/contents/example/jquery/) table of contents using jQuery.
 * [Smooth scrolling](http://gajus.com/sandbox/contents/example/smooth-scrolling/) implemented using [jquery-smooth-scroll](https://github.com/kswedberg/jquery-smooth-scroll).
 
 The code for all of the examples is in the [example](./example/) folder.
@@ -45,11 +52,15 @@ The code for all of the examples is in the [example](./example/) folder.
 | [Reflect window resize](#window-resize-and-scroll-event-handling) | ✓ | - | ✓ |
 | Overwrite markup and navigation | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
-| Required 3rd party libraries | jQuery | jQuery | jQuery, jQueryUI |
-| Size | 3.552 kb | 2.581 kb | 7.246 kb |
-| GitHub Stars | 51 | 307 | 435 |
+| [Required 3rd party libraries](required-3rd-party-libraries) | - | jQuery | jQuery, jQueryUI |
+| Size | 5.000 kb | 2.581 kb | 7.246 kb |
+| GitHub Stars | 71 | 307 | 435 |
 
-Last updated: Fri Oct 17 08:04:50 2014 UTC.
+Last updated: Sun Oct 19 21:01:25 2014 UTC.
+
+### Required 3rd Party Libraries
+
+There are no 3rd party dependencies. jQuery selectors are used in the examples to make it simple for the reader.
 
 ### Smooth Scrolling
 
@@ -57,7 +68,7 @@ You can implement smooth scrolling using either of the existing libraries. See [
 
 ### Window Resize and `scroll` Event Handling
 
-The library will index `offsetTop` of all articles. This index is used to reflect the [change event](#events). The index is built upon loading the page, and in response to `window.onresize` and [`ready.gajus.contents`](#events) events.
+The library will index `offsetTop` of all articles. This index is used to reflect the [change event](#events). The index is built upon loading the page, and in response to `window.onresize` and [`ready`](#events) events.
 
 Reading `offsetTop` causes a [reflow](http://gent.ilcore.com/2011/03/how-not-to-trigger-layout-in-webkit.html). Therefore, this should not be done while scrolling.
 
@@ -76,11 +87,11 @@ The old-fashioned way, download either of the following files:
 
 ## Settings
 
-| Name | Description |
+| Name | Type | Description |
 | --- | --- |
-| `contents` | Reference to the container that will hold the table of contents. |
-| `articles` | (optional) The default behavior is to index all headings (H1-H6) in the document. See [Content Indexing](#content-indexing). |
-| `link` | (optional) Used to represent article in the table of contents and to setup navigation. See [Linking](#linking). |
+| `contents` | `HTMLElement`, `jQuery` | Parent element for the table of contents. |
+| `articles` | `NodeList`, `jQuery` | (optional) The default behavior is to index all headings (H1-H6) in the document. See [Content Indexing](#content-indexing). |
+| `link` | `function` | (optional) Used to represent article in the table of contents and to setup navigation. See [Linking](#linking). |
 
 ## Content Indexing
 
@@ -91,20 +102,22 @@ Use `articles` setting to index content using your own selector:
 ```js
 gajus
     .contents({
-        articles: $('main').find('h2, h3')
+        articles: document.querySelectorAll('main h2, main h2')
+        // If you are using jQuery
+        // articles: $('main').find('h2, h3').get()
     });
 ```
 
 ### Hierarchy
 
-`articles` will be used to make the table of contents. `articles` have level of importance. The level of importance determines list nesting (see [Markup](#markup)). For HTML headings, the level of importance is derived from the tag name (`<h[1-6]>`). To set your own level of importance, use `gajus.contents.level` data attribute, e.g.
+`articles` will be used to make the table of contents. `articles` have level of importance. The level of importance determines list nesting (see [Markup](#markup)). For HTML headings, the level of importance is derived from the tag name (`<h[1-6]>`). To set your own level of importance, use `gajus.contents.level` [dataset](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.dataset) property or jQuery data property with the same name, e.g.
 
 ```js
 $('main').find('.summary').data('gajus.contents.level', 4);
 
 gajus
     .contents({
-        articles: $('main').find('h1, h2, h3, .summary')
+        articles: $('main').find('h1, h2, h3, .summary').get()
     });
 ```
 
@@ -127,26 +140,28 @@ The default implementation:
  * It is called for each article in the index.
  * Used to represent article in the table of contents and to setup navigation.
  * 
- * @param {jQuery} guide An element in the table of contents representing an article.
- * @param {jQuery} article The represented content element.
+ * @param {HTMLElement} guide An element in the table of contents representing an article.
+ * @param {HTMLElement} article The represented content element.
  */
 gajus.contents.link = function (guide, article) {
-    var guideLink = $('<a>'),
-        articleLink = $('<a>'),
-        articleName = article.text(),
-        articleId = article.attr('id') || gajus.contents.id(articleName);
+    var guideLink = document.createElement('a'),
+        articleLink = document.createElement('a'),
+        articleName = article.innerText,
+        articleId = article.id || gajus.contents.id(articleName);
 
-    guideLink
-        .text(articleName)
-        .attr('href', '#' + articleId)
-        .prependTo(guide);
+    article.id = articleId;
 
-    articleLink
-        .attr('href', '#' + articleId);
+    articleLink.href = '#' + articleId;
 
-    article
-        .attr('id', articleId)
-        .wrapInner(articleLink);
+    while (article.childNodes.length) {
+        articleLink.appendChild(article.childNodes[0], articleLink);
+    }
+
+    article.appendChild(articleLink);
+
+    guideLink.appendChild(document.createTextNode(articleName));
+    guideLink.href = '#' + articleId;
+    guide.insertBefore(guideLink, guide.firstChild);
 };
 ```
 
@@ -158,9 +173,16 @@ gajus
         // Example of implementation that does not wrap
         // article node in a hyperlink.
         link: function (guide, article) {
-            var guideLink = $('<a>'),
-                articleName = article.text(),
-                articleId = article.attr('id') || gajus.contents.id(articleName);
+            var guideLink,
+                articleName,
+                articleId;
+
+            guide = $(guide);
+            article = $(article);
+
+            guideLink = $('<a>');
+            articleName = article.text();
+            articleId = article.attr('id') || gajus.contents.id(articleName);
 
             guideLink
                 .text(articleName)
@@ -172,7 +194,6 @@ gajus
         }
     });
 ```
-
 
 ### Article ID
 
@@ -252,39 +273,38 @@ The above content will generate the following table of contents:
 
 | Event | Description |
 | --- | --- |
-| `ready.gajus.contents` | Fired once after the table of contents has been generated. |
-| `resize.gajus.contents` | Fired when the page is loaded and in response to "resize" and "orientationchange" window events. |
-| `change.gajus.contents` | Fired when the page is loaded and when user navigates to a new section of the page. |
+| `ready` | Fired once after the table of contents has been generated. |
+| `resize` | Fired when the page is loaded and in response to "resize" and "orientationchange" window events. |
+| `change` | Fired when the page is loaded and when user navigates to a new section of the page. |
 
-Use the generated list element to listen and trigger events, e.g.
+The events are accessible via `eventProxy` property of the resulting object, e.g.
 
 ```js
-gajus
+var contents = gajus
     .contents({
         // [..]
-    })
-    .on('change.gajus.contents', function (event, change) {
-        if (change.previous) {
-            change.previous.article.removeClass('active-article');
-            change.previous.guide.removeClass('active-guide');
-        }
+    });
 
-        change.current.article.addClass('active-article');
-        change.current.guide.addClass('active-guide');
-    });
-    .on('resize.gajus.contents', function (event) {
-        
-    });
+contents.eventProxy.on('ready', function () {});
+contents.eventProxy.on('resize', function () {});
 ```
 
-The `change.gajus.contents` event listener is passed extra parameters: `.current.article`, `.current.guide`, and when available, `.previous.article`, `.previous.guide`.
-
-You must trigger `resize.gajus.contents` event after programmatically changing the content or the presentation of content, e.g.
+The `change` event listener is passed extra parameters: `.current.article`, `.current.guide`, and when available, `.previous.article`, `.previous.guide`:
 
 ```js
-gajus
-    .contents({
-        // [..]
-    })
-    .trigger('resize.gajus.contents');
+contents.eventProxy.on('change', function (data) {
+    if (data.previous) {
+        $(data.previous.article).removeClass('active-article');
+        $(data.previous.guide).removeClass('active-guide');
+    }
+
+    $(data.current.article).addClass('active-article');
+    $(data.current.guide).addClass('active-guide');
+});
+```
+
+You must trigger `resize` event after programmatically changing the content or the presentation of the content, e.g.
+
+```js
+contents.eventProxy.trigger('resize');
 ```

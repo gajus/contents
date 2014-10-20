@@ -10,14 +10,24 @@
     
     <script>
     $(function () {
-        var link;
+        var link,
+            contents;
 
         link = function (guide, article) {
-            var guideLink = $('<a>'),
-                anchor = $('<hr>'),
-                articleAnchor = article.find('h1'),
-                articleName = articleAnchor.text(),
-                articleId = gajus.contents.id(articleName);
+            var guideLink,
+                anchor,
+                articleAnchor,
+                articleName,
+                articleId;
+
+            guide = $(guide);
+            article = $(article);
+
+            guideLink = $('<a>'),
+            anchor = $('<hr>'),
+            articleAnchor = article.find('h1'),
+            articleName = articleAnchor.text(),
+            articleId = gajus.contents.id(articleName);
             
             anchor
                 .attr('id', articleId)
@@ -29,26 +39,27 @@
                 .prependTo(guide);
         };
 
-        gajus
+        contents = gajus
             .contents({
-                contents: $('aside')
-            })
-            .on('ready.contents.gajus', function () {
-                $('a').smoothScroll();
-            })
-            .on('change.gajus.contents', function (event, change) {
-                if (change.previous) {
-                    change.previous.guide
-                        .removeClass('active')
-                        .parents('li')
-                        .removeClass('active-child');
-                }
-
-                change.current.guide
-                    .addClass('active')
-                    .parents('li')
-                    .addClass('active-child');
+                contents: $('aside')[0]
             });
+
+        contents.eventProxy.on('ready', function () {
+            $('a').smoothScroll();
+        })
+        contents.eventProxy.on('change', function (data) {
+            if (data.previous) {
+                $(data.previous.guide)
+                    .removeClass('active')
+                    .parents('li')
+                    .removeClass('active-child');
+            }
+
+            $(data.current.guide)
+                .addClass('active')
+                .parents('li')
+                .addClass('active-child');
+        });
     });
     </script>
 </head>

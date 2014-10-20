@@ -3,37 +3,13 @@
 <head>
     <link rel="stylesheet" href="./main.css">
 
-    <script src="./../../bower_components/jquery/dist/jquery.js"></script>
     <script src="./../../dist/contents.js"></script>
 
     <script>
-    $(function () {
+    document.addEventListener('DOMContentLoaded', function () {
         gajus
             .contents({
-                contents: $('#contents')
-            })
-            .on('resize.gajus.contents', function () {
-                console.log('resize.gajus.contents');
-            })
-            .on('change.gajus.contents', function (event, change) {
-                console.groupCollapsed('change.gajus.contents');
-
-                $('#contents li').removeClass('active-child');
-
-                if (change.previous) {
-                    change.previous.article.removeClass('active-heading');
-                    change.previous.guide.removeClass('active-anchor');
-                }
-
-                change.current.article.addClass('active-heading');
-                change.current.guide.addClass('active-anchor');
-
-                change.current.guide.parents('li').addClass('active-child');
-
-                console.log('change.previous', change.previous);
-                console.log('change.current', change.current);
-
-                console.groupEnd();
+                contents: document.querySelector('#contents')
             });
     });
     </script>
