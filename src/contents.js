@@ -292,7 +292,7 @@ contents.level = function (element) {
 contents.link = function (guide, article) {
     var guideLink = document.createElement('a'),
         articleLink = document.createElement('a'),
-        articleName = article.innerText,
+        articleName = article.innerText || article.textContent,
         articleId = article.id || contents.id(articleName);
 
     article.id = articleId;
