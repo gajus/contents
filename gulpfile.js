@@ -1,10 +1,10 @@
 var pkg = require('./package.json'),
     karma = require('karma').server,
     gulp = require('gulp'),
+    jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
     header = require('gulp-header'),
-    jshint = require('gulp-jshint'),
     browserify = require('gulp-browserify'),
     fs = require('fs'),
     del = require('del'),
@@ -47,6 +47,7 @@ gulp.task('version', ['bundle'], function () {
     bower.version = pkg.version;
     bower.keywords = pkg.keywords;
     bower.license = pkg.license;
+    bower.authors = [pkg.author];
 
     fs.writeFile('./bower.json', JSON.stringify(bower, null, 4));
 });
