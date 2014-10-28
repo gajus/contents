@@ -1,5 +1,5 @@
 /**
- * @version 2.0.0
+ * @version 2.0.1
  * @link https://github.com/gajus/contents for the canonical source repository
  * @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
  */
@@ -322,7 +322,7 @@ contents.level = function (element) {
 contents.link = function (guide, article) {
     var guideLink = document.createElement('a'),
         articleLink = document.createElement('a'),
-        articleName = article.innerText,
+        articleName = article.innerText || article.textContent,
         articleId = article.id || contents.id(articleName);
 
     article.id = articleId;
@@ -466,4 +466,5 @@ contents.forEach = function (collection, callback) {
 
 window.gajus = window.gajus || {};
 window.gajus.contents = contents;
+
 },{"sister":1}]},{},[2])
