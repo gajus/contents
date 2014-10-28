@@ -1,18 +1,21 @@
 {
-    "main": "dist/contents.min.js",
-    "license": "BSD-3-Clause",
-    "dependencies": {
-        "jquery": ">=1"
-    },
-    "version": "1.0.3",
-    "name": "contents",
-    "description": "Automatically generate table of contents for a given area of content.",
-    "keywords": [
-        "table of contents",
-        "toc",
-        "contents"
-    ],
-    "devDependencies": {
-        "jquery-smooth-scroll": "~1.5.2"
-    }
+  "main": "dist/contents.min.js",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "jquery": ">=1"
+  },
+  "version": "2.0.0",
+  "name": "contents",
+  "description": "Automatically generate table of contents for a given area of content.",
+  "keywords": [
+    "table of contents",
+    "toc",
+    "contents"
+  ],
+  "devDependencies": {
+    "jquery-smooth-scroll": "~1.5.2"
+  },
+  "authors": [
+    null
+  ]
 }

@@ -1,5 +1,4 @@
-var pkg = require('./package.json'),
-    karma = require('karma').server,
+var karma = require('karma').server,
     gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
@@ -8,7 +7,8 @@ var pkg = require('./package.json'),
     browserify = require('gulp-browserify'),
     fs = require('fs'),
     del = require('del'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    jsonfile = require('jsonfile');
 
 gulp.task('lint', function () {
     return gulp
@@ -31,15 +31,17 @@ gulp.task('bundle', ['clean'], function () {
 });
 
 gulp.task('version', ['bundle'], function () {
-    var bower = require('./bower.json');
+    var name = 'contents',
+        pkg = jsonfile.readFileSync('./package.json'),
+        bower = jsonfile.readFileSync('./bower.json');
 
     gulp
-        .src('./dist/contents.js')
-        .pipe(header('/**\n* @version <%= version %>\n* @link https://github.com/gajus/contents for the canonical source repository\n* @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause\n*/\n', {version: pkg.version}))
+        .src('./dist/' + name + '.js')
+        .pipe(header('/**\n * @version <%= version %>\n * @link https://github.com/gajus/' + name + ' for the canonical source repository\n * @license https://github.com/gajus/' + name + '/blob/master/LICENSE BSD 3-Clause\n */\n', {version: pkg.version}))
         .pipe(gulp.dest('./dist/'))
         .pipe(uglify())
-        .pipe(rename('contents.min.js'))
-        .pipe(header('/**\n* @version <%= version %>\n* @link https://github.com/gajus/contents for the canonical source repository\n* @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause\n*/\n', {version: pkg.version}))
+        .pipe(rename(name + '.min.js'))
+        .pipe(header('/**\n * @version <%= version %>\n * @link https://github.com/gajus/' + name + ' for the canonical source repository\n * @license https://github.com/gajus/' + name + '/blob/master/LICENSE BSD 3-Clause\n */\n', {version: pkg.version}))
         .pipe(gulp.dest('./dist/'));
 
     bower.name = pkg.name;
@@ -49,7 +51,7 @@ gulp.task('version', ['bundle'], function () {
     bower.license = pkg.license;
     bower.authors = [pkg.author];
 
-    fs.writeFile('./bower.json', JSON.stringify(bower, null, 4));
+    jsonfile.writeFileSync('./bower.json', bower);
 });
 
 gulp.task('readme', function () {
