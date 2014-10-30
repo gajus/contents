@@ -3,7 +3,7 @@
   "title": "Contents",
   "description": "Automatically generate table of contents for a given area of content.",
   "version": "2.0.2",
-  "private": true,
+  "main": "src/contents.js",
   "devDependencies": {
     "del": "^0.1.2",
     "gulp": "^3.8.7",
