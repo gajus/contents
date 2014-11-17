@@ -1,8 +1,8 @@
 {
   "name": "contents",
   "title": "Contents",
-  "description": "Automatically generate table of contents for a given area of content.",
-  "version": "2.0.2",
+  "description": "Table of contents generator.",
+  "version": "3.0.0",
   "main": "src/contents.js",
   "devDependencies": {
     "del": "^0.1.2",
@@ -19,7 +19,7 @@
     "karma-html2js-preprocessor": "^0.1.0",
     "karma-jasmine": "~0.2.2",
     "karma-phantomjs-launcher": "^0.1.4",
-    "sister": "^1.0.0"
+    "sister": "^3.0.0"
   },
   "keywords": [
     "table of contents",

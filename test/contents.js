@@ -1,4 +1,4 @@
-var gc = gajus.contents;
+var gc = gajus.Contents;
 describe('DOM dependent method', function () {
     beforeEach(function () {
         $('body').html($.parseHTML(__html__['test/fixture/page.html']));

@@ -1,11 +1,11 @@
 var Sister = require('sister'),
-    contents;
+    Contents;
 
 /**
  * @param {object} config
  * @return {object}
  */
-contents = function (config) {
+Contents = function (config) {
     var list,
         emitter;
 
@@ -23,7 +23,7 @@ contents = function (config) {
 
     return {
         list: list,
-        eventProxy: emitter
+        eventEmitter: emitter
     };
 };
 
@@ -32,7 +32,7 @@ contents = function (config) {
  * @param {object} config Result of contents.config.
  * @return {object} Result of contents.eventEmitter.
  */
-contents.bind = function (list, config) {
+Contents.bind = function (list, config) {
     var emitter = Sister(),
         windowHeight,
         /**
@@ -43,8 +43,8 @@ contents.bind = function (list, config) {
         guides = list.querySelectorAll('li');
 
     emitter.on('resize', function () {
-        windowHeight = contents.windowHeight();
-        articleOffsetIndex = contents.indexOffset(config.articles);
+        windowHeight = Contents.windowHeight();
+        articleOffsetIndex = Contents.indexOffset(config.articles);
 
         emitter.trigger('scroll');
     });
@@ -53,7 +53,7 @@ contents.bind = function (list, config) {
         var articleIndex,
             changeEvent;
 
-        articleIndex = contents.getIndexOfClosestValue(contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
+        articleIndex = contents.getIndexOfClosestValue(Contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
 
         if (articleIndex !== lastArticleIndex) {
             changeEvent = {};
@@ -82,11 +82,11 @@ contents.bind = function (list, config) {
         emitter.trigger('resize');
         emitter.trigger('ready');
 
-        window.addEventListener('resize', contents.throttle(function () {
+        global.addEventListener('resize', Contents.throttle(function () {
             emitter.trigger('resize');
         }, 100));
 
-        window.addEventListener('scroll', contents.throttle(function () {
+        global.addEventListener('scroll', Contents.throttle(function () {
             emitter.trigger('scroll');
         }, 100));
     }, 10);
@@ -97,15 +97,15 @@ contents.bind = function (list, config) {
 /**
  * @return {Number}
  */
-contents.windowHeight = function () {
-    return window.innerHeight || document.documentElement.clientHeight;
+Contents.windowHeight = function () {
+    return global.innerHeight || global.document.documentElement.clientHeight;
 };
 
 /**
  * @return {Number}
  */
-contents.windowScrollY = function () {
-    return window.pageYOffset || document.documentElement.scrollTop;
+Contents.windowScrollY = function () {
+    return global.pageYOffset || global.document.documentElement.scrollTop;
 };
 
 /**
@@ -114,12 +114,12 @@ contents.windowScrollY = function () {
  * @param {Object} config
  * @return {Object}
  */
-contents.config = function (config) {
+Contents.config = function (config) {
     var properties = ['contents', 'articles', 'link'];
 
     config = config || {};
 
-    contents.forEach(Object.keys(config), function (name) {
+    Contents.forEach(Object.keys(config), function (name) {
         if (properties.indexOf(name) === -1) {
             throw new Error('Unknown configuration property.');
         }
@@ -144,7 +144,7 @@ contents.config = function (config) {
             throw new Error('Option "link" must be a function.');
         }
     } else {
-        config.link = contents.link;
+        config.link = Contents.link;
     }
 
     return config;
@@ -158,13 +158,13 @@ contents.config = function (config) {
  * @param {Function} formatId
  * @return {String}
  */
-contents.id = function (articleName, formatId) {
+Contents.id = function (articleName, formatId) {
     var formattedId,
         assignedId,
         i = 1;
 
     if (!formatId) {
-        formatId = contents.formatId;
+        formatId = Contents.formatId;
     }
 
     formattedId = formatId(articleName);
@@ -189,7 +189,7 @@ contents.id = function (articleName, formatId) {
  * @param {String} str
  * @return {String}
  */
-contents.formatId = function (str) {
+Contents.formatId = function (str) {
     return str
         .toLowerCase()
         .replace(/[ãàáäâ]/g, 'a')
@@ -210,7 +210,7 @@ contents.formatId = function (str) {
  * @param {NodeList} articles
  * @return {HTMLElement}
  */
-contents.makeList = function (articles) {
+Contents.makeList = function (articles) {
     var rootList = document.createElement('ol'),
         list = rootList,
         lastListInLevelIndex = [],
@@ -263,7 +263,7 @@ contents.makeList = function (articles) {
  * @param {HTMLElement} element
  * @return {Number}
  */
-contents.level = function (element) {
+Contents.level = function (element) {
     var tagName = element.tagName.toLowerCase();
 
     if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
@@ -289,7 +289,7 @@ contents.level = function (element) {
  * @param {HTMLElement} guide An element in the table of contents representing an article.
  * @param {HTMLElement} article The represented content element.
  */
-contents.link = function (guide, article) {
+Contents.link = function (guide, article) {
     var guideLink = document.createElement('a'),
         articleLink = document.createElement('a'),
         articleName = article.innerText || article.textContent,
@@ -316,7 +316,7 @@ contents.link = function (guide, article) {
  * @param {NodeList} articles
  * @return {Array}
  */
-contents.indexOffset = function (elements) {
+Contents.indexOffset = function (elements) {
     var scrollYIndex = [],
         i = 0,
         j = elements.length,
@@ -347,7 +347,7 @@ contents.indexOffset = function (elements) {
  * @param {Array} haystack
  * @return {Number}
  */
-contents.getIndexOfClosestValue = function (needle, haystack) {
+Contents.getIndexOfClosestValue = function (needle, haystack) {
     var closestValueIndex = 0,
         lastClosestValueIndex,
         i = 0,
@@ -388,7 +388,7 @@ contents.getIndexOfClosestValue = function (needle, haystack) {
  * @param {Number} threshold Number of milliseconds between firing the throttled function.
  * @param {Object} context The value of "this" provided for the call to throttled.
  */
-contents.throttle = function (throttled, threshold, context) {
+Contents.throttle = function (throttled, threshold, context) {
     var last,
         deferTimer;
 
@@ -423,7 +423,7 @@ contents.throttle = function (throttled, threshold, context) {
  * @param {Number} n The number of times to execute the callback.
  * @param {forEachCallback} callback
  */
-contents.forEach = function (collection, callback) {
+Contents.forEach = function (collection, callback) {
     var i = 0,
         j = collection.length;
 
@@ -434,5 +434,7 @@ contents.forEach = function (collection, callback) {
     }
 };
 
-window.gajus = window.gajus || {};
-window.gajus.contents = contents;
+global.gajus = window.gajus || {};
+global.gajus.Contents = Contents;
+
+module.exports = Contents;
