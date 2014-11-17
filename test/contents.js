@@ -29,17 +29,9 @@ describe('DOM dependent method', function () {
     beforeEach(function () {
         $('body').html($.parseHTML(__html__['test/fixture/page.html']));
     });
-    describe('.id()', function () {
-        it('uses the formatId function', function () {
-            expect(Contents.id('', function () { return 'ok'; })).toEqual('ok');
-        });
-        it('throws an error if formattedId is invalid', function () {
-            expect(function () {
-                expect(Contents.id('', function () { return '-ok'; }));
-            }).toThrowError('Invalid ID (-ok).');
-        });
+    describe('.portArticleId()', function () {
         it('derives a unique ID', function () {
-            expect(Contents.id('id-not-unique')).toEqual('id-not-unique-1');
+            expect(Contents.postArticleId('id-not-unique')).toEqual('id-not-unique-1');
         });
     });
     describe('.level()', function () {
@@ -70,24 +62,22 @@ describe('DOM dependent method', function () {
         var guide,
             article;
         beforeEach(function () {
-            guide = $('#link .guide');
-            article = $('#link .article');
-            Contents.link(guide[0], article[0]);
-        });
-        it('uses existing article id', function () {
-            guide = $('#link .guide');
-            article = $('#link-bar');
-            Contents.link(guide[0], article[0]);
-            expect(article.attr('id')).toEqual('link-bar');
+            guide = document.createElement('div');
+            article = {
+                id: 'foo',
+                name: 'Foo',
+                element: document.createElement('div')
+            };
+            Contents.link(guide, article);
         });
         it('gives article an id', function () {
-            expect(article.attr('id')).toEqual('foo');
+            expect(article.id).toEqual('foo');
         });
         it('wraps article content in a hyperlink', function () {
-            expect(article.html()).toEqual('<a href="#foo">foo</a>');
+            expect(article.element.innerHTML).toEqual('<a href="#foo"></a>');
         });
         it('appends a hyperlink to the guide', function () {
-            expect(guide.html()).toEqual('<a href="#foo">foo</a>');
+            expect(guide.innerHTML).toEqual('<a href="#foo">Foo</a>');
         });
     });
     describe('.indexOffset()', function () {
@@ -100,11 +90,11 @@ describe('DOM dependent method', function () {
         });
     });
     describe('.makeTree()', function () {
-        var removeArticle = function (tree) {
+        var removeElementProperty = function (tree) {
             tree.forEach(function (node) {
-                delete node.article;
+                delete node.element;
 
-                removeArticle(node.descendants);
+                removeElementProperty(node.descendants);
             });
         };
         it('represents a flat structure', function () {
@@ -117,7 +107,7 @@ describe('DOM dependent method', function () {
                 {level: 1, id: 'c1', name: 'C1', descendants: []}
             ];
 
-            removeArticle(tree);
+            removeElementProperty(tree);
 
             expect(tree).toEqual(expectedTree);
         });
@@ -139,7 +129,7 @@ describe('DOM dependent method', function () {
 
             expectedTree = [a1];
 
-            removeArticle(tree);
+            removeElementProperty(tree);
 
             expect(tree).toEqual(expectedTree);
         });
@@ -160,7 +150,7 @@ describe('DOM dependent method', function () {
 
             expectedTree = [a1];
 
-            removeArticle(tree);
+            removeElementProperty(tree);
 
             expect(tree).toEqual(expectedTree);
         });
@@ -186,7 +176,7 @@ describe('DOM dependent method', function () {
 
             expectedTree = [a1, a2];
 
-            removeArticle(tree);
+            removeElementProperty(tree);
 
             expect(tree).toEqual(expectedTree);
         });
@@ -211,7 +201,7 @@ describe('DOM dependent method', function () {
 
             expectedTree = [a1, a2];
 
-            removeArticle(tree);
+            removeElementProperty(tree);
 
             expect(tree).toEqual(expectedTree);
         });
@@ -340,6 +330,24 @@ describe('.config()', function () {
         it('throws an error if it is not a collection of HTMLElement objects.', function () {
             expect(configFactory({articles: {}}))
                 .toThrowError('Option "articles" is not a collection of HTMLElement objects.');
+        });
+    });
+    describe('setting config.articleId', function () {
+        it('throws an error if it is not a function', function () {
+            expect(configFactory({articleId: 'not a function'}))
+                .toThrowError('Option "articleId" must be a function.');
+        });
+        it('defaults to Contents.articleId', function () {
+            expect(configFactory()().articleId).toEqual(Contents.articleId);
+        });
+    });
+    describe('setting config.articleName', function () {
+        it('throws an error if it is not a function', function () {
+            expect(configFactory({articleName: 'not a function'}))
+                .toThrowError('Option "articleName" must be a function.');
+        });
+        it('defaults to Contents.link', function () {
+            expect(configFactory()().articleName).toEqual(Contents.articleName);
         });
     });
     describe('setting config.link', function () {

@@ -77,6 +77,7 @@ var Sister = require('sister'),
  */
 Contents = function Contents (config) {
     var contents,
+        tree,
         list,
         eventEmitter;
 
@@ -88,11 +89,8 @@ Contents = function Contents (config) {
 
     config = Contents.config(config);
 
-    list = Contents.makeList(Contents.makeTree(config.articles));
-
-    Contents.forEach(list.querySelectorAll('li'), function (guide, i) {
-        config.link(guide, config.articles[i]);
-    });
+    tree = Contents.makeTree(config.articles, config.articleName, config.articleId);
+    list = Contents.makeList(tree, config.link);
 
     eventEmitter = Contents.bind(list, config);
 
@@ -201,7 +199,7 @@ Contents.windowScrollY = function () {
  * @return {Object}
  */
 Contents.config = function (config) {
-    var properties = ['articles', 'link'];
+    var properties = ['articles', 'articleName', 'articleId', 'link'];
 
     config = config || {};
 
@@ -219,6 +217,22 @@ Contents.config = function (config) {
         config.articles = document.querySelectorAll('h1, h2, h3, h4, h5, h6');        
     }
 
+    if (config.articleName) {
+        if (typeof config.articleName !== 'function') {
+            throw new Error('Option "articleName" must be a function.');
+        }
+    } else {
+        config.articleName = Contents.articleName;
+    }
+
+    if (config.articleId) {
+        if (typeof config.articleId !== 'function') {
+            throw new Error('Option "articleId" must be a function.');
+        }
+    } else {
+        config.articleId = Contents.articleId;
+    }
+
     if (config.link) {
         if (typeof config.link !== 'function') {
             throw new Error('Option "link" must be a function.');
@@ -231,23 +245,32 @@ Contents.config = function (config) {
 };
 
 /**
- * Derive ID from articleName using formatId.
- * Ensure that ID is unique across the document.
- * 
+ * @param {HTMLElement} articleElement
+ */
+Contents.articleName = function (articleElement) {
+    return articleElement.innerText || articleElement.textContent;
+};
+
+/**
  * @param {String} articleName
- * @param {Function} formatId
+ * @param {HTMLElement} articleElement
+ */
+Contents.articleId = function (articleName, articleElement) {
+    return articleElement.id || articleName;
+};
+
+/**
+ * Ensure that ID generated using Contents.articleId is unique across the document.
+ * 
+ * @param {String} articleId
  * @return {String}
  */
-Contents.id = function (articleName, formatId) {
+Contents.postArticleId = function (articleId) {
     var formattedId,
         assignedId,
         i = 1;
 
-    if (!formatId) {
-        formatId = Contents.formatId;
-    }
-
-    formattedId = formatId(articleName);
+    formattedId = Contents.formatId(articleId);
 
     if (!formattedId.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
         throw new Error('Invalid ID (' + formattedId + ').');
@@ -287,26 +310,29 @@ Contents.formatId = function (str) {
 };
 
 /**
- * User can overwrite this function.
- */
-Contents.extractName = function (article) {
-    return article.innerText || article.textContent;
-};
-
-/**
  * Generate an array representation of the table of contents.
  * 
- * @param 
+ * @param {Array} articles
+ * @param {Contents.articleName} articleName
+ * @param {Contents.articleId} articleId
  * @return {Array}
  */
-Contents.makeTree = function (articles) {
+Contents.makeTree = function (articles, articleName, articleId) {
     var root = {descendants: [], level: 0},
         tree = root.descendants,
         lastNode,
         findParentNode,
         findParentNodeWithLevelLower;
 
-    Contents.forEach(articles, function (article) {
+    if (!articleName) {
+        articleName = Contents.articleName;
+    }
+
+    if (!articleId) {
+        articleId = Contents.articleId;
+    }
+
+    Contents.forEach(articles, function (articleElement) {
         var node,
             parent;
 
@@ -314,12 +340,12 @@ Contents.makeTree = function (articles) {
             level: null,
             id: null,
             name: null,
-            article: article
+            element: articleElement
         };
 
-        node.level = Contents.level(article);
-        node.name = Contents.extractName(article);
-        node.id = Contents.id(node.name);
+        node.level = Contents.level(articleElement);
+        node.name = articleName(articleElement);
+        node.id = Contents.postArticleId(articleId(node.name, articleElement));
         node.descendants = [];
 
         if (!lastNode) {
@@ -356,6 +382,7 @@ Contents.makeTree.findParentNode = function (node, branch) {
 
     throw new Error('Invalid tree.');
 };
+
 Contents.makeTree.findParentNodeWithLevelLower = function (node, level, root) {
     var parent = Contents.makeTree.findParentNode(node, root);
 
@@ -396,27 +423,27 @@ Contents.makeList = function (branch, link) {
  * It is called for each article in the index.
  * Used to represent article in the table of contents and to setup navigation.
  * 
+ * @todo wrong description
  * @param {HTMLElement} guide An element in the table of contents representing an article.
- * @param {HTMLElement} article The represented content element.
+ * @param {Object} article {level, id, name, element, descendants}
  */
 Contents.link = function (guide, article) {
     var guideLink = document.createElement('a'),
-        articleLink = document.createElement('a'),
-        articleName = article.innerText || article.textContent,
-        articleId = article.id || Contents.id(articleName);
+        articleLink = document.createElement('a');
 
-    article.id = articleId;
+    article.element.id = article.id;
 
-    articleLink.href = '#' + articleId;
+    articleLink.href = '#' + article.id;
 
-    while (article.childNodes.length) {
-        articleLink.appendChild(article.childNodes[0], articleLink);
+    while (article.element.childNodes.length) {
+        articleLink.appendChild(article.element.childNodes[0]);
     }
 
-    article.appendChild(articleLink);
+    article.element.appendChild(articleLink);
 
-    guideLink.appendChild(document.createTextNode(articleName));
-    guideLink.href = '#' + articleId;
+    guideLink.appendChild(document.createTextNode(article.name));
+    guideLink.href = '#' + article.id;
+    
     guide.insertBefore(guideLink, guide.firstChild);
 };
 
