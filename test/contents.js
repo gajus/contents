@@ -17,8 +17,11 @@ describe('contents', function () {
         });
     });
     describe('.eventEmitter()', function () {
-        it('produces an event emitter', function () {
-            expect(contents.eventEmitter().constructor.name).toBe('Sister');
+        it('defines .on()', function () {
+            expect(contents.eventEmitter().on).toBeDefined();
+        });
+        it('defines .trigger()', function () {
+            expect(contents.eventEmitter().trigger).toBeDefined();
         });
     });
 });
