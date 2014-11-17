@@ -99,6 +99,83 @@ describe('DOM dependent method', function () {
             expect(offsetIndex).toEqual([0, 100, 200]);
         });
     });
+    describe('.makeTree()', function () {
+        it('represents a flat structure', function () {
+            var tree = Contents.makeTree(document.querySelectorAll('#make_tree-flat h1')),
+                expectedTree;
+
+            expectedTree = [
+                {level: 1, id: 'a1', name: 'A1', descendants: []},
+                {level: 1, id: 'b1', name: 'B1', descendants: []},
+                {level: 1, id: 'c1', name: 'C1', descendants: []}
+            ];
+
+            expect(tree).toEqual(expectedTree);
+        });
+        it('represents an ascending hierarchy', function () {
+            var tree,
+                expectedTree,
+                a1,
+                b1,
+                c1;
+
+            tree = Contents.makeTree(document.querySelector('#make_tree-ascending_hierarchy').querySelectorAll('h1, h2, h3')),
+
+            a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
+            b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
+            c1 = {level: 3, id: 'c1', name: 'C1', descendants: []};
+
+            a1.descendants = [b1];
+            b1.descendants = [c1];
+
+            expectedTree = [a1];
+
+            expect(tree).toEqual(expectedTree);
+        });
+        it('represents a multiple children', function () {
+            var tree,
+                expectedTree,
+                a1,
+                b1,
+                b2;
+
+            tree = Contents.makeTree(document.querySelector('#make_tree-multiple_children').querySelectorAll('h1, h2, h3')),
+
+            a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
+            b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
+            b2 = {level: 2, id: 'b2', name: 'B2', descendants: []};
+
+            a1.descendants = [b1, b2];
+
+            expectedTree = [a1];
+
+            expect(tree).toEqual(expectedTree);
+        });
+        it('represents a descending hierarchy', function () {
+            var tree,
+                expectedTree,
+                a1,
+                b1,
+                c1,
+                b2,
+                a2;
+
+            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy').querySelectorAll('h1, h2, h3')),
+
+            a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
+            b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
+            c1 = {level: 3, id: 'c1', name: 'C1', descendants: []};
+            b2 = {level: 2, id: 'b2', name: 'B2', descendants: []};
+            a2 = {level: 1, id: 'a2', name: 'A2', descendants: []};
+
+            a1.descendants = [b1, b2];
+            b1.descendants = [c1];
+
+            expectedTree = [a1, a2];
+
+            expect(tree).toEqual(expectedTree);
+        });
+    });
     describe('.makeList()', function () {
         it('represents a flat structure', function () {
             var list = Contents.makeList(document.querySelectorAll('#make_list-flat p'), function () {});

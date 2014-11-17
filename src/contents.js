@@ -42,6 +42,8 @@ Contents = function Contents (config) {
 };
 
 /**
+ * Setups event listeners to reflect changes to the table of contents and user navigation.
+ * 
  * @param {HTMLElement} Table of contents root element (<ol>).
  * @param {object} config Result of contents.config.
  * @return {object} Result of contents.eventEmitter.
@@ -212,6 +214,86 @@ Contents.formatId = function (str) {
         .replace(/\-+/g, '-')
         .replace(/^\-|\-$/g, '')
         .replace(/^[^a-z]+/g, '');
+};
+
+/**
+ * Generate an array representation of the table of contents.
+ * 
+ * @return {Array}
+ */
+Contents.makeTree = function (articles) {
+    var root = {descendants: [], level: 0},
+        tree = root.descendants,
+        lastNode,
+        findParentNode,
+        findParentNodeWithLevelLower;
+
+    findParentNode = function (node, branch) {
+        var i,
+            parent;
+
+        if (branch.descendants.indexOf(node) != -1) {
+            return branch;
+        }
+
+        i = branch.descendants.length;
+
+        while (i--) {
+            if (parent = findParentNode(node, branch.descendants[i])) {
+                return parent;
+            }
+        }
+
+        throw new Error('Invalid tree.');
+    };
+
+    findParentNodeWithLevelLower = function (node, level) {
+        var parent = findParentNode(node, root);
+
+        if (parent.level < level) {
+            return parent;
+        } else {
+            return findParentNodeWithLevelLower(parent, level);
+        }
+    };
+
+    Contents.forEach(articles, function (article) {
+        var node,
+            parent;
+
+        node = {
+            level: null,
+            id: null,
+            name: null
+        };
+
+        node.level = Contents.level(article);
+        node.name = Contents.extractName(article);
+        node.id = Contents.id(node.name);
+        node.descendants = [];
+
+        if (!lastNode) {
+            tree.push(node);
+        } else if (lastNode.level === node.level) {
+            findParentNode(lastNode, root).descendants.push(node);
+        } else if (node.level > lastNode.level) {
+            lastNode.descendants.push(node);
+        } else {
+            findParentNodeWithLevelLower(lastNode, node.level).descendants.push(node);
+        }
+
+        lastNode = node;
+    });
+
+    return tree;
+};
+
+
+/**
+ * User can overwrite this function.
+ */
+Contents.extractName = function (article) {
+    return article.innerText || article.textContent;
 };
 
 /**
