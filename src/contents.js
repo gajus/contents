@@ -18,7 +18,7 @@ Contents = function Contents (config) {
 
     config = Contents.config(config);
 
-    list = Contents.makeList(config.articles);
+    list = Contents.makeList(Contents.makeTree(config.articles));
 
     Contents.forEach(list.querySelectorAll('li'), function (guide, i) {
         config.link(guide, config.articles[i]);
@@ -217,6 +217,13 @@ Contents.formatId = function (str) {
 };
 
 /**
+ * User can overwrite this function.
+ */
+Contents.extractName = function (article) {
+    return article.innerText || article.textContent;
+};
+
+/**
  * Generate an array representation of the table of contents.
  * 
  * @return {Array}
@@ -264,7 +271,8 @@ Contents.makeTree = function (articles) {
         node = {
             level: null,
             id: null,
-            name: null
+            name: null,
+            article: article
         };
 
         node.level = Contents.level(article);
@@ -288,87 +296,29 @@ Contents.makeTree = function (articles) {
     return tree;
 };
 
-
 /**
- * User can overwrite this function.
- */
-Contents.extractName = function (article) {
-    return article.innerText || article.textContent;
-};
-
-/**
- * @param {NodeList} articles
+ * @param {Array} tree
+ * @param {Function} link
  * @return {HTMLElement}
  */
-Contents.makeList = function (articles) {
-    var rootList = document.createElement('ol'),
-        list = rootList,
-        lastListInLevelIndex = [],
-        lastListInLevelOrLower,
-        lastListItem,
-        lastLevel;
+Contents.makeList = function (branch, link) {
+    var list = document.createElement('ol');
 
-    lastListInLevelOrLower = function (level) {
-        while (level > 0) {
-            if (lastListInLevelIndex[level]) {
-                return lastListInLevelIndex[level];
-            }
-            level--;
+    Contents.forEach(branch, function (article) {
+        var li = document.createElement('li');
+
+        if (link) {
+            link(li, article);
         }
-        
-        throw new Error('Invalid markup.');
-    };
 
-    Contents.forEach(articles, function (article) {
-        var level,
-            li = document.createElement('li');
-
-        level = Contents.level(article);
-        
-        lastListInLevelIndex = lastListInLevelIndex.slice(0, level + 1);
-        
-        if (!lastLevel || lastLevel === level) {
-            list.appendChild(li);
-        } else if (lastLevel < level) {
-            list = document.createElement('ol');
-            list.appendChild(li);
-            lastListItem.appendChild(list);
-        } else {
-            list = lastListInLevelOrLower(level);
-            list.appendChild(li);
+        if (article.descendants.length) {
+            li.appendChild(Contents.makeList(article.descendants, link));
         }
-        
-        lastListInLevelIndex[level] = list;
-        lastLevel = level;
-        lastListItem = li;
+
+        list.appendChild(li);
     });
 
-    return rootList;
-};
-
-/**
- * Extract element level used to construct list hierarchy, e.g. <h1> is 1, <h2> is 2.
- * When element is not a heading, use Contents.level data attribute. Default to 1.
- *
- * @param {HTMLElement} element
- * @return {Number}
- */
-Contents.level = function (element) {
-    var tagName = element.tagName.toLowerCase();
-
-    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
-        return parseInt(tagName.slice(1), 10);
-    }
-
-    if (element.dataset['gajus.contents.level'] !== undefined) {
-        return parseInt(element.dataset['gajus.contents.level'], 10);
-    }
-
-    if (jQuery && jQuery.data(element, 'gajus.contents.level') !== undefined) {
-        return jQuery.data(element, 'gajus.contents.level');
-    }
-
-    return 1;
+    return list;
 };
 
 /**
@@ -398,6 +348,31 @@ Contents.link = function (guide, article) {
     guideLink.appendChild(document.createTextNode(articleName));
     guideLink.href = '#' + articleId;
     guide.insertBefore(guideLink, guide.firstChild);
+};
+
+/**
+ * Extract element level used to construct list hierarchy, e.g. <h1> is 1, <h2> is 2.
+ * When element is not a heading, use Contents.level data attribute. Default to 1.
+ *
+ * @param {HTMLElement} element
+ * @return {Number}
+ */
+Contents.level = function (element) {
+    var tagName = element.tagName.toLowerCase();
+
+    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
+        return parseInt(tagName.slice(1), 10);
+    }
+
+    if (element.dataset['gajus.contents.level'] !== undefined) {
+        return parseInt(element.dataset['gajus.contents.level'], 10);
+    }
+
+    if (jQuery && jQuery.data(element, 'gajus.contents.level') !== undefined) {
+        return jQuery.data(element, 'gajus.contents.level');
+    }
+
+    return 1;
 };
 
 /**

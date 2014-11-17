@@ -100,6 +100,13 @@ describe('DOM dependent method', function () {
         });
     });
     describe('.makeTree()', function () {
+        var removeArticle = function (tree) {
+            tree.forEach(function (node) {
+                delete node.article;
+
+                removeArticle(node.descendants);
+            });
+        };
         it('represents a flat structure', function () {
             var tree = Contents.makeTree(document.querySelectorAll('#make_tree-flat h1')),
                 expectedTree;
@@ -110,6 +117,8 @@ describe('DOM dependent method', function () {
                 {level: 1, id: 'c1', name: 'C1', descendants: []}
             ];
 
+            removeArticle(tree);
+
             expect(tree).toEqual(expectedTree);
         });
         it('represents an ascending hierarchy', function () {
@@ -119,7 +128,7 @@ describe('DOM dependent method', function () {
                 b1,
                 c1;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-ascending_hierarchy').querySelectorAll('h1, h2, h3')),
+            tree = Contents.makeTree(document.querySelector('#make_tree-ascending_hierarchy').querySelectorAll('h1, h2, h3'));
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -130,6 +139,8 @@ describe('DOM dependent method', function () {
 
             expectedTree = [a1];
 
+            removeArticle(tree);
+
             expect(tree).toEqual(expectedTree);
         });
         it('represents a multiple children', function () {
@@ -139,7 +150,7 @@ describe('DOM dependent method', function () {
                 b1,
                 b2;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-multiple_children').querySelectorAll('h1, h2, h3')),
+            tree = Contents.makeTree(document.querySelector('#make_tree-multiple_children').querySelectorAll('h1, h2, h3'));
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -148,6 +159,8 @@ describe('DOM dependent method', function () {
             a1.descendants = [b1, b2];
 
             expectedTree = [a1];
+
+            removeArticle(tree);
 
             expect(tree).toEqual(expectedTree);
         });
@@ -160,7 +173,7 @@ describe('DOM dependent method', function () {
                 b2,
                 a2;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy').querySelectorAll('h1, h2, h3')),
+            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy').querySelectorAll('h1, h2, h3'));
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -173,24 +186,93 @@ describe('DOM dependent method', function () {
 
             expectedTree = [a1, a2];
 
+            removeArticle(tree);
+
+            expect(tree).toEqual(expectedTree);
+        });
+        it('represents a descending hierarchy with gaps', function () {
+            var tree,
+                expectedTree,
+                a1,
+                b1,
+                c1,
+                b2,
+                a2;
+
+            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy_with_gaps').querySelectorAll('h1, h2, h3'));
+
+            a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
+            b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
+            c1 = {level: 3, id: 'c1', name: 'C1', descendants: []};
+            a2 = {level: 1, id: 'a2', name: 'A2', descendants: []};
+
+            a1.descendants = [b1];
+            b1.descendants = [c1];
+
+            expectedTree = [a1, a2];
+
+            removeArticle(tree);
+
             expect(tree).toEqual(expectedTree);
         });
     });
     describe('.makeList()', function () {
         it('represents a flat structure', function () {
-            var list = Contents.makeList(document.querySelectorAll('#make_list-flat p'), function () {});
+            var tree,
+                list;
 
-            expect(list.outerHTML).toEqual('<ol><li></li><li></li><li></li></ol>');
+            tree = Contents.makeTree(document.querySelectorAll('#make_tree-flat h1'));
+            list = Contents.makeList(tree, function (listElement, article) {
+                listElement.innerHTML = article.name;
+            });
+
+            expect(list.outerHTML).toEqual('<ol><li>A1</li><li>B1</li><li>C1</li></ol>');
         });
-        it('represents an increasing hierarchy', function () {
-            var list = Contents.makeList($('#make_list-increasing_hierarchy').find('h1, h2, h3').get(), function () {});
+        it('represents an ascending hierarchy', function () {
+            var tree,
+                list;
 
-            expect(list.outerHTML).toEqual('<ol><li><ol><li><ol><li></li></ol></li></ol></li></ol>');
+            tree = Contents.makeTree(document.querySelector('#make_tree-ascending_hierarchy').querySelectorAll('h1, h2, h3'));
+            list = Contents.makeList(tree, function (listElement, article) {
+                listElement.innerHTML = article.name;
+            });
+
+            expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1<ol><li>C1</li></ol></li></ol></li></ol>');
         });
-        it('represents a decreasing hierarchy', function () {
-            var list = Contents.makeList($('#make_list-decreasing_hierarchy').find('h1, h2, h3').get(), function () {});
+        it('represents a multiple children', function () {
+            var tree,
+                list;
 
-            expect(list.outerHTML).toEqual('<ol><li><ol><li><ol><li></li></ol></li><li></li></ol></li></ol>');
+            tree = Contents.makeTree(document.querySelector('#make_tree-multiple_children').querySelectorAll('h1, h2, h3'));
+            list = Contents.makeList(tree, function (listElement, article) {
+                listElement.innerHTML = article.name;
+            });
+
+            expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1</li><li>B2</li></ol></li></ol>');
+        });
+        it('represents a descending hierarchy', function () {
+            var tree,
+                list;
+
+            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy').querySelectorAll('h1, h2, h3'));
+
+            list = Contents.makeList(tree, function (listElement, article) {
+                listElement.innerHTML = article.name;
+            });
+
+            expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1<ol><li>C1</li></ol></li><li>B2</li></ol></li><li>A2</li></ol>');
+        });
+        it('represents a descending hierarchy with gaps', function () {
+            var tree,
+                expectedTree;
+
+            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy_with_gaps').querySelectorAll('h1, h2, h3'));
+
+            list = Contents.makeList(tree, function (listElement, article) {
+                listElement.innerHTML = article.name;
+            });
+
+            expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1<ol><li>C1</li></ol></li></ol></li><li>A2</li></ol>');
         });
     });
 });
