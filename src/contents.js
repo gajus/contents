@@ -226,6 +226,7 @@ Contents.extractName = function (article) {
 /**
  * Generate an array representation of the table of contents.
  * 
+ * @param 
  * @return {Array}
  */
 Contents.makeTree = function (articles) {
@@ -234,35 +235,6 @@ Contents.makeTree = function (articles) {
         lastNode,
         findParentNode,
         findParentNodeWithLevelLower;
-
-    findParentNode = function (node, branch) {
-        var i,
-            parent;
-
-        if (branch.descendants.indexOf(node) != -1) {
-            return branch;
-        }
-
-        i = branch.descendants.length;
-
-        while (i--) {
-            if (parent = findParentNode(node, branch.descendants[i])) {
-                return parent;
-            }
-        }
-
-        throw new Error('Invalid tree.');
-    };
-
-    findParentNodeWithLevelLower = function (node, level) {
-        var parent = findParentNode(node, root);
-
-        if (parent.level < level) {
-            return parent;
-        } else {
-            return findParentNodeWithLevelLower(parent, level);
-        }
-    };
 
     Contents.forEach(articles, function (article) {
         var node,
@@ -283,17 +255,45 @@ Contents.makeTree = function (articles) {
         if (!lastNode) {
             tree.push(node);
         } else if (lastNode.level === node.level) {
-            findParentNode(lastNode, root).descendants.push(node);
+            Contents.makeTree.findParentNode(lastNode, root).descendants.push(node);
         } else if (node.level > lastNode.level) {
             lastNode.descendants.push(node);
         } else {
-            findParentNodeWithLevelLower(lastNode, node.level).descendants.push(node);
+            Contents.makeTree.findParentNodeWithLevelLower(lastNode, node.level, root).descendants.push(node);
         }
 
         lastNode = node;
     });
 
     return tree;
+};
+
+Contents.makeTree.findParentNode = function (node, branch) {
+    var i,
+        parent;
+
+    if (branch.descendants.indexOf(node) != -1) {
+        return branch;
+    }
+
+    i = branch.descendants.length;
+
+    while (i--) {
+        if (parent = Contents.makeTree.findParentNode(node, branch.descendants[i])) {
+            return parent;
+        }
+    }
+
+    throw new Error('Invalid tree.');
+};
+Contents.makeTree.findParentNodeWithLevelLower = function (node, level, root) {
+    var parent = Contents.makeTree.findParentNode(node, root);
+
+    if (parent.level < level) {
+        return parent;
+    } else {
+        return Contents.makeTree.findParentNodeWithLevelLower(parent, level, root);
+    }
 };
 
 /**
