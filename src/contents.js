@@ -14,6 +14,8 @@ Contents = function Contents (config) {
         return new Contents(config);
     }
 
+    contents = this;
+
     config = Contents.config(config);
 
     list = Contents.makeList(config.articles);
@@ -21,8 +23,6 @@ Contents = function Contents (config) {
     Contents.forEach(list.querySelectorAll('li'), function (guide, i) {
         config.link(guide, config.articles[i]);
     });
-
-    config.contents.appendChild(list);
 
     eventEmitter = Contents.bind(list, config);
 
@@ -129,7 +129,7 @@ Contents.windowScrollY = function () {
  * @return {Object}
  */
 Contents.config = function (config) {
-    var properties = ['contents', 'articles', 'link'];
+    var properties = ['articles', 'link'];
 
     config = config || {};
 
@@ -139,12 +139,6 @@ Contents.config = function (config) {
         }
     });
 
-    if (!config.contents) {
-        throw new Error('Option "contents" is not set.');
-    } else if (!(config.contents instanceof HTMLElement)) {
-        throw new Error('Option "contents" is not an HTMLElement object.');
-    }
-    
     if (config.articles) {
         if (!config.articles.length || !(config.articles[0] instanceof HTMLElement)) {
             throw new Error('Option "articles" is not a collection of HTMLElement objects.');
@@ -184,7 +178,7 @@ Contents.id = function (articleName, formatId) {
     formattedId = formatId(articleName);
 
     if (!formattedId.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
-        throw new Error('Invalid ID.');
+        throw new Error('Invalid ID (' + formattedId + ').');
     }
 
     assignedId = formattedId;

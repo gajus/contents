@@ -2,40 +2,38 @@
 
 ### Quick Start
 
-Generate a table of contents:
-
 ```js
 var Contents,
-    contents;
+    contents,
+    newHeading;
 
 Contents = require('contents');
 
 // If you are using ./dist/ version, then Contents is available under "gajus" global property, i.e.
 // Contents = gajus.Contents;
 
-contents = Contents({
-    // The container element for the table of contents.
-    contents: document.querySelector('#contents')
-    // If you are using jQuery:
-    // contents: $('#contents')[0]
+contents = Contents();
+
+// Append the generated list element (table of contents) to the container.
+document.querySelector('#your-table-of-contents-container').appendChild(contents.list());
+
+// Attach event listeners:
+contents.eventEmitter().on('change', function () {
+    console.log('User has navigated to a new section of the page.');
 });
+
+// The rest of the code illustrates firing "resize" event after you have
+// added new content after generating the table of contents.
+newHeading = document.createElement('h2');
+hewHeading.innerHTML = 'Dynamically generated title';
+
+document.body.appendChild(newHeading);
+
+// Firing the "resize" event will regenerate the table of contents.
+contents.eventEmitter().trigger('resize');
 ```
 
-The above will generate a table of contents for all of the headings in the document. Table of contents is an ordered list element; it will be appended to `#contents` container.
-
-An instance of Contents exposes methods:
-
-```js
-/**
- * @return {HTMLElement} Ordered list element representation of the table of contents.
- */
-contents.list();
-
-/**
- * @return {Sister} Event emitter used to attach event listeners and trigger events.
- */
-contents.eventEmitter();
-```
+This example generates a table of contents for all of the headings in the document. Table of contents is an ordered list element. This element is then appended to an arbitrary container element (optional).
 
 ### Examples
 

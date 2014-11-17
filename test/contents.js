@@ -1,6 +1,26 @@
 var Contents = gajus.Contents;
-describe('Contents', function () {
+describe('contents', function () {
+    var contents;
+    beforeEach(function () {
+        $('body').html($.parseHTML(__html__['test/fixture/page.html']));
 
+        contents = Contents({
+            articles: document.querySelectorAll('#constructor h1')
+        });
+    });
+    it('produces an instance of Contents', function () {
+        expect(contents instanceof Contents).toBe(true);
+    });
+    describe('.list()', function () {
+        it('produces a HTMLElement', function () {
+            expect(contents.list() instanceof HTMLElement).toBe(true);
+        });
+    });
+    describe('.eventEmitter()', function () {
+        it('produces an event emitter', function () {
+            expect(contents.eventEmitter().constructor.name).toBe('Sister');
+        });
+    });
 });
 describe('DOM dependent method', function () {
     beforeEach(function () {
@@ -13,7 +33,7 @@ describe('DOM dependent method', function () {
         it('throws an error if formattedId is invalid', function () {
             expect(function () {
                 expect(Contents.id('', function () { return '-ok'; }));
-            }).toThrowError('Invalid ID.');
+            }).toThrowError('Invalid ID (-ok).');
         });
         it('derives a unique ID', function () {
             expect(Contents.id('id-not-unique')).toEqual('id-not-unique-1');
@@ -138,16 +158,14 @@ describe('DOM independent method', function () {
         });
     });
 });
-describe('Contents.config()', function () {
+describe('.config()', function () {
     var configFactory;
     beforeEach(function () {
         $('body').html($.parseHTML(__html__['test/fixture/page.html']));
     });
     configFactory = function (overwrite) {
         var config;
-        config = $.extend({
-            contents: $('#config .contents')[0]
-        }, overwrite);
+        config = $.extend({}, overwrite);
         return function () {
             return Contents.config(config);
         };
@@ -155,16 +173,6 @@ describe('Contents.config()', function () {
     it('throws an error if an unknown property is provided', function () {
         expect(configFactory({unknown: null}))
             .toThrowError('Unknown configuration property.');
-    });
-    describe('setting config.contents', function () {
-        it('throws an error if it is not set', function () {
-            expect(configFactory({contents: null}))
-                .toThrowError('Option "contents" is not set.');
-        });
-        it('throws an error if it is not an HTMLElement object', function () {
-            expect(configFactory({contents: {}}))
-                .toThrowError('Option "contents" is not an HTMLElement object.');
-        });
     });
     describe('setting config.articles', function () {
         it('throws an error if it is not a collection of HTMLElement objects.', function () {
@@ -177,7 +185,7 @@ describe('Contents.config()', function () {
             expect(configFactory({link: 'not a function'}))
                 .toThrowError('Option "link" must be a function.');
         });
-        it('defaults to gajus.contents.link', function () {
+        it('defaults to Contents.link', function () {
             expect(configFactory()().link).toEqual(Contents.link);
         });
     });
