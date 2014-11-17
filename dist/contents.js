@@ -62,27 +62,41 @@ var Sister = require('sister'),
 
 /**
  * @param {object} config
- * @return {object}
+ * @return {Contents}
  */
-Contents = function (config) {
-    var list,
-        emitter;
+Contents = function Contents (config) {
+    var contents,
+        list,
+        eventEmitter;
 
-    config = contents.config(config);
+    if (!(this instanceof Contents)) {
+        return new Contents(config);
+    }
 
-    list = contents.makeList(config.articles);
+    config = Contents.config(config);
 
-    contents.forEach(list.querySelectorAll('li'), function (guide, i) {
+    list = Contents.makeList(config.articles);
+
+    Contents.forEach(list.querySelectorAll('li'), function (guide, i) {
         config.link(guide, config.articles[i]);
     });
 
     config.contents.appendChild(list);
 
-    emitter = contents.bind(list, config);
+    eventEmitter = Contents.bind(list, config);
 
-    return {
-        list: list,
-        eventEmitter: emitter
+    /**
+     * @return {HTMLElement} Ordered list element representation of the table of contents.
+     */
+    contents.list = function () {
+        return list;
+    };
+
+    /**
+     * @return {Sister} Event emitter used to attach event listeners and trigger events.
+     */
+    contents.eventEmitter = function () {
+        return eventEmitter;
     };
 };
 
@@ -112,7 +126,7 @@ Contents.bind = function (list, config) {
         var articleIndex,
             changeEvent;
 
-        articleIndex = contents.getIndexOfClosestValue(Contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
+        articleIndex = Contents.getIndexOfClosestValue(Contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
 
         if (articleIndex !== lastArticleIndex) {
             changeEvent = {};
@@ -288,11 +302,11 @@ Contents.makeList = function (articles) {
         throw new Error('Invalid markup.');
     };
 
-    contents.forEach(articles, function (article) {
+    Contents.forEach(articles, function (article) {
         var level,
             li = document.createElement('li');
 
-        level = contents.level(article);
+        level = Contents.level(article);
         
         lastListInLevelIndex = lastListInLevelIndex.slice(0, level + 1);
         
@@ -317,7 +331,7 @@ Contents.makeList = function (articles) {
 
 /**
  * Extract element level used to construct list hierarchy, e.g. <h1> is 1, <h2> is 2.
- * When element is not a heading, use contents.level data attribute. Default to 1.
+ * When element is not a heading, use Contents.level data attribute. Default to 1.
  *
  * @param {HTMLElement} element
  * @return {Number}
@@ -352,7 +366,7 @@ Contents.link = function (guide, article) {
     var guideLink = document.createElement('a'),
         articleLink = document.createElement('a'),
         articleName = article.innerText || article.textContent,
-        articleId = article.id || contents.id(articleName);
+        articleId = article.id || Contents.id(articleName);
 
     article.id = articleId;
 

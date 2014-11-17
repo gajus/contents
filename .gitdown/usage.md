@@ -5,14 +5,15 @@
 Generate a table of contents:
 
 ```js
-var Contents;
+var Contents,
+    contents;
 
 Contents = require('contents');
 
 // If you are using ./dist/ version, then Contents is available under "gajus" global property, i.e.
 // Contents = gajus.Contents;
 
-Contents({
+contents = Contents({
     // The container element for the table of contents.
     contents: document.querySelector('#contents')
     // If you are using jQuery:
@@ -22,10 +23,19 @@ Contents({
 
 The above will generate a table of contents for all of the headings in the document. Table of contents is an ordered list element; it will be appended to `#contents` container.
 
-The result of the `Contents()` is an object with properties:
+An instance of Contents exposes methods:
 
-* `list` the generated `<ol>` element. See [Markup](#markup).
-* `eventEmitter`. See [Events](#events).
+```js
+/**
+ * @return {HTMLElement} Ordered list element representation of the table of contents.
+ */
+contents.list();
+
+/**
+ * @return {Sister} Event emitter used to attach event listeners and trigger events.
+ */
+contents.eventEmitter();
+```
 
 ### Examples
 

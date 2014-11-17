@@ -8,6 +8,9 @@ module.exports = function(config) {
             'test/*.js',
             'test/fixture/*.html'
         ],
+        exclude: [
+            'dist/contents.min.js'
+        ],
         preprocessors: {
             'test/fixture/*.html': ['html2js']
         },
