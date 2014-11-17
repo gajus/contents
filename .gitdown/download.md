@@ -1,5 +1,13 @@
 ## Download
 
+Using [NPM](https://www.npmjs.org/):
+
+```sh
+npm install contents
+```
+
+## Download
+
 Using [Bower](http://bower.io/):
 
 ```sh

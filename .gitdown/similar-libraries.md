@@ -7,7 +7,7 @@
 | Forward and back button support | ✓ | - | ✓ |
 | [Events](#events) | ✓ | - | - |
 | [Efficient `scroll` event](#window-resize-and-scroll-event-handling) | ✓ | ✓ | - |
-| [Reflect window resize](#window-resize-and-scroll-event-handling) | ✓ | - | ✓ |
+| [Reflect `window` resize](#window-resize-and-scroll-event-handling) | ✓ | - | ✓ |
 | Overwrite markup and navigation | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
 | [Required 3rd party libraries](#required-3rd-party-libraries) | - | jQuery | jQuery, jQueryUI |
