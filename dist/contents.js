@@ -77,7 +77,6 @@ var Sister = require('sister'),
  */
 Contents = function Contents (config) {
     var contents,
-        tree,
         list,
         eventEmitter;
 
@@ -89,7 +88,7 @@ Contents = function Contents (config) {
 
     config = Contents.config(config);
 
-    tree = Contents.makeTree(config.articles, config.articleName, config.articleId);
+    tree = Contents.makeTree(config.articles, config.articleName, config.articleId)
     list = Contents.makeList(tree, config.link);
 
     eventEmitter = Contents.bind(list, config);
@@ -99,6 +98,13 @@ Contents = function Contents (config) {
      */
     contents.list = function () {
         return list;
+    };
+
+    /**
+     * @return {array} Array representation of the table of contents.
+     */
+    contents.tree = function () {
+        return tree;
     };
 
     /**
@@ -286,7 +292,7 @@ Contents.postArticleId = function (articleId) {
 };
 
 /**
- * Format text into an ID/anchor safe value.
+ * Formats text into an ID/anchor safe value.
  *
  * @see http://stackoverflow.com/a/1077111/368691
  * @param {String} str
@@ -310,7 +316,7 @@ Contents.formatId = function (str) {
 };
 
 /**
- * Generate an array representation of the table of contents.
+ * Generates an array representation of the table of contents.
  * 
  * @param {Array} articles
  * @param {Contents.articleName} articleName

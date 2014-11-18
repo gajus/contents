@@ -12,6 +12,8 @@ Contents = require('contents');
 // If you are using ./dist/ version, then Contents is available under "gajus" global property, i.e.
 // Contents = gajus.Contents;
 
+// This example generates a table of contents for all of the headings in the document.
+// Table of contents is an ordered list element.
 contents = Contents();
 
 // Append the generated list element (table of contents) to the container.
@@ -32,8 +34,6 @@ document.body.appendChild(newHeading);
 // Firing the "resize" event will regenerate the table of contents.
 contents.eventEmitter().trigger('resize');
 ```
-
-This example generates a table of contents for all of the headings in the document. Table of contents is an ordered list element. This element is then appended to an arbitrary container element (optional).
 
 ### Examples
 
