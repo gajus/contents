@@ -5,14 +5,14 @@ module.exports = function(config) {
         files: [
             'bower_components/jquery/dist/jquery.js',
             'dist/*',
-            'test/*.js',
-            'test/fixture/*.html'
+            'tests/*.js',
+            'tests/fixture/*.html'
         ],
         exclude: [
             'dist/contents.min.js'
         ],
         preprocessors: {
-            'test/fixture/*.html': ['html2js']
+            'tests/fixture/*.html': ['html2js']
         },
         reporters: [
             'progress'
