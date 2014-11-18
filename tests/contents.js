@@ -2,7 +2,7 @@ var Contents = gajus.Contents;
 describe('contents', function () {
     var contents;
     beforeEach(function () {
-        $('body').html($.parseHTML(__html__['test/fixture/page.html']));
+        $('body').html($.parseHTML(__html__['tests/fixture/page.html']));
 
         contents = Contents({
             articles: document.querySelectorAll('#constructor h1')
@@ -27,7 +27,7 @@ describe('contents', function () {
 });
 describe('DOM dependent method', function () {
     beforeEach(function () {
-        $('body').html($.parseHTML(__html__['test/fixture/page.html']));
+        $('body').html($.parseHTML(__html__['tests/fixture/page.html']));
     });
     describe('.portArticleId()', function () {
         it('derives a unique ID', function () {
