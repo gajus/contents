@@ -7,10 +7,9 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        gajus
-            .contents({
-                contents: document.querySelector('#contents')
-            });
+        var contents = gajus.Contents();
+
+        document.querySelector('#contents').appendChild(contents.list());
     });
     </script>
 </head>

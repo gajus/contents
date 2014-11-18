@@ -7,18 +7,15 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var contents = gajus
-            .contents({
-                contents: document.querySelector('#contents')
-            });
+        var contents = gajus.Contents();
 
-        console.log(contents.list);
+        // List element does not need to be appended to the document.
+        console.log(contents.list());
     });
     </script>
 </head>
 <body>
     <main>
-        <aside id="contents"></aside>
         <article>
             <h1>Pellentesque habitant</h1>
             

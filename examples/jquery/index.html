@@ -9,10 +9,7 @@
 
     <script>
     $(function () {
-        gajus
-            .contents({
-                contents: $('#contents')[0]
-            });
+        $('#contents').append(gajus.Contents().list());
     });
     </script>
 </head>

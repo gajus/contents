@@ -10,11 +10,11 @@
 
     <script>
     $(function () {
-        var contents = gajus
-            .contents({
-                contents: $('#contents')[0]
-            });
-        contents.eventProxy.on('ready', function () {
+        var contents = gajus.Contents();
+
+        $('#contents').append(contents.list());
+
+        contents.eventEmitter().on('ready', function () {
             $('a').smoothScroll();
         });
     });

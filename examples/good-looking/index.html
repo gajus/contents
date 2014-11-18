@@ -11,43 +11,21 @@
     <script>
     $(function () {
         var link,
-            contents;
-
-        link = function (guide, article) {
-            var guideLink,
-                anchor,
-                articleAnchor,
-                articleName,
-                articleId;
-
-            guide = $(guide);
-            article = $(article);
-
-            guideLink = $('<a>'),
-            anchor = $('<hr>'),
-            articleAnchor = article.find('h1'),
-            articleName = articleAnchor.text(),
-            articleId = gajus.contents.id(articleName);
-            
-            anchor
-                .attr('id', articleId)
-                .insertBefore(article);
-
-            guideLink
-                .text(articleName)
-                .attr('href', '#' + articleId)
-                .prependTo(guide);
-        };
+            contents,
+            eventEmitter;
 
         contents = gajus
-            .contents({
-                contents: $('aside')[0]
-            });
+            .Contents();
 
-        contents.eventProxy.on('ready', function () {
+        eventEmitter = contents.eventEmitter();
+
+        $('aside').append(contents.list());
+
+        eventEmitter.on('ready', function () {
             $('a').smoothScroll();
-        })
-        contents.eventProxy.on('change', function (data) {
+        });
+
+        eventEmitter.on('change', function (data) {
             if (data.previous) {
                 $(data.previous.guide)
                     .removeClass('active')
