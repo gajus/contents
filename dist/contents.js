@@ -1,5 +1,5 @@
 /**
- * @version 3.0.2
+ * @version 3.0.3
  * @link https://github.com/gajus/contents for the canonical source repository
  * @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
  */

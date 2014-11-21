@@ -30,16 +30,26 @@ describe('DOM dependent method', function () {
         $('body').html($.parseHTML(__html__['tests/fixture/page.html']));
     });
     describe('.uniqueID()', function () {
-        it('derives a unique ID in the context of the document', function () {
-            expect(Contents.uniqueID('id-not-unique')).toEqual('id-not-unique-1');
+        describe('when in the context of the document', function () {
+            it('does not affect a unique ID', function () {
+                expect(Contents.uniqueID('id-unique')).toEqual('id-unique');
+            });
+            it('derives a unique ID', function () {
+                expect(Contents.uniqueID('id-not-unique')).toEqual('id-not-unique-1');
+            });
         });
-        it('derives a unique ID in the context of array', function () {
-            expect(Contents.uniqueID('id-not-unique', ['id-not-unique'])).toEqual('id-not-unique-1');
-        });
-        it('updates the haystack when using array context', function () {
-            var haystack = ['id-not-unique'];
-            Contents.uniqueID('id-not-unique', haystack);
-            expect(haystack).toEqual(['id-not-unique', 'id-not-unique-1']);
+        describe('when in the context of an array', function () {
+            it('does not affect a unique ID', function () {
+                expect(Contents.uniqueID('id-unique', [])).toEqual('id-unique');
+            });
+            it('derives a unique ID', function () {
+                expect(Contents.uniqueID('id-not-unique', ['id-not-unique'])).toEqual('id-not-unique-1');
+            });
+            it('updates the haystack', function () {
+                var haystack = ['id-not-unique'];
+                Contents.uniqueID('id-not-unique', haystack);
+                expect(haystack).toEqual(['id-not-unique', 'id-not-unique-1']);
+            });
         });
     });
     describe('.level()', function () {
