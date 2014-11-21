@@ -2,7 +2,7 @@
   "name": "contents",
   "title": "Contents",
   "description": "Table of contents generator.",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "main": "src/contents.js",
   "devDependencies": {
     "del": "^0.1.2",
