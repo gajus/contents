@@ -1,5 +1,5 @@
 /**
- * @version 3.0.0
+ * @version 3.0.1
  * @link https://github.com/gajus/contents for the canonical source repository
  * @license https://github.com/gajus/contents/blob/master/LICENSE BSD 3-Clause
  */
@@ -280,14 +280,18 @@ Contents.articleId = function (articleName, element) {
  * Make element ID unique in the context of the document.
  * 
  * @param {String} id
- * @param {HTMLElement} document
+ * @Param {HTMLElement} document Document in which the tree is generated. Required for markup-contents. (https://github.com/gajus/markdown-contents)
  * @return {String}
  */
-Contents.elementUniqueID = function (id, document) {
+Contents.elementUniqueID = function (id, _document) {
     var assignedId,
         i = 1;
 
-    document = document || global.document;
+    _document = _document || global.document;
+
+    if (!_document) {
+        throw new Error('No document context.');
+    }
 
     if (!id.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
         throw new Error('Invalid ID (' + id + ').');
@@ -295,7 +299,7 @@ Contents.elementUniqueID = function (id, document) {
 
     assignedId = id;
 
-    while (document.querySelector('#' + assignedId)) {
+    while (_document.querySelector('#' + assignedId)) {
         assignedId = id + '-' + (i++);
     }
 
@@ -363,15 +367,16 @@ Contents.articles = function (elements, articleName, articleId) {
  * Makes hierarchical index of the articles from a flat index.
  * 
  * @param {Array} articles Generated using Contents.articles.
+ * @Param {HTMLElement} _document Document in which the tree is generated. Required for markup-contents. (https://github.com/gajus/markdown-contents)
  * @return {Array}
  */
-Contents.tree = function (articles) {
+Contents.tree = function (articles, _document) {
     var root = {descendants: [], level: 0},
         tree = root.descendants,
         lastNode;
 
     Contents.forEach(articles, function (article) {
-        article.id = Contents.elementUniqueID(article.id);
+        article.id = Contents.elementUniqueID(article.id, _document);
         article.descendants = [];
 
         if (!lastNode) {
