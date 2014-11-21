@@ -280,28 +280,33 @@ Contents.articleId = function (articleName, element) {
  * Make element ID unique in the context of the document.
  * 
  * @param {String} id
- * @Param {HTMLElement} document Document in which the tree is generated. Required for markup-contents. (https://github.com/gajus/markdown-contents)
+ * @param {Array} existingIDs Existing IDs in the document. Required for markup-contents. (https://github.com/gajus/markdown-contents)
  * @return {String}
  */
-Contents.elementUniqueID = function (id, _document) {
+Contents.uniqueID = function (id, existingIDs) {
     var assignedId,
         i = 1;
 
     id = Contents.formatId(id);
-    _document = _document || global.document;
 
-    if (!_document) {
-        throw new Error('No document context.');
-    }
+    if (existingIDs) {
+        assignedId = id;
 
-    if (!id.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
-        throw new Error('Invalid ID (' + id + ').');
-    }
+        while (existingIDs.indexOf(assignedId) != -1) {
+            assignedId = id + '-' + (i++);
+        }
 
-    assignedId = id;
+        existingIDs.push(assignedId);
+    } else {
+        if (!global.document) {
+            throw new Error('No document context.');
+        }
 
-    while (_document.querySelector('#' + assignedId)) {
-        assignedId = id + '-' + (i++);
+        assignedId = id;
+
+        while (global.document.querySelector('#' + assignedId)) {
+            assignedId = id + '-' + (i++);
+        }
     }
 
     return assignedId;
@@ -368,16 +373,16 @@ Contents.articles = function (elements, articleName, articleId) {
  * Makes hierarchical index of the articles from a flat index.
  * 
  * @param {Array} articles Generated using Contents.articles.
- * @Param {HTMLElement} _document Document in which the tree is generated. Required for markup-contents. (https://github.com/gajus/markdown-contents)
+ * @param {Array} existingIDs Existing IDs in the document. Required for markup-contents. (https://github.com/gajus/markdown-contents)
  * @return {Array}
  */
-Contents.tree = function (articles, _document) {
+Contents.tree = function (articles, existingIDs) {
     var root = {descendants: [], level: 0},
         tree = root.descendants,
         lastNode;
 
     Contents.forEach(articles, function (article) {
-        article.id = Contents.elementUniqueID(article.id, _document);
+        article.id = Contents.uniqueID(article.id, existingIDs);
         article.descendants = [];
 
         if (!lastNode) {

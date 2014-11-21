@@ -29,9 +29,17 @@ describe('DOM dependent method', function () {
     beforeEach(function () {
         $('body').html($.parseHTML(__html__['tests/fixture/page.html']));
     });
-    describe('.elementUniqueID()', function () {
-        it('derives a unique ID', function () {
-            expect(Contents.elementUniqueID('id-not-unique')).toEqual('id-not-unique-1');
+    describe('.uniqueID()', function () {
+        it('derives a unique ID in the context of the document', function () {
+            expect(Contents.uniqueID('id-not-unique')).toEqual('id-not-unique-1');
+        });
+        it('derives a unique ID in the context of array', function () {
+            expect(Contents.uniqueID('id-not-unique', ['id-not-unique'])).toEqual('id-not-unique-1');
+        });
+        it('updates the haystack when using array context', function () {
+            var haystack = ['id-not-unique'];
+            Contents.uniqueID('id-not-unique', haystack);
+            expect(haystack).toEqual(['id-not-unique', 'id-not-unique-1']);
         });
     });
     describe('.level()', function () {
@@ -100,9 +108,9 @@ describe('DOM dependent method', function () {
                 expectedArticles;
 
             expectedArticles = [
-                {level: 1, id: 'a1', name: 'A1'},
-                {level: 1, id: 'b1', name: 'B1'},
-                {level: 1, id: 'c1', name: 'C1'}
+                {level: 1, id: 'A1', name: 'A1'},
+                {level: 1, id: 'B1', name: 'B1'},
+                {level: 1, id: 'C1', name: 'C1'}
             ];
 
             removeElementProperty(articles);
