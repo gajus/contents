@@ -287,6 +287,7 @@ Contents.elementUniqueID = function (id, _document) {
     var assignedId,
         i = 1;
 
+    id = Contents.formatId(id);
     _document = _document || global.document;
 
     if (!_document) {
@@ -354,7 +355,7 @@ Contents.articles = function (elements, articleName, articleId) {
 
         article.level = Contents.level(element);
         article.name = articleName(element);
-        article.id = Contents.formatId(articleId(article.name, element));
+        article.id = articleId(article.name, element);
         article.element = element;
 
         articles.push(article);
