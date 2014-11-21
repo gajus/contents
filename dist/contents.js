@@ -93,8 +93,8 @@ Contents = function Contents (config) {
     config = Contents.config(config);
 
     articles = Contents.makeArticles(config.articles, config.articleName, config.articleId);
-    tree = Contents.makeTree(articles);
-    list = Contents.makeList(tree, config.link);
+    tree = Contents.tree(articles);
+    list = Contents.list(tree, config.link);
 
     Contents.bind(eventEmitter, list, config);
 
@@ -365,7 +365,7 @@ Contents.makeArticles = function (elements, articleName, articleId) {
  * @param {Array} articles Generated using Contents.makeArticles.
  * @return {Array}
  */
-Contents.makeTree = function (articles) {
+Contents.tree = function (articles) {
     var root = {descendants: [], level: 0},
         tree = root.descendants,
         lastNode;
@@ -377,11 +377,11 @@ Contents.makeTree = function (articles) {
         if (!lastNode) {
             tree.push(article);
         } else if (lastNode.level === article.level) {
-            Contents.makeTree.findParentNode(lastNode, root).descendants.push(article);
+            Contents.tree.findParentNode(lastNode, root).descendants.push(article);
         } else if (article.level > lastNode.level) {
             lastNode.descendants.push(article);
         } else {
-            Contents.makeTree.findParentNodeWithLevelLower(lastNode, article.level, root).descendants.push(article);
+            Contents.tree.findParentNodeWithLevelLower(lastNode, article.level, root).descendants.push(article);
         }
 
         lastNode = article;
@@ -396,7 +396,7 @@ Contents.makeTree = function (articles) {
  * @param {Object} needle
  * @param {Object} haystack
  */
-Contents.makeTree.findParentNode = function (needle, haystack) {
+Contents.tree.findParentNode = function (needle, haystack) {
     var i,
         parent;
 
@@ -407,7 +407,7 @@ Contents.makeTree.findParentNode = function (needle, haystack) {
     i = haystack.descendants.length;
 
     while (i--) {
-        if (parent = Contents.makeTree.findParentNode(needle, haystack.descendants[i])) {
+        if (parent = Contents.tree.findParentNode(needle, haystack.descendants[i])) {
             return parent;
         }
     }
@@ -423,24 +423,24 @@ Contents.makeTree.findParentNode = function (needle, haystack) {
  * @param {Number} level
  * @param {Object} haystack
  */
-Contents.makeTree.findParentNodeWithLevelLower = function (needle, level, haystack) {
-    var parent = Contents.makeTree.findParentNode(needle, haystack);
+Contents.tree.findParentNodeWithLevelLower = function (needle, level, haystack) {
+    var parent = Contents.tree.findParentNode(needle, haystack);
 
     if (parent.level < level) {
         return parent;
     } else {
-        return Contents.makeTree.findParentNodeWithLevelLower(parent, level, haystack);
+        return Contents.tree.findParentNodeWithLevelLower(parent, level, haystack);
     }
 };
 
 /**
- * Generate ordered list from a tree (see makeTree) object.
+ * Generate ordered list from a tree (see tree) object.
  * 
  * @param {Array} tree
  * @param {Function} link Used to customize the destination element in the list and the source element.
  * @return {HTMLElement}
  */
-Contents.makeList = function (tree, link) {
+Contents.list = function (tree, link) {
     var list = global.document.createElement('ol');
 
     Contents.forEach(tree, function (article) {
@@ -451,7 +451,7 @@ Contents.makeList = function (tree, link) {
         }
 
         if (article.descendants.length) {
-            li.appendChild(Contents.makeList(article.descendants, link));
+            li.appendChild(Contents.list(article.descendants, link));
         }
 
         list.appendChild(li);

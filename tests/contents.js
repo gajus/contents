@@ -112,7 +112,7 @@ describe('DOM dependent method', function () {
     });
 });
 describe('DOM independent method', function () {
-    describe('.makeTree()', function () {
+    describe('.tree()', function () {
         var removeElementProperty = function (tree) {
             tree.forEach(function (node) {
                 delete node.element;
@@ -131,7 +131,7 @@ describe('DOM independent method', function () {
                 {level: 1, id: 'c1', name: 'C1'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
             expectedTree = [
                 {level: 1, id: 'a1', name: 'A1', descendants: []},
@@ -157,7 +157,7 @@ describe('DOM independent method', function () {
                 {level: 3, id: 'c1', name: 'C1'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -186,7 +186,7 @@ describe('DOM independent method', function () {
                 {level: 2, id: 'b2', name: 'B2'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -218,7 +218,7 @@ describe('DOM independent method', function () {
                 {level: 1, id: 'a2', name: 'A2'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -252,7 +252,7 @@ describe('DOM independent method', function () {
                 {level: 1, id: 'a2', name: 'A2'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -269,7 +269,7 @@ describe('DOM independent method', function () {
             expect(tree).toEqual(expectedTree);
         });
     });
-    describe('.makeList()', function () {
+    describe('.list()', function () {
         it('represents a flat structure', function () {
             var articles,
                 tree,
@@ -281,8 +281,8 @@ describe('DOM independent method', function () {
                 {level: 1, id: 'c1', name: 'C1'}
             ];
 
-            tree = Contents.makeTree(articles);
-            list = Contents.makeList(tree, function (listElement, article) {
+            tree = Contents.tree(articles);
+            list = Contents.list(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
 
@@ -299,8 +299,8 @@ describe('DOM independent method', function () {
                 {level: 3, id: 'c1', name: 'C1'}
             ];
 
-            tree = Contents.makeTree(articles);
-            list = Contents.makeList(tree, function (listElement, article) {
+            tree = Contents.tree(articles);
+            list = Contents.list(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
 
@@ -317,8 +317,8 @@ describe('DOM independent method', function () {
                 {level: 2, id: 'b2', name: 'B2'}
             ];
 
-            tree = Contents.makeTree(articles);
-            list = Contents.makeList(tree, function (listElement, article) {
+            tree = Contents.tree(articles);
+            list = Contents.list(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
 
@@ -337,9 +337,9 @@ describe('DOM independent method', function () {
                 {level: 1, id: 'a2', name: 'A2'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
-            list = Contents.makeList(tree, function (listElement, article) {
+            list = Contents.list(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
 
@@ -357,9 +357,9 @@ describe('DOM independent method', function () {
                 {level: 1, id: 'a2', name: 'A2'}
             ];
 
-            tree = Contents.makeTree(articles);
+            tree = Contents.tree(articles);
 
-            list = Contents.makeList(tree, function (listElement, article) {
+            list = Contents.list(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
 
