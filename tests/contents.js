@@ -89,14 +89,14 @@ describe('DOM dependent method', function () {
             expect(offsetIndex).toEqual([0, 100, 200]);
         });
     });
-    describe('.makeArticles()', function () {
+    describe('.articles()', function () {
         var removeElementProperty = function (tree) {
             tree.forEach(function (node) {
                 delete node.element;
             });
         };
         it('represents a flat structure', function () {
-            var articles = Contents.makeArticles(document.querySelectorAll('#make_articles h1')),
+            var articles = Contents.articles(document.querySelectorAll('#make_articles h1')),
                 expectedArticles;
 
             expectedArticles = [

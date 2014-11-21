@@ -92,7 +92,7 @@ Contents = function Contents (config) {
 
     config = Contents.config(config);
 
-    articles = Contents.makeArticles(config.articles, config.articleName, config.articleId);
+    articles = Contents.articles(config.articles, config.articleName, config.articleId);
     tree = Contents.tree(articles);
     list = Contents.list(tree, config.link);
 
@@ -334,7 +334,7 @@ Contents.formatId = function (str) {
  * @param {Contents.articleId} articleId
  * @return {Array}
  */
-Contents.makeArticles = function (elements, articleName, articleId) {
+Contents.articles = function (elements, articleName, articleId) {
     var articles = [];
 
     if (!articleName) {
@@ -362,7 +362,7 @@ Contents.makeArticles = function (elements, articleName, articleId) {
 /**
  * Makes hierarchical index of the articles from a flat index.
  * 
- * @param {Array} articles Generated using Contents.makeArticles.
+ * @param {Array} articles Generated using Contents.articles.
  * @return {Array}
  */
 Contents.tree = function (articles) {
