@@ -373,16 +373,18 @@ Contents.articles = function (elements, articleName, articleId) {
  * Makes hierarchical index of the articles from a flat index.
  * 
  * @param {Array} articles Generated using Contents.articles.
- * @param {Array} existingIDs Existing IDs in the document. Required for markup-contents. (https://github.com/gajus/markdown-contents)
+ * @param {Boolean} makeUniqueIDs
  * @return {Array}
  */
-Contents.tree = function (articles, existingIDs) {
+Contents.tree = function (articles, makeUniqueIDs) {
     var root = {descendants: [], level: 0},
         tree = root.descendants,
         lastNode;
 
     Contents.forEach(articles, function (article) {
-        article.id = Contents.uniqueID(article.id, existingIDs);
+        if (makeUniqueIDs) {
+            article.id = Contents.uniqueID(article.id);
+        }
         article.descendants = [];
 
         if (!lastNode) {
