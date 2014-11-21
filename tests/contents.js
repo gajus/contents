@@ -29,9 +29,9 @@ describe('DOM dependent method', function () {
     beforeEach(function () {
         $('body').html($.parseHTML(__html__['tests/fixture/page.html']));
     });
-    describe('.portArticleId()', function () {
+    describe('.elementUniqueID()', function () {
         it('derives a unique ID', function () {
-            expect(Contents.postArticleId('id-not-unique')).toEqual('id-not-unique-1');
+            expect(Contents.elementUniqueID('id-not-unique')).toEqual('id-not-unique-1');
         });
     });
     describe('.level()', function () {
@@ -89,6 +89,29 @@ describe('DOM dependent method', function () {
             expect(offsetIndex).toEqual([0, 100, 200]);
         });
     });
+    describe('.makeArticles()', function () {
+        var removeElementProperty = function (tree) {
+            tree.forEach(function (node) {
+                delete node.element;
+            });
+        };
+        it('represents a flat structure', function () {
+            var articles = Contents.makeArticles(document.querySelectorAll('#make_articles h1')),
+                expectedArticles;
+
+            expectedArticles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 1, id: 'b1', name: 'B1'},
+                {level: 1, id: 'c1', name: 'C1'}
+            ];
+
+            removeElementProperty(articles);
+
+            expect(articles).toEqual(expectedArticles);
+        });
+    });
+});
+describe('DOM independent method', function () {
     describe('.makeTree()', function () {
         var removeElementProperty = function (tree) {
             tree.forEach(function (node) {
@@ -98,8 +121,17 @@ describe('DOM dependent method', function () {
             });
         };
         it('represents a flat structure', function () {
-            var tree = Contents.makeTree(document.querySelectorAll('#make_tree-flat h1')),
+            var articles,
+                tree,
                 expectedTree;
+
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 1, id: 'b1', name: 'B1'},
+                {level: 1, id: 'c1', name: 'C1'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             expectedTree = [
                 {level: 1, id: 'a1', name: 'A1', descendants: []},
@@ -112,13 +144,20 @@ describe('DOM dependent method', function () {
             expect(tree).toEqual(expectedTree);
         });
         it('represents an ascending hierarchy', function () {
-            var tree,
+            var articles,
+                tree,
                 expectedTree,
                 a1,
                 b1,
                 c1;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-ascending_hierarchy').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 3, id: 'c1', name: 'C1'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -134,13 +173,20 @@ describe('DOM dependent method', function () {
             expect(tree).toEqual(expectedTree);
         });
         it('represents a multiple children', function () {
-            var tree,
+            var articles,
+                tree,
                 expectedTree,
                 a1,
                 b1,
                 b2;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-multiple_children').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 2, id: 'b2', name: 'B2'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -155,7 +201,8 @@ describe('DOM dependent method', function () {
             expect(tree).toEqual(expectedTree);
         });
         it('represents a descending hierarchy', function () {
-            var tree,
+            var articles,
+                tree,
                 expectedTree,
                 a1,
                 b1,
@@ -163,7 +210,15 @@ describe('DOM dependent method', function () {
                 b2,
                 a2;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 3, id: 'c1', name: 'C1'},
+                {level: 2, id: 'b2', name: 'B2'},
+                {level: 1, id: 'a2', name: 'A2'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -181,7 +236,8 @@ describe('DOM dependent method', function () {
             expect(tree).toEqual(expectedTree);
         });
         it('represents a descending hierarchy with gaps', function () {
-            var tree,
+            var articles,
+                tree,
                 expectedTree,
                 a1,
                 b1,
@@ -189,7 +245,14 @@ describe('DOM dependent method', function () {
                 b2,
                 a2;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy_with_gaps').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 3, id: 'c1', name: 'C1'},
+                {level: 1, id: 'a2', name: 'A2'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             a1 = {level: 1, id: 'a1', name: 'A1', descendants: []};
             b1 = {level: 2, id: 'b1', name: 'B1', descendants: []};
@@ -208,10 +271,17 @@ describe('DOM dependent method', function () {
     });
     describe('.makeList()', function () {
         it('represents a flat structure', function () {
-            var tree,
+            var articles,
+                tree,
                 list;
 
-            tree = Contents.makeTree(document.querySelectorAll('#make_tree-flat h1'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 1, id: 'b1', name: 'B1'},
+                {level: 1, id: 'c1', name: 'C1'}
+            ];
+
+            tree = Contents.makeTree(articles);
             list = Contents.makeList(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
@@ -219,10 +289,17 @@ describe('DOM dependent method', function () {
             expect(list.outerHTML).toEqual('<ol><li>A1</li><li>B1</li><li>C1</li></ol>');
         });
         it('represents an ascending hierarchy', function () {
-            var tree,
+            var articles,
+                tree,
                 list;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-ascending_hierarchy').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 3, id: 'c1', name: 'C1'}
+            ];
+
+            tree = Contents.makeTree(articles);
             list = Contents.makeList(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
@@ -230,10 +307,17 @@ describe('DOM dependent method', function () {
             expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1<ol><li>C1</li></ol></li></ol></li></ol>');
         });
         it('represents a multiple children', function () {
-            var tree,
+            var articles,
+                tree,
                 list;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-multiple_children').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 2, id: 'b2', name: 'B2'}
+            ];
+
+            tree = Contents.makeTree(articles);
             list = Contents.makeList(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
             });
@@ -241,10 +325,19 @@ describe('DOM dependent method', function () {
             expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1</li><li>B2</li></ol></li></ol>');
         });
         it('represents a descending hierarchy', function () {
-            var tree,
+            var articles,
+                tree,
                 list;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 3, id: 'c1', name: 'C1'},
+                {level: 2, id: 'b2', name: 'B2'},
+                {level: 1, id: 'a2', name: 'A2'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             list = Contents.makeList(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
@@ -253,10 +346,18 @@ describe('DOM dependent method', function () {
             expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1<ol><li>C1</li></ol></li><li>B2</li></ol></li><li>A2</li></ol>');
         });
         it('represents a descending hierarchy with gaps', function () {
-            var tree,
+            var articles,
+                tree,
                 expectedTree;
 
-            tree = Contents.makeTree(document.querySelector('#make_tree-descending_hierarchy_with_gaps').querySelectorAll('h1, h2, h3'));
+            articles = [
+                {level: 1, id: 'a1', name: 'A1'},
+                {level: 2, id: 'b1', name: 'B1'},
+                {level: 3, id: 'c1', name: 'C1'},
+                {level: 1, id: 'a2', name: 'A2'}
+            ];
+
+            tree = Contents.makeTree(articles);
 
             list = Contents.makeList(tree, function (listElement, article) {
                 listElement.innerHTML = article.name;
@@ -265,8 +366,6 @@ describe('DOM dependent method', function () {
             expect(list.outerHTML).toEqual('<ol><li>A1<ol><li>B1<ol><li>C1</li></ol></li></ol></li><li>A2</li></ol>');
         });
     });
-});
-describe('DOM independent method', function () {
     describe('.getIndexOfClosestValue()', function () {
         it('throws an error when the haystack is empty', function () {
             expect(function () {

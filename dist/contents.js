@@ -77,6 +77,7 @@ var Sister = require('sister'),
  */
 Contents = function Contents (config) {
     var contents,
+        articles,
         tree,
         list,
         eventEmitter;
@@ -91,7 +92,8 @@ Contents = function Contents (config) {
 
     config = Contents.config(config);
 
-    tree = Contents.makeTree(config.articles, config.articleName, config.articleId)
+    articles = Contents.makeArticles(config.articles, config.articleName, config.articleId);
+    tree = Contents.makeTree(articles);
     list = Contents.makeList(tree, config.link);
 
     Contents.bind(eventEmitter, list, config);
@@ -122,7 +124,7 @@ Contents = function Contents (config) {
  * Setups event listeners to reflect changes to the table of contents and user navigation.
  * 
  * @param {Sister} eventEmitter
- * @param {HTMLElement} Table of contents root element (<ol>).
+ * @param {HTMLElement} list Table of contents root element (<ol>).
  * @param {object} config Result of contents.config.
  * @return {object} Result of contents.eventEmitter.
  */
@@ -252,43 +254,49 @@ Contents.config = function (config) {
 };
 
 /**
- * @param {HTMLElement} articleElement
+ * Derive article name.
+ *
+ * This method can be overwritten using config.articleName.
+ * 
+ * @param {HTMLElement} element
  */
-Contents.articleName = function (articleElement) {
-    return articleElement.innerText || articleElement.textContent;
+Contents.articleName = function (element) {
+    return element.innerText || element.textContent;
 };
 
 /**
+ * Derive article ID.
+ *
+ * This method can be overwritten using config.articleId.
+ * 
  * @param {String} articleName
- * @param {HTMLElement} articleElement
+ * @param {HTMLElement} element
  */
-Contents.articleId = function (articleName, articleElement) {
-    return articleElement.id || articleName;
+Contents.articleId = function (articleName, element) {
+    return element.id || articleName;
 };
 
 /**
- * Ensure that element ID is unique.
+ * Make element ID unique in the context of the document.
  * 
  * @param {String} id
+ * @param {HTMLElement} document
  * @return {String}
  */
-Contents.elementUniqueID = function (id) {
-    var formattedId,
-        assignedId,
+Contents.elementUniqueID = function (id, document) {
+    var assignedId,
         i = 1;
 
-    //doc = doc || global.document;
+    document = document || global.document;
 
-    formattedId = Contents.formatId(id);
-
-    if (!formattedId.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
-        throw new Error('Invalid ID (' + formattedId + ').');
+    if (!id.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
+        throw new Error('Invalid ID (' + id + ').');
     }
 
-    assignedId = formattedId;
+    assignedId = id;
 
-    while (doc.querySelector('#' + assignedId)) {
-        assignedId = formattedId + '-' + (i++);
+    while (document.querySelector('#' + assignedId)) {
+        assignedId = id + '-' + (i++);
     }
 
     return assignedId;
@@ -341,8 +349,8 @@ Contents.makeArticles = function (elements, articleName, articleId) {
         var article = {};
 
         article.level = Contents.level(element);
-        article.name = articleName(articleElement);
-        article.id = articleId(article.name, articleElement);
+        article.name = articleName(element);
+        article.id = Contents.formatId(articleId(article.name, element));
         article.element = element;
 
         articles.push(article);
@@ -363,7 +371,7 @@ Contents.makeTree = function (articles) {
         lastNode;
 
     Contents.forEach(articles, function (article) {
-        article.id = Contents.postArticleId(article.id);
+        article.id = Contents.elementUniqueID(article.id);
         article.descendants = [];
 
         if (!lastNode) {
@@ -393,7 +401,7 @@ Contents.makeTree.findParentNode = function (needle, haystack) {
         parent;
 
     if (haystack.descendants.indexOf(needle) != -1) {
-        return branch;
+        return haystack;
     }
 
     i = haystack.descendants.length;
