@@ -7,6 +7,7 @@ var Sister = require('sister'),
  */
 Contents = function Contents (config) {
     var contents,
+        tree,
         list,
         eventEmitter;
 
@@ -16,12 +17,14 @@ Contents = function Contents (config) {
 
     contents = this;
 
+    eventEmitter = Sister();
+
     config = Contents.config(config);
 
     tree = Contents.makeTree(config.articles, config.articleName, config.articleId)
     list = Contents.makeList(tree, config.link);
 
-    eventEmitter = Contents.bind(list, config);
+    Contents.bind(eventEmitter, list, config);
 
     /**
      * @return {HTMLElement} Ordered list element representation of the table of contents.
@@ -48,13 +51,13 @@ Contents = function Contents (config) {
 /**
  * Setups event listeners to reflect changes to the table of contents and user navigation.
  * 
+ * @param {Sister} eventEmitter
  * @param {HTMLElement} Table of contents root element (<ol>).
  * @param {object} config Result of contents.config.
  * @return {object} Result of contents.eventEmitter.
  */
-Contents.bind = function (list, config) {
-    var emitter = Sister(),
-        windowHeight,
+Contents.bind = function (eventEmitter, list, config) {
+    var windowHeight,
         /**
          * @var {Array}
          */
@@ -62,14 +65,14 @@ Contents.bind = function (list, config) {
         lastArticleIndex,
         guides = list.querySelectorAll('li');
 
-    emitter.on('resize', function () {
+    eventEmitter.on('resize', function () {
         windowHeight = Contents.windowHeight();
         articleOffsetIndex = Contents.indexOffset(config.articles);
 
-        emitter.trigger('scroll');
+        eventEmitter.trigger('scroll');
     });
 
-    emitter.on('scroll', function () {
+    eventEmitter.on('scroll', function () {
         var articleIndex,
             changeEvent;
 
@@ -90,7 +93,7 @@ Contents.bind = function (list, config) {
                 };
             }
 
-            emitter.trigger('change', changeEvent);
+            eventEmitter.trigger('change', changeEvent);
 
             lastArticleIndex = articleIndex;
         }
@@ -99,19 +102,17 @@ Contents.bind = function (list, config) {
     // This allows the script that constructs Contents
     // to catch the first ready, resize and scroll events.
     setTimeout(function () {
-        emitter.trigger('resize');
-        emitter.trigger('ready');
+        eventEmitter.trigger('resize');
+        eventEmitter.trigger('ready');
 
         global.addEventListener('resize', Contents.throttle(function () {
-            emitter.trigger('resize');
+            eventEmitter.trigger('resize');
         }, 100));
 
         global.addEventListener('scroll', Contents.throttle(function () {
-            emitter.trigger('scroll');
+            eventEmitter.trigger('scroll');
         }, 100));
     }, 10);
-
-    return emitter;
 };
 
 /**
@@ -150,7 +151,7 @@ Contents.config = function (config) {
             throw new Error('Option "articles" is not a collection of HTMLElement objects.');
         }
     } else {
-        config.articles = document.querySelectorAll('h1, h2, h3, h4, h5, h6');        
+        config.articles = global.document.querySelectorAll('h1, h2, h3, h4, h5, h6');        
     }
 
     if (config.articleName) {
@@ -196,17 +197,19 @@ Contents.articleId = function (articleName, articleElement) {
 };
 
 /**
- * Ensure that ID generated using Contents.articleId is unique across the document.
+ * Ensure that element ID is unique.
  * 
- * @param {String} articleId
+ * @param {String} id
  * @return {String}
  */
-Contents.postArticleId = function (articleId) {
+Contents.elementUniqueID = function (id) {
     var formattedId,
         assignedId,
         i = 1;
 
-    formattedId = Contents.formatId(articleId);
+    //doc = doc || global.document;
+
+    formattedId = Contents.formatId(id);
 
     if (!formattedId.match(/^[a-z]+[a-z0-9\-_:\.]*$/)) {
         throw new Error('Invalid ID (' + formattedId + ').');
@@ -214,7 +217,7 @@ Contents.postArticleId = function (articleId) {
 
     assignedId = formattedId;
 
-    while (document.querySelector('#' + assignedId)) {
+    while (doc.querySelector('#' + assignedId)) {
         assignedId = formattedId + '-' + (i++);
     }
 
@@ -246,19 +249,15 @@ Contents.formatId = function (str) {
 };
 
 /**
- * Generates an array representation of the table of contents.
- * 
- * @param {Array} articles
+ * Generate flat index of the articles.
+ *
+ * @param {Array} NodeList
  * @param {Contents.articleName} articleName
  * @param {Contents.articleId} articleId
  * @return {Array}
  */
-Contents.makeTree = function (articles, articleName, articleId) {
-    var root = {descendants: [], level: 0},
-        tree = root.descendants,
-        lastNode,
-        findParentNode,
-        findParentNodeWithLevelLower;
+Contents.makeArticles = function (elements, articleName, articleId) {
+    var articles = [];
 
     if (!articleName) {
         articleName = Contents.articleName;
@@ -268,50 +267,69 @@ Contents.makeTree = function (articles, articleName, articleId) {
         articleId = Contents.articleId;
     }
 
-    Contents.forEach(articles, function (articleElement) {
-        var node,
-            parent;
+    Contents.forEach(elements, function (element) {
+        var article = {};
 
-        node = {
-            level: null,
-            id: null,
-            name: null,
-            element: articleElement
-        };
+        article.level = Contents.level(element);
+        article.name = articleName(articleElement);
+        article.id = articleId(article.name, articleElement);
+        article.element = element;
 
-        node.level = Contents.level(articleElement);
-        node.name = articleName(articleElement);
-        node.id = Contents.postArticleId(articleId(node.name, articleElement));
-        node.descendants = [];
+        articles.push(article);
+    });
+
+    return articles;
+};
+
+/**
+ * Makes hierarchical index of the articles from a flat index.
+ * 
+ * @param {Array} articles Generated using Contents.makeArticles.
+ * @return {Array}
+ */
+Contents.makeTree = function (articles) {
+    var root = {descendants: [], level: 0},
+        tree = root.descendants,
+        lastNode;
+
+    Contents.forEach(articles, function (article) {
+        article.id = Contents.postArticleId(article.id);
+        article.descendants = [];
 
         if (!lastNode) {
-            tree.push(node);
-        } else if (lastNode.level === node.level) {
-            Contents.makeTree.findParentNode(lastNode, root).descendants.push(node);
-        } else if (node.level > lastNode.level) {
-            lastNode.descendants.push(node);
+            tree.push(article);
+        } else if (lastNode.level === article.level) {
+            Contents.makeTree.findParentNode(lastNode, root).descendants.push(article);
+        } else if (article.level > lastNode.level) {
+            lastNode.descendants.push(article);
         } else {
-            Contents.makeTree.findParentNodeWithLevelLower(lastNode, node.level, root).descendants.push(node);
+            Contents.makeTree.findParentNodeWithLevelLower(lastNode, article.level, root).descendants.push(article);
         }
 
-        lastNode = node;
+        lastNode = article;
     });
 
     return tree;
 };
 
-Contents.makeTree.findParentNode = function (node, branch) {
+/**
+ * Find the object whose descendant is the needle object.
+ *
+ * @param {Object} needle
+ * @param {Object} haystack
+ */
+Contents.makeTree.findParentNode = function (needle, haystack) {
     var i,
         parent;
 
-    if (branch.descendants.indexOf(node) != -1) {
+    if (haystack.descendants.indexOf(needle) != -1) {
         return branch;
     }
 
-    i = branch.descendants.length;
+    i = haystack.descendants.length;
 
     while (i--) {
-        if (parent = Contents.makeTree.findParentNode(node, branch.descendants[i])) {
+        if (parent = Contents.makeTree.findParentNode(needle, haystack.descendants[i])) {
             return parent;
         }
     }
@@ -319,26 +337,36 @@ Contents.makeTree.findParentNode = function (node, branch) {
     throw new Error('Invalid tree.');
 };
 
-Contents.makeTree.findParentNodeWithLevelLower = function (node, level, root) {
-    var parent = Contents.makeTree.findParentNode(node, root);
+/**
+ * Find the object whose descendant is the needle object.
+ * Look for parent (including parents of the found object) with level lower than level.
+ *
+ * @param {Object} needle
+ * @param {Number} level
+ * @param {Object} haystack
+ */
+Contents.makeTree.findParentNodeWithLevelLower = function (needle, level, haystack) {
+    var parent = Contents.makeTree.findParentNode(needle, haystack);
 
     if (parent.level < level) {
         return parent;
     } else {
-        return Contents.makeTree.findParentNodeWithLevelLower(parent, level, root);
+        return Contents.makeTree.findParentNodeWithLevelLower(parent, level, haystack);
     }
 };
 
 /**
+ * Generate ordered list from a tree (see makeTree) object.
+ * 
  * @param {Array} tree
- * @param {Function} link
+ * @param {Function} link Used to customize the destination element in the list and the source element.
  * @return {HTMLElement}
  */
-Contents.makeList = function (branch, link) {
-    var list = document.createElement('ol');
+Contents.makeList = function (tree, link) {
+    var list = global.document.createElement('ol');
 
-    Contents.forEach(branch, function (article) {
-        var li = document.createElement('li');
+    Contents.forEach(tree, function (article) {
+        var li = global.document.createElement('li');
 
         if (link) {
             link(li, article);
@@ -364,8 +392,8 @@ Contents.makeList = function (branch, link) {
  * @param {Object} article {level, id, name, element, descendants}
  */
 Contents.link = function (guide, article) {
-    var guideLink = document.createElement('a'),
-        articleLink = document.createElement('a');
+    var guideLink = global.document.createElement('a'),
+        articleLink = global.document.createElement('a');
 
     article.element.id = article.id;
 
@@ -377,7 +405,7 @@ Contents.link = function (guide, article) {
 
     article.element.appendChild(articleLink);
 
-    guideLink.appendChild(document.createTextNode(article.name));
+    guideLink.appendChild(global.document.createTextNode(article.name));
     guideLink.href = '#' + article.id;
     
     guide.insertBefore(guideLink, guide.firstChild);
@@ -532,7 +560,7 @@ Contents.forEach = function (collection, callback) {
     }
 };
 
-global.gajus = window.gajus || {};
+global.gajus = global.gajus || {};
 global.gajus.Contents = Contents;
 
 module.exports = Contents;
