@@ -18,8 +18,7 @@
     "karma": "^0.12.22",
     "karma-html2js-preprocessor": "^0.1.0",
     "karma-jasmine": "~0.2.2",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "sister": "^3.0.0"
+    "karma-phantomjs-launcher": "^0.1.4"
   },
   "keywords": [
     "table of contents",
@@ -30,5 +29,7 @@
     "test": "gulp travis"
   },
   "license": "BSD-3-Clause",
-  "dependencies": {}
+  "dependencies": {
+    "sister": "^3.0.0"
+  }
 }
