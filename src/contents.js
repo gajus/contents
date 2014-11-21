@@ -304,16 +304,17 @@ Contents.articles = function (elements, articleName, articleId) {
  * 
  * @param {Array} articles Generated using Contents.articles.
  * @param {Boolean} makeUniqueIDs
+ * @param {Array} uniqueIDpool
  * @return {Array}
  */
-Contents.tree = function (articles, makeUniqueIDs) {
+Contents.tree = function (articles, makeUniqueIDs, uniqueIDpool) {
     var root = {descendants: [], level: 0},
         tree = root.descendants,
         lastNode;
 
     Contents.forEach(articles, function (article) {
         if (makeUniqueIDs) {
-            article.id = Contents.uniqueID(article.id);
+            article.id = Contents.uniqueID(article.id, uniqueIDpool);
         }
         article.descendants = [];
 
