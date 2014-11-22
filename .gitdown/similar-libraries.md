@@ -12,10 +12,10 @@
 | Overwrite markup and navigation | ✓ | - | - |
 | Can have multiple on a page | ✓ | ✓ | ✓ |
 | [Required 3rd party libraries](#required-3rd-party-libraries) | - | jQuery | jQuery, jQueryUI |
-| Size | < 5.000 kb | 2.581 kb | 7.246 kb |
+| Size | < 6.000 kb | 2.581 kb | 7.246 kb |
 | GitHub Stars | 192 | 307 | 435 |
 
-Last updated: Mon Oct 20 13:27:31 2014 UTC.
+Last updated: Saturday, 22-Nov-14 08:44:41 UTC. 
 
 ### Required 3rd Party Libraries
 
