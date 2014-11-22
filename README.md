@@ -20,7 +20,6 @@ Table of contents generator.
         * [Window Resize and `scroll` Event Handling](#table-of-contents-toc-generator-similar-libraries-window-resize-and-scroll-event-handling)
 * [Table of Contents Array](#table-of-contents-array)
     * [Download](#table-of-contents-array-download)
-    * [Download](#table-of-contents-array-download)
     * [Configuration](#table-of-contents-array-configuration)
     * [Content Indexing](#table-of-contents-array-content-indexing)
         * [Hierarchy](#table-of-contents-array-content-indexing-hierarchy)
@@ -150,18 +149,11 @@ Using [NPM](https://www.npmjs.org/):
 npm install contents
 ```
 
-<h2 id="table-of-contents-array-download">Download</h2>
-
 Using [Bower](http://bower.io/):
 
 ```sh
 bower install contents
 ```
-
-The old-fashioned way, download either of the following files:
-
-* https://raw.githubusercontent.com/gajus/contents/master/dist/contents.min.js
-* https://raw.githubusercontent.com/gajus/contents/master/dist/contents.js
 <h2 id="table-of-contents-array-configuration">Configuration</h2>
 
 | Name | Type | Description |
