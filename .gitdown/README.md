@@ -12,11 +12,11 @@ Table of contents generator.
 
 {"gitdown": "contents"}
 
-{"gitdown", "include", "file": ".gitdown/usage.md"}
-{"gitdown", "include", "file": ".gitdown/similar-libraries.md"}
-{"gitdown", "include", "file": ".gitdown/download.md"}
-{"gitdown", "include", "file": ".gitdown/configuration.md"}
-{"gitdown", "include", "file": ".gitdown/content-indexing.md"}
-{"gitdown", "include", "file": ".gitdown/linking.md"}
-{"gitdown", "include", "file": ".gitdown/markup.md"}
-{"gitdown", "include", "file": ".gitdown/events.md"}
+{"gitdown": "include", "file": ".gitdown/usage.md"}
+{"gitdown": "include", "file": ".gitdown/similar-libraries.md"}
+{"gitdown": "include", "file": ".gitdown/download.md"}
+{"gitdown": "include", "file": ".gitdown/configuration.md"}
+{"gitdown": "include", "file": ".gitdown/content-indexing.md"}
+{"gitdown": "include", "file": ".gitdown/linking.md"}
+{"gitdown": "include", "file": ".gitdown/markup.md"}
+{"gitdown": "include", "file": ".gitdown/events.md"}

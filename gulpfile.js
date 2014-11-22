@@ -7,8 +7,8 @@ var karma = require('karma').server,
     browserify = require('gulp-browserify'),
     fs = require('fs'),
     del = require('del'),
-    exec = require('child_process').exec,
-    jsonfile = require('jsonfile');
+    jsonfile = require('jsonfile'),
+    GitDown = require('gitdown');
 
 gulp.task('lint', function () {
     return gulp
@@ -54,13 +54,17 @@ gulp.task('version', ['bundle'], function () {
     jsonfile.writeFileSync('./bower.json', bower);
 });
 
-gulp.task('readme', function () {
-    exec('ruby ./.readme/github_toc.rb ./.readme/README.md ./README.md', {cwd: __dirname});
+gulp.task('gitdown', function () {
+    var gitdown;
+
+    gitdown = GitDown.read('.gitdown/README.md');
+
+    return gitdown.write('README.md');
 });
 
 gulp.task('watch', function () {
     gulp.watch(['./src/*', './package.json'], ['default']);
-    gulp.watch('./.readme/README.md', ['readme']);
+    gulp.watch('./.gitdown/*', ['gitdown']);
 });
 
 gulp.task('travis', ['default'], function (cb) {
