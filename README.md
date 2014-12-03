@@ -4,8 +4,6 @@
 [![NPM version](http://img.shields.io/npm/v/contents.svg?style=flat)](https://www.npmjs.org/package/contents)
 [![Bower version](http://img.shields.io/bower/v/contents.svg?style=flat)](http://bower.io/search/?q=contents)
 
-## Hi There! Over the past few hours (Dec 4th) there have been a lot of people staring this library. Unfortunately, GitHub's analytics software doesn't tell me the origin of this trafic. Please let me know where you have learned about Contents, https://twitter.com/kuizinas. Thank you!
-
 Table of contents generator.
 
 * [Table of Contents (TOC) Generator](#table-of-contents-toc-generator)
