@@ -4,9 +4,7 @@
 [![NPM version](http://img.shields.io/npm/v/contents.svg?style=flat)](https://www.npmjs.org/package/contents)
 [![Bower version](http://img.shields.io/bower/v/contents.svg?style=flat)](http://bower.io/search/?q=contents)
 
-<!--
-[![Tweet Button](./.readme/tweet-button.png)](https://twitter.com/intent/tweet?text=%23JavaScript%20library%20to%20generate%20table%20of%20contents%20for%20a%20given%20area%20of%20content.&url=https://github.com/gajus/contents&via=kuizinas)
--->
+## Hi There! Over the past few hours (Dec 4th) there have been a lot of people staring this library. Unfortunately, GitHub's analytics software doesn't tell me the origin of this trafic. Please let me know where you have learned about Contents, https://twitter.com/kuizinas. Thank you!
 
 Table of contents generator.
 
