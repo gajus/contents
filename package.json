@@ -5,16 +5,8 @@
   "version": "3.0.4",
   "main": "src/contents.js",
   "devDependencies": {
-    "del": "^0.1.2",
     "gitdown": "^1.0.3",
     "gulp": "^3.8.7",
-    "gulp-browserify": "^0.5.0",
-    "gulp-header": "^1.0.5",
-    "gulp-jshint": "^1.8.5",
-    "gulp-rename": "^1.2.0",
-    "gulp-uglify": "^0.3.1",
-    "gulp-util": "^3.0.0",
-    "jshint-stylish": "^1.0.0",
     "jsonfile": "^2.0.0",
     "karma": "^0.12.22",
     "karma-html2js-preprocessor": "^0.1.0",
@@ -27,7 +19,7 @@
     "contents"
   ],
   "scrips": {
-    "test": "gulp travis"
+    "test": "gulp test"
   },
   "repository": {
 		"type": "git",
