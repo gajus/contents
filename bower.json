@@ -4,7 +4,6 @@
   "dependencies": {
     "jquery": ">=1"
   },
-  "version": "3.0.4",
   "name": "contents",
   "description": "Table of contents generator.",
   "keywords": [
