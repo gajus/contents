@@ -29,6 +29,10 @@
   "scrips": {
     "test": "gulp travis"
   },
+  "repository": {
+		"type": "git",
+		"url": "http://github.com/gajus/contents.git"
+	},
   "license": "BSD-3-Clause",
   "dependencies": {
     "sister": "^3.0.0"
