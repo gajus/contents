@@ -1,3 +1,7 @@
+## Introduction of ES6 in 4.0.0
+
+[Similar Libraries](#rimilar-libraries) stats have been generated in 22-Nov-14 08:44:41 UTC. Since then Contents has evolved a lot. The source code is written in ES6 and depends on `babel-core` to run. In projects that already depend on Babel and use webpack to build packages, this is not going to be a problem. Other projects need to consider the relatively heavy weight of the generated package.
+
 ## Similar Libraries
 
 | Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
@@ -61,7 +65,3 @@ Tree is a collection of nodes:
     }
 ]
 ```
-
-### Introduction of ES6 in 4.0.0
-
-[Similar Libraries](#rimilar-libraries) stats have been generated in 22-Nov-14 08:44:41 UTC. Since then Contents has evolved a lot. The source code is written in ES6 and depends on `babel-core` to run. In projects that already depend on Babel and use webpack to build packages, this is not going to be a problem. Other projects need to consider the relatively heavy weight of the generated package.
