@@ -19,6 +19,7 @@ Table of contents generator.
         * [Smooth Scrolling](#table-of-contents-toc-generator-similar-libraries-smooth-scrolling)
         * [Window Resize and `scroll` Event Handling](#table-of-contents-toc-generator-similar-libraries-window-resize-and-scroll-event-handling)
 * [Table of Contents Array](#table-of-contents-array)
+    * [Introduction of ES6 in 4.0.0](#table-of-contents-array-introduction-of-es6-in-4-0-0)
     * [Download](#table-of-contents-array-download)
     * [Configuration](#table-of-contents-array-configuration)
     * [Content Indexing](#table-of-contents-array-content-indexing)
@@ -95,7 +96,7 @@ The code for all of the examples is in the [examples](./examples/) folder.
 | Size | < 6.000 kb | 2.581 kb | 7.246 kb |
 | GitHub Stars | 192 | 307 | 435 |
 
-Last updated: Saturday, 22-Nov-14 08:44:41 UTC. 
+Last updated: Saturday, 22-Nov-14 08:44:41 UTC.
 
 <h3 id="table-of-contents-toc-generator-similar-libraries-required-3rd-party-libraries">Required 3rd Party Libraries</h3>
 
@@ -141,6 +142,11 @@ Tree is a collection of nodes:
     }
 ]
 ```
+
+<h3 id="table-of-contents-array-introduction-of-es6-in-4-0-0">Introduction of ES6 in 4.0.0</h3>
+
+[Similar Libraries](#rimilar-libraries) stats have been generated in 22-Nov-14 08:44:41 UTC. Since then Contents has evolved a lot. The source code is written in ES6 and depends on `babel-core` to run. In projects that already depend on Babel and use webpack to build packages, this is not going to be a problem. Other projects need to consider the relatively heavy weight of the generated package.
+
 <h2 id="table-of-contents-array-download">Download</h2>
 
 Using [NPM](https://www.npmjs.org/):

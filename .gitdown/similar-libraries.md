@@ -15,7 +15,7 @@
 | Size | < 6.000 kb | 2.581 kb | 7.246 kb |
 | GitHub Stars | 192 | 307 | 435 |
 
-Last updated: Saturday, 22-Nov-14 08:44:41 UTC. 
+Last updated: Saturday, 22-Nov-14 08:44:41 UTC.
 
 ### Required 3rd Party Libraries
 
@@ -61,3 +61,7 @@ Tree is a collection of nodes:
     }
 ]
 ```
+
+### Introduction of ES6 in 4.0.0
+
+[Similar Libraries](#rimilar-libraries) stats have been generated in 22-Nov-14 08:44:41 UTC. Since then Contents has evolved a lot. The source code is written in ES6 and depends on `babel-core` to run. In projects that already depend on Babel and use webpack to build packages, this is not going to be a problem. Other projects need to consider the relatively heavy weight of the generated package.
