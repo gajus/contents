@@ -5,7 +5,7 @@
 {"gitdown": "badge", "name": "bower-version"}
 
 <!--
-[![Tweet Button](./.readme/tweet-button.png)](https://twitter.com/intent/tweet?text=%23JavaScript%20library%20to%20generate%20table%20of%20contents%20for%20a%20given%20area%20of%20content.&url=https://github.com/gajus/contents&via=kuizinas)
+[![Tweet Button](./.gitdown/tweet-button.png)](https://twitter.com/intent/tweet?text=%23JavaScript%20library%20to%20generate%20table%20of%20contents%20for%20a%20given%20area%20of%20content.&url=https://github.com/gajus/contents&via=kuizinas)
 -->
 
 Table of contents generator.
