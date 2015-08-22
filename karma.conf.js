@@ -1,18 +1,34 @@
 module.exports = function(config) {
     config.set({
+        babelPreprocessor: {
+            options: {
+                sourceMap: 'inline'
+            },
+            filename: function (file) {
+                return file.originalPath.replace(/\.js$/, '.es5.js');
+            },
+            sourceFileName: function (file) {
+                return file.originalPath;
+            }
+        },
         basePath: '',
-        frameworks: ['jasmine'],
+        frameworks: [
+            'mocha',
+            'chai'
+        ],
         files: [
-            'bower_components/jquery/dist/jquery.js',
-            'dist/*',
+            'node_modules/jquery/dist/jquery.js',
+            'dist/contents.js',
             'tests/*.js',
             'tests/fixture/*.html'
         ],
-        exclude: [
-            'dist/contents.min.js'
-        ],
         preprocessors: {
-            'tests/fixture/*.html': ['html2js']
+            'tests/**/*.js': [
+                'babel'
+            ],
+            'tests/fixture/*.html': [
+                'html2js'
+            ]
         },
         reporters: [
             'progress'
@@ -20,7 +36,9 @@ module.exports = function(config) {
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        browsers: ['PhantomJS'],
+        browsers: [
+            'PhantomJS'
+        ],
         singleRun: false
     });
 };

@@ -11,10 +11,11 @@
     "toc",
     "contents"
   ],
-  "devDependencies": {
-    "jquery-smooth-scroll": "~1.5.2"
-  },
   "authors": [
-    null
+    {
+      "name": "Gajus Kuizinas",
+      "email": "gk@anuary.com",
+      "url": "http://gajus.com"
+    }
   ]
 }

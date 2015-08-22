@@ -1,27 +1,19 @@
-var karma = require('karma').server,
-    gulp = require('gulp'),
-    jshint = require('gulp-jshint'),
+var gulp = require('gulp'),
+    Server = require('karma').Server,
+    eslint = require('gulp-eslint'),
     jsonfile = require('jsonfile'),
-    Gitdown = require('gitdown');
+    gitdown = require('gitdown');
 
 gulp.task('lint', function () {
     return gulp
-        .src('./src/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'));
+        .src(['./src/**/*.js','./tests/**/*.js'])
+        .pipe(eslint())
+        .pipe(eslint.format());
 });
 
 gulp.task('version', ['lint'], function () {
-    var name = 'contents',
-        pkg = jsonfile.readFileSync('./package.json'),
+    var pkg = jsonfile.readFileSync('./package.json'),
         bower = jsonfile.readFileSync('./bower.json');
-
-    gulp
-        .src('./dist/' + name + '.js')
-        .pipe(gulp.dest('./dist/'))
-        .pipe(uglify())
-        .pipe(rename(name + '.min.js'))
-        .pipe(gulp.dest('./dist/'));
 
     bower.name = pkg.name;
     bower.description = pkg.description;
@@ -33,23 +25,27 @@ gulp.task('version', ['lint'], function () {
 });
 
 gulp.task('gitdown', function () {
-    var gitdown;
-
-    gitdown = Gitdown.read('.gitdown/README.md');
-
-    return gitdown.write('README.md');
+    return gitdown
+        .read('./.gitdown/README.md')
+        .write('./README.md');
 });
 
 gulp.task('watch', function () {
-    gulp.watch(['./src/*', './package.json'], ['default']);
-    gulp.watch('./.gitdown/*', ['gitdown']);
+    gulp.watch(['./src/**/*', './tests/**/*'], ['default']);
+    gulp.watch(['./.gitdown/**/*'], ['gitdown']);
 });
 
-gulp.task('test', ['default'], function (cb) {
-    karma.start({
+gulp.task('test', ['default'], function (done) {
+    var server;
+
+    server = new Server({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true
-    }, cb);
+    });
+
+    server.start(function () {
+        done();
+    });
 });
 
 gulp.task('default', ['version']);
