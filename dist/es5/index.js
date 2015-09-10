@@ -1,25 +1,39 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+var _arguments = arguments;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _utilJs = require('./util.js');
+
+var _utilJs2 = _interopRequireDefault(_utilJs);
+
+var _sister = require('sister');
+
+var _sister2 = _interopRequireDefault(_sister);
+
 require('babel/polyfill');
 
-import _ from './util.js';
-import Sister from 'sister';
-
-let Contents;
+var Contents = undefined;
 
 /**
  * @param {object} config
  * @return {Contents}
  */
-Contents = config => {
-    let articles,
-        contents,
-        eventEmitter,
-        instanceConfig,
-        list,
-        tree;
+Contents = function (config) {
+    var articles = undefined,
+        contents = undefined,
+        eventEmitter = undefined,
+        instanceConfig = undefined,
+        list = undefined,
+        tree = undefined;
 
     contents = {};
 
-    eventEmitter = Sister();
+    eventEmitter = (0, _sister2['default'])();
 
     instanceConfig = Contents.config(config);
 
@@ -32,21 +46,21 @@ Contents = config => {
     /**
      * @return {HTMLElement} Ordered list element representation of the table of contents.
      */
-    contents.list = () => {
+    contents.list = function () {
         return list;
     };
 
     /**
      * @return {array} Array representation of the table of contents.
      */
-    contents.tree = () => {
+    contents.tree = function () {
         return tree;
     };
 
     /**
      * @return {Sister} Event emitter used to attach event listeners and trigger events.
      */
-    contents.eventEmitter = () => {
+    contents.eventEmitter = function () {
         return eventEmitter;
     };
 
@@ -61,26 +75,26 @@ Contents = config => {
  * @param {object} config Result of contents.config.
  * @return {object} Result of contents.eventEmitter.
  */
-Contents.bind = (eventEmitter, list, config) => {
-    let articleOffsetIndex,
-        guides,
-        lastArticleIndex,
-        windowHeight;
+Contents.bind = function (eventEmitter, list, config) {
+    var articleOffsetIndex = undefined,
+        guides = undefined,
+        lastArticleIndex = undefined,
+        windowHeight = undefined;
 
     lastArticleIndex = null;
 
     guides = list.querySelectorAll('li');
 
-    eventEmitter.on('resize', () => {
+    eventEmitter.on('resize', function () {
         windowHeight = Contents.windowHeight();
         articleOffsetIndex = Contents.indexOffset(config.articles);
 
         eventEmitter.trigger('scroll');
     });
 
-    eventEmitter.on('scroll', () => {
-        let articleIndex,
-            changeEvent;
+    eventEmitter.on('scroll', function () {
+        var articleIndex = undefined,
+            changeEvent = undefined;
 
         articleIndex = Contents.getIndexOfClosestValue(Contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
 
@@ -107,15 +121,15 @@ Contents.bind = (eventEmitter, list, config) => {
 
     // This allows the script that constructs Contents
     // to catch the first ready, resize and scroll events.
-    setTimeout(() => {
+    setTimeout(function () {
         eventEmitter.trigger('resize');
         eventEmitter.trigger('ready');
 
-        global.addEventListener('resize', Contents.throttle(() => {
+        global.addEventListener('resize', Contents.throttle(function () {
             eventEmitter.trigger('resize');
         }, 100));
 
-        global.addEventListener('scroll', Contents.throttle(() => {
+        global.addEventListener('scroll', Contents.throttle(function () {
             eventEmitter.trigger('scroll');
         }, 100));
     }, 10);
@@ -124,14 +138,14 @@ Contents.bind = (eventEmitter, list, config) => {
 /**
  * @return {Number}
  */
-Contents.windowHeight = () => {
+Contents.windowHeight = function () {
     return global.innerHeight || global.document.documentElement.clientHeight;
 };
 
 /**
  * @return {Number}
  */
-Contents.windowScrollY = () => {
+Contents.windowScrollY = function () {
     return global.pageYOffset || global.document.documentElement.scrollTop;
 };
 
@@ -141,23 +155,20 @@ Contents.windowScrollY = () => {
  * @param {Object} userConfig
  * @return {Object}
  */
-Contents.config = (userConfig = {}) => {
-    let defaultConfig,
-        difference,
-        instanceConfig,
-        properties;
+Contents.config = function () {
+    var userConfig = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-    properties = [
-        'articles',
-        'articleName',
-        'articleId',
-        'link'
-    ];
+    var defaultConfig = undefined,
+        difference = undefined,
+        instanceConfig = undefined,
+        properties = undefined;
 
-    difference = _.difference(Object.keys(userConfig), properties);
+    properties = ['articles', 'articleName', 'articleId', 'link'];
+
+    difference = _utilJs2['default'].difference(Object.keys(userConfig), properties);
 
     if (difference.length) {
-        throw new Error(`Unknown configuration property "${difference[0]}".`);
+        throw new Error('Unknown configuration property "' + difference[0] + '".');
     }
 
     defaultConfig = {
@@ -167,7 +178,7 @@ Contents.config = (userConfig = {}) => {
         link: Contents.link
     };
 
-    instanceConfig = _.assign({}, defaultConfig, userConfig);
+    instanceConfig = _utilJs2['default'].assign({}, defaultConfig, userConfig);
 
     if (!instanceConfig.articles.length || !(instanceConfig.articles[0] instanceof HTMLElement)) {
         throw new Error('Option "articles" is not a collection of HTMLElement objects.');
@@ -196,7 +207,7 @@ Contents.config = (userConfig = {}) => {
  * @param {HTMLElement} element
  * @return {String}
  */
-Contents.articleName = element => {
+Contents.articleName = function (element) {
     return element.innerText || element.textContent;
 };
 
@@ -209,7 +220,7 @@ Contents.articleName = element => {
  * @param {HTMLElement} element
  * @return {String}
  */
-Contents.articleId = (articleName, element) => {
+Contents.articleId = function (articleName, element) {
     return element.id || articleName;
 };
 
@@ -220,10 +231,10 @@ Contents.articleId = (articleName, element) => {
  * @param {Array} existingIDs Existing IDs in the document. Required for markup-contents. (https://github.com/gajus/markdown-contents)
  * @return {String}
  */
-Contents.uniqueID = (inputId, existingIDs) => {
-    let assignedId,
-        formattedId,
-        i;
+Contents.uniqueID = function (inputId, existingIDs) {
+    var assignedId = undefined,
+        formattedId = undefined,
+        i = undefined;
 
     i = 1;
 
@@ -233,7 +244,7 @@ Contents.uniqueID = (inputId, existingIDs) => {
         assignedId = formattedId;
 
         while (existingIDs.indexOf(assignedId) !== -1) {
-            assignedId = `${formattedId}-${i++}`;
+            assignedId = formattedId + '-' + i++;
         }
 
         existingIDs.push(assignedId);
@@ -244,8 +255,8 @@ Contents.uniqueID = (inputId, existingIDs) => {
 
         assignedId = formattedId;
 
-        while (global.document.querySelector(`#${assignedId}`)) {
-            assignedId = `${formattedId}-${i++}`;
+        while (global.document.querySelector('#' + assignedId)) {
+            assignedId = formattedId + '-' + i++;
         }
     }
 
@@ -259,21 +270,8 @@ Contents.uniqueID = (inputId, existingIDs) => {
  * @param {String} str
  * @return {String}
  */
-Contents.formatId = str => {
-    return str
-        .toLowerCase()
-        .replace(/[ãàáäâ]/g, 'a')
-        .replace(/[ẽèéëê]/g, 'e')
-        .replace(/[ìíïî]/g, 'i')
-        .replace(/[õòóöô]/g, 'o')
-        .replace(/[ùúüû]/g, 'u')
-        .replace(/[ñ]/g, 'n')
-        .replace(/[ç]/g, 'c')
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9\-_]+/g, '-')
-        .replace(/\-+/g, '-')
-        .replace(/^\-|\-$/g, '')
-        .replace(/^[^a-z]+/g, '');
+Contents.formatId = function (str) {
+    return str.toLowerCase().replace(/[ãàáäâ]/g, 'a').replace(/[ẽèéëê]/g, 'e').replace(/[ìíïî]/g, 'i').replace(/[õòóöô]/g, 'o').replace(/[ùúüû]/g, 'u').replace(/[ñ]/g, 'n').replace(/[ç]/g, 'c').replace(/\s+/g, '-').replace(/[^a-z0-9\-_]+/g, '-').replace(/\-+/g, '-').replace(/^\-|\-$/g, '').replace(/^[^a-z]+/g, '');
 };
 
 /**
@@ -284,9 +282,12 @@ Contents.formatId = str => {
  * @param {Contents.articleId} articleId
  * @return {Array}
  */
-Contents.articles = (elements, articleName = Contents.articleName, articleId = Contents.articleId) => {
-    return _.map(elements, element => {
-        let article;
+Contents.articles = function (elements) {
+    var articleName = arguments.length <= 1 || arguments[1] === undefined ? Contents.articleName : arguments[1];
+    var articleId = arguments.length <= 2 || arguments[2] === undefined ? Contents.articleId : arguments[2];
+
+    return _utilJs2['default'].map(elements, function (element) {
+        var article = undefined;
 
         article = {};
 
@@ -307,10 +308,10 @@ Contents.articles = (elements, articleName = Contents.articleName, articleId = C
  * @param {Array} uniqueIDpool
  * @return {Array}
  */
-Contents.tree = (articles, makeUniqueIDs, uniqueIDpool) => {
-    let lastNode,
-        rootNode,
-        tree;
+Contents.tree = function (articles, makeUniqueIDs, uniqueIDpool) {
+    var lastNode = undefined,
+        rootNode = undefined,
+        tree = undefined;
 
     rootNode = {
         descendants: [],
@@ -319,7 +320,7 @@ Contents.tree = (articles, makeUniqueIDs, uniqueIDpool) => {
 
     tree = rootNode.descendants;
 
-    _.forEach(articles, article => {
+    _utilJs2['default'].forEach(articles, function (article) {
         if (makeUniqueIDs) {
             article.id = Contents.uniqueID(article.id, uniqueIDpool);
         }
@@ -348,9 +349,9 @@ Contents.tree = (articles, makeUniqueIDs, uniqueIDpool) => {
  * @param {Object} haystack
  * @return {HTMLElement}
  */
-Contents.tree.findParentNode = (needle, haystack) => {
-    let i,
-        parent;
+Contents.tree.findParentNode = function (needle, haystack) {
+    var i = undefined,
+        parent = undefined;
 
     if (haystack.descendants.indexOf(needle) !== -1) {
         return haystack;
@@ -378,8 +379,8 @@ Contents.tree.findParentNode = (needle, haystack) => {
  * @param {Object} haystack
  * @return {HTMLElement}
  */
-Contents.tree.findParentNodeWithLevelLower = (needle, level, haystack) => {
-    let parent;
+Contents.tree.findParentNodeWithLevelLower = function (needle, level, haystack) {
+    var parent = undefined;
 
     parent = Contents.tree.findParentNode(needle, haystack);
 
@@ -397,13 +398,13 @@ Contents.tree.findParentNodeWithLevelLower = (needle, level, haystack) => {
  * @param {Function} link Used to customize the destination element in the list and the source element.
  * @return {HTMLElement}
  */
-Contents.list = (tree, link) => {
-    let list;
+Contents.list = function (tree, link) {
+    var list = undefined;
 
     list = global.document.createElement('ol');
 
-    _.forEach(tree, article => {
-        let li;
+    _utilJs2['default'].forEach(tree, function (article) {
+        var li = undefined;
 
         li = global.document.createElement('li');
 
@@ -431,16 +432,16 @@ Contents.list = (tree, link) => {
  * @param {Object} article {level, id, name, element, descendants}
  * @return {undefined}
  */
-Contents.link = (guide, article) => {
-    let articleLink,
-        guideLink;
+Contents.link = function (guide, article) {
+    var articleLink = undefined,
+        guideLink = undefined;
 
     guideLink = global.document.createElement('a');
     articleLink = global.document.createElement('a');
 
     article.element.id = article.id;
 
-    articleLink.href = `#${article.id}`;
+    articleLink.href = '#' + article.id;
 
     while (article.element.childNodes.length) {
         articleLink.appendChild(article.element.childNodes[0]);
@@ -449,7 +450,7 @@ Contents.link = (guide, article) => {
     article.element.appendChild(articleLink);
 
     guideLink.appendChild(global.document.createTextNode(article.name));
-    guideLink.href = `#${article.id}`;
+    guideLink.href = '#' + article.id;
 
     guide.insertBefore(guideLink, guide.firstChild);
 };
@@ -461,8 +462,8 @@ Contents.link = (guide, article) => {
  * @param {HTMLElement} element
  * @return {Number}
  */
-Contents.level = element => {
-    let tagName;
+Contents.level = function (element) {
+    var tagName = undefined;
 
     tagName = element.tagName.toLowerCase();
 
@@ -487,12 +488,12 @@ Contents.level = element => {
  * @param {NodeList} elements
  * @return {Array}
  */
-Contents.indexOffset = elements => {
-    let element,
-        i,
-        j,
-        offset,
-        scrollYIndex;
+Contents.indexOffset = function (elements) {
+    var element = undefined,
+        i = undefined,
+        j = undefined,
+        offset = undefined,
+        scrollYIndex = undefined;
 
     scrollYIndex = [];
     i = 0;
@@ -522,11 +523,11 @@ Contents.indexOffset = elements => {
  * @param {Array} haystack
  * @return {Number}
  */
-Contents.getIndexOfClosestValue = (needle, haystack) => {
-    let closestValueIndex,
-        i,
-        j,
-        lastClosestValueIndex;
+Contents.getIndexOfClosestValue = function (needle, haystack) {
+    var closestValueIndex = undefined,
+        i = undefined,
+        j = undefined,
+        lastClosestValueIndex = undefined;
 
     closestValueIndex = 0;
     i = 0;
@@ -568,20 +569,23 @@ Contents.getIndexOfClosestValue = (needle, haystack) => {
  * @param {Object} context The value of "this" provided for the call to throttled.
  * @return {Function}
  */
-Contents.throttle = (throttled, threshold = 250, context = {}) => {
-    let deferTimer,
-        last;
+Contents.throttle = function (throttled) {
+    var threshold = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
+    var context = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-    return () => {
-        let args,
-            now;
+    var deferTimer = undefined,
+        last = undefined;
 
-        args = arguments;
+    return function () {
+        var args = undefined,
+            now = undefined;
+
+        args = _arguments;
         now = Number(new Date());
 
         if (last && now < last + threshold) {
             clearTimeout(deferTimer);
-            deferTimer = setTimeout(() => {
+            deferTimer = setTimeout(function () {
                 last = now;
                 Reflect.apply(throttled, context, args);
             }, threshold);
@@ -595,4 +599,5 @@ Contents.throttle = (throttled, threshold = 250, context = {}) => {
 global.gajus = global.gajus || {};
 global.gajus.Contents = Contents;
 
-export default Contents;
+exports['default'] = Contents;
+module.exports = exports['default'];
