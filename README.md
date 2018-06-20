@@ -1,8 +1,8 @@
-<h1 id="table-of-contents-toc-generator">Table of Contents (TOC) Generator</h1>
+<a name="table-of-contents-toc-generator"></a>
+# Table of Contents (TOC) Generator
 
-[![Travis build status](http://img.shields.io/travis/gajus/contents/master.svg?style=flat)](https://travis-ci.org/gajus/contents)
-[![NPM version](http://img.shields.io/npm/v/contents.svg?style=flat)](https://www.npmjs.org/package/contents)
-[![Bower version](http://img.shields.io/bower/v/contents.svg?style=flat)](http://bower.io/search/?q=contents)
+[![Travis build status](http://img.shields.io/travis/gajus/contents/master.svg?style=flat-square)](https://travis-ci.org/gajus/contents)
+[![NPM version](http://img.shields.io/npm/v/contents.svg?style=flat-square)](https://www.npmjs.org/package/contents)
 
 <!--
 [![Tweet Button](./.gitdown/tweet-button.png)](https://twitter.com/intent/tweet?text=%23JavaScript%20library%20to%20generate%20table%20of%20contents%20for%20a%20given%20area%20of%20content.&url=https://github.com/gajus/contents&via=kuizinas)
@@ -30,9 +30,11 @@ Table of contents generator.
     * [Events](#table-of-contents-array-events)
 
 
-<h2 id="table-of-contents-toc-generator-usage">Usage</h2>
+<a name="table-of-contents-toc-generator-usage"></a>
+## Usage
 
-<h3 id="table-of-contents-toc-generator-usage-quick-start">Quick Start</h3>
+<a name="table-of-contents-toc-generator-usage-quick-start"></a>
+### Quick Start
 
 ```js
 var Contents,
@@ -67,7 +69,8 @@ document.body.appendChild(newHeading);
 contents.eventEmitter().trigger('resize');
 ```
 
-<h3 id="table-of-contents-toc-generator-usage-examples">Examples</h3>
+<a name="table-of-contents-toc-generator-usage-examples"></a>
+### Examples
 
 * [Good looking](http://gajus.com/sandbox/contents/examples/good-looking/) example.
 * [Plain](http://gajus.com/sandbox/contents/examples/plain/) table of contents not using jQuery.
@@ -79,11 +82,13 @@ contents.eventEmitter().trigger('resize');
 The code for all of the examples is in the [examples](./examples/) folder.
 
 [Raise an issue](https://github.com/gajus/contents/issues) if you are missing an example.
-<h2 id="table-of-contents-toc-generator-introduction-of-es6-in-4-0-0">Introduction of ES6 in 4.0.0</h2>
+<a name="table-of-contents-toc-generator-introduction-of-es6-in-4-0-0"></a>
+## Introduction of ES6 in 4.0.0
 
 [Similar Libraries](#rimilar-libraries) stats have been generated in 22-Nov-14 08:44:41 UTC. Since then Contents has evolved a lot. The source code is written in ES6 and depends on `babel-core` to run. In projects that already depend on Babel and use webpack to build packages, this is not going to be a problem. Other projects need to consider the relatively heavy weight of the generated package.
 
-<h2 id="table-of-contents-toc-generator-similar-libraries">Similar Libraries</h2>
+<a name="table-of-contents-toc-generator-similar-libraries"></a>
+## Similar Libraries
 
 | Feature | [contents](https://github.com/gajus/contents) | [toc](https://github.com/jgallen23/toc) | [jquery.tocify.js](https://github.com/gfranko/jquery.tocify.js) |
 | --- | --- | --- | --- |
@@ -102,21 +107,25 @@ The code for all of the examples is in the [examples](./examples/) folder.
 
 Last updated: Saturday, 22-Nov-14 08:44:41 UTC.
 
-<h3 id="table-of-contents-toc-generator-similar-libraries-required-3rd-party-libraries">Required 3rd Party Libraries</h3>
+<a name="table-of-contents-toc-generator-similar-libraries-required-3rd-party-libraries"></a>
+### Required 3rd Party Libraries
 
 There are no 3rd party dependencies. jQuery selectors are used in the examples to make it simple for the reader.
 
-<h3 id="table-of-contents-toc-generator-similar-libraries-smooth-scrolling">Smooth Scrolling</h3>
+<a name="table-of-contents-toc-generator-similar-libraries-smooth-scrolling"></a>
+### Smooth Scrolling
 
 You can implement smooth scrolling using either of the existing libraries. See [Integration Examples](#integration-examples).
 
-<h3 id="table-of-contents-toc-generator-similar-libraries-window-resize-and-scroll-event-handling">Window Resize and `scroll` Event Handling</h3>
+<a name="table-of-contents-toc-generator-similar-libraries-window-resize-and-scroll-event-handling"></a>
+### Window Resize and <code>scroll</code> Event Handling
 
 The library will index `offsetTop` of all articles. This index is used to reflect the [change event](#events). The index is built upon loading the page, and in response to `window.onresize` and [`ready`](#events) events.
 
 Reading `offsetTop` causes a [reflow](http://gent.ilcore.com/2011/03/how-not-to-trigger-layout-in-webkit.html). Therefore, this should not be done while scrolling.
 
-<h1 id="table-of-contents-array">Table of Contents Array</h1>
+<a name="table-of-contents-array"></a>
+# Table of Contents Array
 
 You can extract the table of contents as a collection of nested objects representing the table of contents.
 
@@ -147,7 +156,8 @@ Tree is a collection of nodes:
 ]
 ```
 
-<h2 id="table-of-contents-array-download">Download</h2>
+<a name="table-of-contents-array-download"></a>
+## Download
 
 Using [NPM](https://www.npmjs.org/):
 
@@ -155,18 +165,15 @@ Using [NPM](https://www.npmjs.org/):
 npm install contents
 ```
 
-Using [Bower](http://bower.io/):
-
-```sh
-bower install contents
-```
-<h2 id="table-of-contents-array-configuration">Configuration</h2>
+<a name="table-of-contents-array-configuration"></a>
+## Configuration
 
 | Name | Type | Description |
 | --- | --- | --- |
 | `articles` | `NodeList`, `jQuery` | (optional) The default behavior is to index all headings (H1-H6) in the document. See [Content Indexing](#content-indexing). |
 | `link` | `function` | (optional) Used to represent article in the table of contents and to setup navigation. See [Linking](#linking). |
-<h2 id="table-of-contents-array-content-indexing">Content Indexing</h2>
+<a name="table-of-contents-array-content-indexing"></a>
+## Content Indexing
 
 The default behavior is to index all headings (H1-H6) in the document.
 
@@ -181,7 +188,8 @@ gajus
     });
 ```
 
-<h3 id="table-of-contents-array-content-indexing-hierarchy">Hierarchy</h3>
+<a name="table-of-contents-array-content-indexing-hierarchy"></a>
+### Hierarchy
 
 `articles` will be used to make the table of contents. `articles` have level of importance. The level of importance determines list nesting (see [Markup](#markup)). For HTML headings, the level of importance is derived from the tag name (`<h[1-6]>`). To set your own level of importance, use `Contents.level` [dataset](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement.dataset) property or jQuery data property with the same name, e.g.
 
@@ -195,7 +203,8 @@ gajus
 ```
 
 When level of importance cannot be determined, it defaults to 1.
-<h2 id="table-of-contents-array-linking">Linking</h2>
+<a name="table-of-contents-array-linking"></a>
+## Linking
 
 `link` method is used to represent article in the table of contents and to setup navigation. This method is called once for each article after the list of the table of contents is generated.
 
@@ -266,7 +275,8 @@ Contents({
 });
 ```
 
-<h3 id="table-of-contents-array-linking-article-id">Article ID</h3>
+<a name="table-of-contents-array-linking-article-id"></a>
+### Article ID
 
 The default implementation relies on each article having an "id" attribute to enable anchor navigation.
 
@@ -287,7 +297,8 @@ The default `link` implementation will use `Contents.id` to give each article a 
 <h2 id="allow-me-to-reiterate-1">Allow me to reiterate</h2>
 <h2 id="allow-me-to-reiterate-2">Allow me to reiterate</h2>
 ```
-<h2 id="table-of-contents-array-markup">Markup</h2>
+<a name="table-of-contents-array-markup"></a>
+## Markup
 
 Table of contents is an ordered [list element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol). List nesting reflects the heading hierarchy. The default behavior is to represent each heading using a hyperlink (See [Linking](#linking)), e.g.
 
@@ -338,7 +349,8 @@ Contents will generate the following markup for the above content:
     </li>
 </ol>
 ```
-<h2 id="table-of-contents-array-events">Events</h2>
+<a name="table-of-contents-array-events"></a>
+## Events
 
 | Event | Description |
 | --- | --- |

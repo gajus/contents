@@ -1,8 +1,7 @@
 var gulp = require('gulp'),
     Server = require('karma').Server,
     eslint = require('gulp-eslint'),
-    jsonfile = require('jsonfile'),
-    gitdown = require('gitdown');
+    jsonfile = require('jsonfile');
 
 gulp.task('lint', function () {
     return gulp
@@ -24,15 +23,8 @@ gulp.task('version', ['lint'], function () {
     jsonfile.writeFileSync('./bower.json', bower);
 });
 
-gulp.task('gitdown', function () {
-    return gitdown
-        .read('./.gitdown/README.md')
-        .write('./README.md');
-});
-
 gulp.task('watch', function () {
     gulp.watch(['./src/**/*', './tests/**/*'], ['default']);
-    gulp.watch(['./.gitdown/**/*'], ['gitdown']);
 });
 
 gulp.task('test', ['default'], function (done) {
