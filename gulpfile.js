@@ -10,19 +10,6 @@ gulp.task('lint', function () {
         .pipe(eslint.format());
 });
 
-gulp.task('version', ['lint'], function () {
-    var pkg = jsonfile.readFileSync('./package.json'),
-        bower = jsonfile.readFileSync('./bower.json');
-
-    bower.name = pkg.name;
-    bower.description = pkg.description;
-    bower.keywords = pkg.keywords;
-    bower.license = pkg.license;
-    bower.authors = [pkg.author];
-
-    jsonfile.writeFileSync('./bower.json', bower);
-});
-
 gulp.task('watch', function () {
     gulp.watch(['./src/**/*', './tests/**/*'], ['default']);
 });
@@ -40,4 +27,4 @@ gulp.task('test', ['default'], function (done) {
     });
 });
 
-gulp.task('default', ['version']);
+gulp.task('default', ['lint']);

@@ -1,1 +1,0 @@
-{"main":"dist/browser/contents.js","license":"BSD-3-Clause","dependencies":{"jquery":">=1"},"name":"contents","description":"Table of contents generator.","keywords":["table of contents","toc","contents"],"authors":[{"name":"Gajus Kuizinas","email":"gk@anuary.com","url":"http://gajus.com"}]}
