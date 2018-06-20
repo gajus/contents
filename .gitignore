@@ -2,6 +2,7 @@
 /node_modules
 /coverage
 /sandbox
+/dist
 .npmrc
 .DS_Store
 npm-debug.log
