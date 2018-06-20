@@ -307,7 +307,7 @@ Contents.articles = (elements, articleName = Contents.articleName, articleId = C
  * @param {Array} uniqueIDpool
  * @return {Array}
  */
-Contents.tree = (articles, makeUniqueIDs, uniqueIDpool) => {
+Contents.tree = (articles, makeUniqueIDs = true, uniqueIDpool = []) => {
     let lastNode,
         rootNode,
         tree;
