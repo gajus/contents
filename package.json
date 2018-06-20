@@ -25,6 +25,7 @@
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.3.2",
+    "phantomjs": "^2.1.7",
     "webpack": "^1.12.1"
   },
   "keywords": [
