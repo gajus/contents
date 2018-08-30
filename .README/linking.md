@@ -14,59 +14,60 @@ The default implementation:
  * This function is called after the table of contents is generated.
  * It is called for each article in the index.
  * Used to represent article in the table of contents and to setup navigation.
- * 
+ *
  * @param {HTMLElement} guide An element in the table of contents representing an article.
  * @param {HTMLElement} article The represented content element.
  */
-Contents.link = function (guide, article) {
-    var guideLink = document.createElement('a'),
-        articleLink = document.createElement('a'),
-        articleName = article.innerText,
-        articleId = article.id || Contents.id(articleName);
+Contents.link = (guide, article) => {
+  const guideLink = document.createElement('a'),
+  const articleLink = document.createElement('a'),
+  const articleName = article.innerText,
+  const articleId = article.id || Contents.id(articleName);
 
-    article.id = articleId;
+  article.id = articleId;
 
-    articleLink.href = '#' + articleId;
+  articleLink.href = '#' + articleId;
 
-    while (article.childNodes.length) {
-        articleLink.appendChild(article.childNodes[0], articleLink);
-    }
+  while (article.childNodes.length) {
+    articleLink.appendChild(article.childNodes[0], articleLink);
+  }
 
-    article.appendChild(articleLink);
+  article.appendChild(articleLink);
 
-    guideLink.appendChild(document.createTextNode(articleName));
-    guideLink.href = '#' + articleId;
-    guide.insertBefore(guideLink, guide.firstChild);
+  guideLink.appendChild(document.createTextNode(articleName));
+  guideLink.href = '#' + articleId;
+  guide.insertBefore(guideLink, guide.firstChild);
 };
+
 ```
 
 To overwrite the default behavior, you can provide your own `link` function as part of the configuration:
 
 ```js
 Contents({
-    // Example of implementation that does not wrap
-    // article node in a hyperlink.
-    link: function (guide, article) {
-        var guideLink,
-            articleName,
-            articleId;
+  // Example of implementation that does not wrap
+  // article node in a hyperlink.
+  link: (guide, article) => {
+    var guideLink,
+        articleName,
+        articleId;
 
-        guide = $(guide);
-        article = $(article);
+    guide = $(guide);
+    article = $(article);
 
-        guideLink = $('<a>');
-        articleName = article.text();
-        articleId = article.attr('id') || Contents.id(articleName);
+    guideLink = $('<a>');
+    articleName = article.text();
+    articleId = article.attr('id') || Contents.id(articleName);
 
-        guideLink
-            .text(articleName)
-            .attr('href', '#' + articleId)
-            .prependTo(guide);
+    guideLink
+      .text(articleName)
+      .attr('href', '#' + articleId)
+      .prependTo(guide);
 
-        article
-            .attr('id', articleId);
-    }
+    article.attr('id', articleId);
+  }
 });
+
 ```
 
 ### Article ID
@@ -81,6 +82,7 @@ If you are overwriting the default `link` implementation, you can take advantage
 <h2>Allow me to reiterate</h2>
 <h2>Allow me to reiterate</h2>
 <h2>Allow me to reiterate</h2>
+
 ```
 
 The default `link` implementation will use `Contents.id` to give each article a unique ID:
@@ -89,4 +91,5 @@ The default `link` implementation will use `Contents.id` to give each article a 
 <h2 id="allow-me-to-reiterate">Allow me to reiterate</h2>
 <h2 id="allow-me-to-reiterate-1">Allow me to reiterate</h2>
 <h2 id="allow-me-to-reiterate-2">Allow me to reiterate</h2>
+
 ```

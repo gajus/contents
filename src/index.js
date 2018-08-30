@@ -1,56 +1,45 @@
-require('babel/polyfill');
-
-import _ from './util.js';
+import _ from 'lodash';
 import Sister from 'sister';
 
-let Contents;
-
 /**
- * @param {object} config
+ * @param {Object} config
  * @return {Contents}
  */
-Contents = config => {
-    let articles,
-        contents,
-        eventEmitter,
-        instanceConfig,
-        list,
-        tree;
+const Contents = (config) => {
+  const contents = {};
 
-    contents = {};
+  const eventEmitter = Sister();
 
-    eventEmitter = Sister();
+  const instanceConfig = Contents.config(config);
 
-    instanceConfig = Contents.config(config);
+  const articles = Contents.articles(instanceConfig.articles, instanceConfig.articleName, instanceConfig.articleId);
+  const tree = Contents.tree(articles);
+  const list = Contents.list(tree, instanceConfig.link);
 
-    articles = Contents.articles(instanceConfig.articles, instanceConfig.articleName, instanceConfig.articleId);
-    tree = Contents.tree(articles);
-    list = Contents.list(tree, instanceConfig.link);
+  Contents.bind(eventEmitter, list, instanceConfig);
 
-    Contents.bind(eventEmitter, list, instanceConfig);
-
-    /**
+  /**
      * @return {HTMLElement} Ordered list element representation of the table of contents.
      */
-    contents.list = () => {
-        return list;
-    };
+  contents.list = () => {
+    return list;
+  };
 
-    /**
-     * @return {array} Array representation of the table of contents.
+  /**
+     * @return {Array} Array representation of the table of contents.
      */
-    contents.tree = () => {
-        return tree;
-    };
+  contents.tree = () => {
+    return tree;
+  };
 
-    /**
+  /**
      * @return {Sister} Event emitter used to attach event listeners and trigger events.
      */
-    contents.eventEmitter = () => {
-        return eventEmitter;
-    };
+  contents.eventEmitter = () => {
+    return eventEmitter;
+  };
 
-    return contents;
+  return contents;
 };
 
 /**
@@ -58,81 +47,77 @@ Contents = config => {
  *
  * @param {Sister} eventEmitter
  * @param {HTMLElement} list Table of contents root element (<ol>).
- * @param {object} config Result of contents.config.
- * @return {object} Result of contents.eventEmitter.
+ * @param {Object} config Result of contents.config.
+ * @return {Object} Result of contents.eventEmitter.
  */
 Contents.bind = (eventEmitter, list, config) => {
-    let articleOffsetIndex,
-        guides,
-        lastArticleIndex,
-        windowHeight;
+  let articleOffsetIndex;
+  let lastArticleIndex = null;
+  let windowHeight;
 
-    lastArticleIndex = null;
+  const guides = list.querySelectorAll('li');
 
-    guides = list.querySelectorAll('li');
+  eventEmitter.on('resize', () => {
+    windowHeight = Contents.windowHeight();
+    articleOffsetIndex = Contents.indexOffset(config.articles);
 
-    eventEmitter.on('resize', () => {
-        windowHeight = Contents.windowHeight();
-        articleOffsetIndex = Contents.indexOffset(config.articles);
+    eventEmitter.trigger('scroll');
+  });
 
-        eventEmitter.trigger('scroll');
-    });
+  eventEmitter.on('scroll', () => {
+    let changeEvent;
 
-    eventEmitter.on('scroll', () => {
-        let articleIndex,
-            changeEvent;
+    const articleIndex = Contents.getIndexOfClosestValue(Contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
 
-        articleIndex = Contents.getIndexOfClosestValue(Contents.windowScrollY() + windowHeight * 0.2, articleOffsetIndex);
+    if (articleIndex !== lastArticleIndex) {
+      changeEvent = {};
 
-        if (articleIndex !== lastArticleIndex) {
-            changeEvent = {};
+      changeEvent.current = {
+        article: config.articles[articleIndex],
+        guide: guides[articleIndex]
+      };
 
-            changeEvent.current = {
-                article: config.articles[articleIndex],
-                guide: guides[articleIndex]
-            };
+      if (lastArticleIndex !== null) {
+        changeEvent.previous = {
+          article: config.articles[lastArticleIndex],
+          guide: guides[lastArticleIndex]
+        };
+      }
 
-            if (lastArticleIndex !== null) {
-                changeEvent.previous = {
-                    article: config.articles[lastArticleIndex],
-                    guide: guides[lastArticleIndex]
-                };
-            }
+      eventEmitter.trigger('change', changeEvent);
 
-            eventEmitter.trigger('change', changeEvent);
+      lastArticleIndex = articleIndex;
+    }
+  });
 
-            lastArticleIndex = articleIndex;
-        }
-    });
+  // This allows the script that constructs Contents
+  // to catch the first ready, resize and scroll events.
+  setTimeout(() => {
+    eventEmitter.trigger('resize');
+    eventEmitter.trigger('ready');
 
-    // This allows the script that constructs Contents
-    // to catch the first ready, resize and scroll events.
-    setTimeout(() => {
-        eventEmitter.trigger('resize');
-        eventEmitter.trigger('ready');
+    global.window.addEventListener('resize', Contents.throttle(() => {
+      eventEmitter.trigger('resize');
+    }, 100));
 
-        global.addEventListener('resize', Contents.throttle(() => {
-            eventEmitter.trigger('resize');
-        }, 100));
-
-        global.addEventListener('scroll', Contents.throttle(() => {
-            eventEmitter.trigger('scroll');
-        }, 100));
-    }, 10);
+    global.window.addEventListener('scroll', Contents.throttle(() => {
+      eventEmitter.trigger('scroll');
+    }, 100));
+  }, 10);
 };
 
 /**
- * @return {Number}
+ * @return {number}
  */
 Contents.windowHeight = () => {
-    return global.innerHeight || global.document.documentElement.clientHeight;
+  return global.innerHeight || global.document.documentElement.clientHeight;
 };
 
 /**
- * @return {Number}
+ * @return {number}
  */
 Contents.windowScrollY = () => {
-    return global.pageYOffset || global.document.documentElement.scrollTop;
+  return global.pageYOffset || global.document.documentElement.scrollTop;
 };
 
 /**
@@ -142,50 +127,45 @@ Contents.windowScrollY = () => {
  * @return {Object}
  */
 Contents.config = (userConfig = {}) => {
-    let defaultConfig,
-        difference,
-        instanceConfig,
-        properties;
+  const properties = [
+    'articles',
+    'articleName',
+    'articleId',
+    'link'
+  ];
 
-    properties = [
-        'articles',
-        'articleName',
-        'articleId',
-        'link'
-    ];
+  const difference = _.difference(Object.keys(userConfig), properties);
 
-    difference = _.difference(Object.keys(userConfig), properties);
+  if (difference.length) {
+    throw new Error('Unknown configuration property "' + difference[0] + '".');
+  }
 
-    if (difference.length) {
-        throw new Error(`Unknown configuration property "${difference[0]}".`);
-    }
+  const defaultConfig = {
+    articleId: Contents.articleId,
+    articleName: Contents.articleName,
+    articles: global.document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+    link: Contents.link
+  };
 
-    defaultConfig = {
-        articles: global.document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
-        articleName: Contents.articleName,
-        articleId: Contents.articleId,
-        link: Contents.link
-    };
+  const instanceConfig = _.assign({}, defaultConfig, userConfig);
 
-    instanceConfig = _.assign({}, defaultConfig, userConfig);
+  if (!instanceConfig.articles.length || !(instanceConfig.articles[0] instanceof global.window.HTMLElement)) {
+    throw new Error('Option "articles" is not a collection of HTMLElement objects.');
+  }
 
-    if (!instanceConfig.articles.length || !(instanceConfig.articles[0] instanceof HTMLElement)) {
-        throw new Error('Option "articles" is not a collection of HTMLElement objects.');
-    }
+  if (typeof instanceConfig.articleName !== 'function') {
+    throw new TypeError('Option "articleName" must be a function.');
+  }
 
-    if (typeof instanceConfig.articleName !== 'function') {
-        throw new Error('Option "articleName" must be a function.');
-    }
+  if (typeof instanceConfig.articleId !== 'function') {
+    throw new TypeError('Option "articleId" must be a function.');
+  }
 
-    if (typeof instanceConfig.articleId !== 'function') {
-        throw new Error('Option "articleId" must be a function.');
-    }
+  if (typeof instanceConfig.link !== 'function') {
+    throw new TypeError('Option "link" must be a function.');
+  }
 
-    if (typeof instanceConfig.link !== 'function') {
-        throw new Error('Option "link" must be a function.');
-    }
-
-    return instanceConfig;
+  return instanceConfig;
 };
 
 /**
@@ -194,10 +174,10 @@ Contents.config = (userConfig = {}) => {
  * This method can be overwritten using config.articleName.
  *
  * @param {HTMLElement} element
- * @return {String}
+ * @return {string}
  */
-Contents.articleName = element => {
-    return element.innerText || element.textContent;
+Contents.articleName = (element) => {
+  return element.innerText || element.textContent;
 };
 
 /**
@@ -205,75 +185,73 @@ Contents.articleName = element => {
  *
  * This method can be overwritten using config.articleId.
  *
- * @param {String} articleName
+ * @param {string} articleName
  * @param {HTMLElement} element
- * @return {String}
+ * @return {string}
  */
 Contents.articleId = (articleName, element) => {
-    return element.id || articleName;
+  return element.id || articleName;
 };
 
 /**
  * Make element ID unique in the context of the document.
  *
- * @param {String} inputId
+ * @param {string} inputId
  * @param {Array} existingIDs Existing IDs in the document. Required for markup-contents. (https://github.com/gajus/markdown-contents)
- * @return {String}
+ * @return {string}
  */
 Contents.uniqueID = (inputId, existingIDs) => {
-    let assignedId,
-        formattedId,
-        i;
+  let assignedId;
 
-    i = 1;
+  let i = 1;
 
-    formattedId = Contents.formatId(inputId);
+  const formattedId = Contents.formatId(inputId);
 
-    if (existingIDs) {
-        assignedId = formattedId;
+  if (existingIDs) {
+    assignedId = formattedId;
 
-        while (existingIDs.indexOf(assignedId) !== -1) {
-            assignedId = `${formattedId}-${i++}`;
-        }
-
-        existingIDs.push(assignedId);
-    } else {
-        if (!global.document) {
-            throw new Error('No document context.');
-        }
-
-        assignedId = formattedId;
-
-        while (global.document.querySelector(`#${assignedId}`)) {
-            assignedId = `${formattedId}-${i++}`;
-        }
+    while (existingIDs.indexOf(assignedId) !== -1) {
+      assignedId = formattedId + '-' + i++;
     }
 
-    return assignedId;
+    existingIDs.push(assignedId);
+  } else {
+    if (!global.document) {
+      throw new Error('No document context.');
+    }
+
+    assignedId = formattedId;
+
+    while (global.document.querySelector('#' + assignedId)) {
+      assignedId = formattedId + '-' + i++;
+    }
+  }
+
+  return assignedId;
 };
 
 /**
  * Formats text into an ID/anchor safe value.
  *
  * @see http://stackoverflow.com/a/1077111/368691
- * @param {String} str
- * @return {String}
+ * @param {string} str
+ * @return {string}
  */
-Contents.formatId = str => {
-    return str
-        .toLowerCase()
-        .replace(/[ãàáäâ]/g, 'a')
-        .replace(/[ẽèéëê]/g, 'e')
-        .replace(/[ìíïî]/g, 'i')
-        .replace(/[õòóöô]/g, 'o')
-        .replace(/[ùúüû]/g, 'u')
-        .replace(/[ñ]/g, 'n')
-        .replace(/[ç]/g, 'c')
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9\-_]+/g, '-')
-        .replace(/\-+/g, '-')
-        .replace(/^\-|\-$/g, '')
-        .replace(/^[^a-z]+/g, '');
+Contents.formatId = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/[ãàáäâ]/g, 'a')
+    .replace(/[ẽèéëê]/g, 'e')
+    .replace(/[ìíïî]/g, 'i')
+    .replace(/[õòóöô]/g, 'o')
+    .replace(/[ùúüû]/g, 'u')
+    .replace(/[ñ]/g, 'n')
+    .replace(/[ç]/g, 'c')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .replace(/^[^a-z]+/g, '');
 };
 
 /**
@@ -285,60 +263,56 @@ Contents.formatId = str => {
  * @return {Array}
  */
 Contents.articles = (elements, articleName = Contents.articleName, articleId = Contents.articleId) => {
-    return _.map(elements, element => {
-        let article;
+  return _.map(elements, (element) => {
+    const article = {};
 
-        article = {};
+    article.level = Contents.level(element);
+    article.name = articleName(element);
+    article.id = articleId(article.name, element);
+    article.element = element;
 
-        article.level = Contents.level(element);
-        article.name = articleName(element);
-        article.id = articleId(article.name, element);
-        article.element = element;
-
-        return article;
-    });
+    return article;
+  });
 };
 
 /**
  * Makes hierarchical index of the articles from a flat index.
  *
  * @param {Array} articles Generated using Contents.articles.
- * @param {Boolean} makeUniqueIDs
+ * @param {boolean} makeUniqueIDs
  * @param {Array} uniqueIDpool
  * @return {Array}
  */
 Contents.tree = (articles, makeUniqueIDs = true, uniqueIDpool = []) => {
-    let lastNode,
-        rootNode,
-        tree;
+  let lastNode;
 
-    rootNode = {
-        descendants: [],
-        level: 0
-    };
+  const rootNode = {
+    descendants: [],
+    level: 0
+  };
 
-    tree = rootNode.descendants;
+  const tree = rootNode.descendants;
 
-    _.forEach(articles, article => {
-        if (makeUniqueIDs) {
-            article.id = Contents.uniqueID(article.id, uniqueIDpool);
-        }
-        article.descendants = [];
+  _.forEach(articles, (article) => {
+    if (makeUniqueIDs) {
+      article.id = Contents.uniqueID(article.id, uniqueIDpool);
+    }
+    article.descendants = [];
 
-        if (!lastNode) {
-            tree.push(article);
-        } else if (lastNode.level === article.level) {
-            Contents.tree.findParentNode(lastNode, rootNode).descendants.push(article);
-        } else if (article.level > lastNode.level) {
-            lastNode.descendants.push(article);
-        } else {
-            Contents.tree.findParentNodeWithLevelLower(lastNode, article.level, rootNode).descendants.push(article);
-        }
+    if (!lastNode) {
+      tree.push(article);
+    } else if (lastNode.level === article.level) {
+      Contents.tree.findParentNode(lastNode, rootNode).descendants.push(article);
+    } else if (article.level > lastNode.level) {
+      lastNode.descendants.push(article);
+    } else {
+      Contents.tree.findParentNodeWithLevelLower(lastNode, article.level, rootNode).descendants.push(article);
+    }
 
-        lastNode = article;
-    });
+    lastNode = article;
+  });
 
-    return tree;
+  return tree;
 };
 
 /**
@@ -349,24 +323,22 @@ Contents.tree = (articles, makeUniqueIDs = true, uniqueIDpool = []) => {
  * @return {HTMLElement}
  */
 Contents.tree.findParentNode = (needle, haystack) => {
-    let i,
-        parent;
+  if (haystack.descendants.indexOf(needle) !== -1) {
+    return haystack;
+  }
 
-    if (haystack.descendants.indexOf(needle) !== -1) {
-        return haystack;
+  let parent;
+  let i = haystack.descendants.length;
+
+  while (i--) {
+    parent = Contents.tree.findParentNode(needle, haystack.descendants[i]);
+
+    if (parent) {
+      return parent;
     }
+  }
 
-    i = haystack.descendants.length;
-
-    while (i--) {
-        parent = Contents.tree.findParentNode(needle, haystack.descendants[i]);
-
-        if (parent) {
-            return parent;
-        }
-    }
-
-    throw new Error('Invalid tree.');
+  throw new Error('Invalid tree.');
 };
 
 /**
@@ -374,20 +346,18 @@ Contents.tree.findParentNode = (needle, haystack) => {
  * Look for parent (including parents of the found object) with level lower than level.
  *
  * @param {Object} needle
- * @param {Number} level
+ * @param {number} level
  * @param {Object} haystack
  * @return {HTMLElement}
  */
 Contents.tree.findParentNodeWithLevelLower = (needle, level, haystack) => {
-    let parent;
+  const parent = Contents.tree.findParentNode(needle, haystack);
 
-    parent = Contents.tree.findParentNode(needle, haystack);
-
-    if (parent.level < level) {
-        return parent;
-    } else {
-        return Contents.tree.findParentNodeWithLevelLower(parent, level, haystack);
-    }
+  if (parent.level < level) {
+    return parent;
+  } else {
+    return Contents.tree.findParentNodeWithLevelLower(parent, level, haystack);
+  }
 };
 
 /**
@@ -398,27 +368,23 @@ Contents.tree.findParentNodeWithLevelLower = (needle, level, haystack) => {
  * @return {HTMLElement}
  */
 Contents.list = (tree, link) => {
-    let list;
+  const list = global.document.createElement('ol');
 
-    list = global.document.createElement('ol');
+  _.forEach(tree, (article) => {
+    const li = global.document.createElement('li');
 
-    _.forEach(tree, article => {
-        let li;
+    if (link) {
+      link(li, article);
+    }
 
-        li = global.document.createElement('li');
+    if (article.descendants.length) {
+      li.appendChild(Contents.list(article.descendants, link));
+    }
 
-        if (link) {
-            link(li, article);
-        }
+    list.appendChild(li);
+  });
 
-        if (article.descendants.length) {
-            li.appendChild(Contents.list(article.descendants, link));
-        }
-
-        list.appendChild(li);
-    });
-
-    return list;
+  return list;
 };
 
 /**
@@ -432,26 +398,23 @@ Contents.list = (tree, link) => {
  * @return {undefined}
  */
 Contents.link = (guide, article) => {
-    let articleLink,
-        guideLink;
+  const guideLink = global.document.createElement('a');
+  const articleLink = global.document.createElement('a');
 
-    guideLink = global.document.createElement('a');
-    articleLink = global.document.createElement('a');
+  article.element.id = article.id;
 
-    article.element.id = article.id;
+  articleLink.href = '#' + article.id;
 
-    articleLink.href = `#${article.id}`;
+  while (article.element.childNodes.length) {
+    articleLink.appendChild(article.element.childNodes[0]);
+  }
 
-    while (article.element.childNodes.length) {
-        articleLink.appendChild(article.element.childNodes[0]);
-    }
+  article.element.appendChild(articleLink);
 
-    article.element.appendChild(articleLink);
+  guideLink.appendChild(global.document.createTextNode(article.name));
+  guideLink.href = '#' + article.id;
 
-    guideLink.appendChild(global.document.createTextNode(article.name));
-    guideLink.href = `#${article.id}`;
-
-    guide.insertBefore(guideLink, guide.firstChild);
+  guide.insertBefore(guideLink, guide.firstChild);
 };
 
 /**
@@ -459,26 +422,20 @@ Contents.link = (guide, article) => {
  * When element is not a heading, use Contents.level data attribute. Default to 1.
  *
  * @param {HTMLElement} element
- * @return {Number}
+ * @return {number}
  */
-Contents.level = element => {
-    let tagName;
+Contents.level = (element) => {
+  const tagName = element.tagName.toLowerCase();
 
-    tagName = element.tagName.toLowerCase();
+  if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
+    return parseInt(tagName.slice(1), 10);
+  }
 
-    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(tagName) !== -1) {
-        return parseInt(tagName.slice(1), 10);
-    }
+  if (typeof element.dataset['gajus.contents.level'] !== 'undefined') {
+    return parseInt(element.dataset['gajus.contents.level'], 10);
+  }
 
-    if (typeof element.dataset['gajus.contents.level'] !== 'undefined') {
-        return parseInt(element.dataset['gajus.contents.level'], 10);
-    }
-
-    if (jQuery && typeof jQuery.data(element, 'gajus.contents.level') !== 'undefined') {
-        return jQuery.data(element, 'gajus.contents.level');
-    }
-
-    return 1;
+  return 1;
 };
 
 /**
@@ -487,70 +444,64 @@ Contents.level = element => {
  * @param {NodeList} elements
  * @return {Array}
  */
-Contents.indexOffset = elements => {
-    let element,
-        i,
-        j,
-        offset,
-        scrollYIndex;
+Contents.indexOffset = (elements) => {
+  let element;
+  let offset;
+  const scrollYIndex = [];
+  let i = 0;
+  const j = elements.length;
 
-    scrollYIndex = [];
-    i = 0;
-    j = elements.length;
+  while (i < j) {
+    element = elements[i++];
 
-    while (i < j) {
-        element = elements[i++];
+    offset = element.offsetTop;
 
-        offset = element.offsetTop;
+    // element.offsetTop might produce a float value.
+    // Round to the nearest multiple of 5 (either up or down).
+    // This is done to help readability and testing.
+    offset = 5 * Math.round(offset / 5);
 
-        // element.offsetTop might produce a float value.
-        // Round to the nearest multiple of 5 (either up or down).
-        // This is done to help readability and testing.
-        offset = 5 * Math.round(offset / 5);
+    scrollYIndex.push(offset);
+  }
 
-        scrollYIndex.push(offset);
-    }
-
-    return scrollYIndex;
+  return scrollYIndex;
 };
 
 /**
  * Find the nearest value to the needle in the haystack and return the value index.
  *
  * @see http://stackoverflow.com/a/26366951/368691
- * @param {Number} needle
+ * @param {number} needle
  * @param {Array} haystack
- * @return {Number}
+ * @return {number}
  */
 Contents.getIndexOfClosestValue = (needle, haystack) => {
-    let closestValueIndex,
-        i,
-        j,
-        lastClosestValueIndex;
+  let lastClosestValueIndex;
 
-    closestValueIndex = 0;
-    i = 0;
-    j = haystack.length;
+  let closestValueIndex = 0;
+  let i = 0;
 
-    if (!j) {
-        throw new Error('Haystack must be not empty.');
+  const j = haystack.length;
+
+  if (!j) {
+    throw new Error('Haystack must be not empty.');
+  }
+
+  while (i < j) {
+    if (Math.abs(needle - haystack[closestValueIndex]) > Math.abs(haystack[i] - needle)) {
+      closestValueIndex = i;
     }
 
-    while (i < j) {
-        if (Math.abs(needle - haystack[closestValueIndex]) > Math.abs(haystack[i] - needle)) {
-            closestValueIndex = i;
-        }
-
-        if (closestValueIndex === lastClosestValueIndex) {
-            break;
-        }
-
-        lastClosestValueIndex = closestValueIndex;
-
-        i++;
+    if (closestValueIndex === lastClosestValueIndex) {
+      break;
     }
 
-    return closestValueIndex;
+    lastClosestValueIndex = closestValueIndex;
+
+    i++;
+  }
+
+  return closestValueIndex;
 };
 
 /**
@@ -564,35 +515,28 @@ Contents.getIndexOfClosestValue = (needle, haystack) => {
  *
  * @see https://remysharp.com/2010/07/21/throttling-function-calls
  * @param {throttleCallback} throttled
- * @param {Number} threshold Number of milliseconds between firing the throttled function.
+ * @param {number} threshold Number of milliseconds between firing the throttled function.
  * @param {Object} context The value of "this" provided for the call to throttled.
- * @return {Function}
+ * @returns {Function}
  */
 Contents.throttle = (throttled, threshold = 250, context = {}) => {
-    let deferTimer,
-        last;
+  let deferTimer;
+  let last;
 
-    return () => {
-        let args,
-            now;
+  return (...args) => {
+    const now = Number(new Date());
 
-        args = arguments;
-        now = Number(new Date());
-
-        if (last && now < last + threshold) {
-            clearTimeout(deferTimer);
-            deferTimer = setTimeout(() => {
-                last = now;
-                Reflect.apply(throttled, context, args);
-            }, threshold);
-        } else {
-            last = now;
-            Reflect.apply(throttled, context, args);
-        }
-    };
+    if (last && now < last + threshold) {
+      clearTimeout(deferTimer);
+      deferTimer = setTimeout(() => {
+        last = now;
+        Reflect.apply(throttled, context, args);
+      }, threshold);
+    } else {
+      last = now;
+      Reflect.apply(throttled, context, args);
+    }
+  };
 };
-
-global.gajus = global.gajus || {};
-global.gajus.Contents = Contents;
 
 export default Contents;

@@ -5,12 +5,12 @@ The default behavior is to index all headings (H1-H6) in the document.
 Use `articles` setting to index content using your own selector:
 
 ```js
-gajus
-    .contents({
-        articles: document.querySelectorAll('main h2, main h2')
-        // If you are using jQuery
-        // articles: $('main').find('h2, h3').get()
-    });
+Contents({
+  articles: document.querySelectorAll('main h2, main h2')
+  // If you are using jQuery
+  // articles: $('main').find('h2, h3').get()
+});
+
 ```
 
 ### Hierarchy
@@ -20,10 +20,10 @@ gajus
 ```js
 $('main').find('.summary').data('gajus.contents.level', 4);
 
-gajus
-    .contents({
-        articles: $('main').find('h1, h2, h3, .summary').get()
-    });
+Contents({
+  articles: $('main').find('h1, h2, h3, .summary').get()
+});
+
 ```
 
 When level of importance cannot be determined, it defaults to 1.

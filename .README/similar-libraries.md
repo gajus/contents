@@ -50,18 +50,18 @@ Tree is a collection of nodes:
 
 ```js
 [
-    // Node
-    {
-        // Hierarchy level (e.g. h1 = 1)
-        level: 1,
-        // Id derived using articleId() function.
-        id: '',
-        // Name derived using articleName() function.
-        name: '',
-        // The article element.
-        element: null,
-        // Collection of the descendant nodes.
-        descendants: [ /* node */ ]
-    }
+  // Node
+  {
+    // Hierarchy level (e.g. h1 = 1)
+    level: 1,
+    // Id derived using articleId() function.
+    id: '',
+    // Name derived using articleName() function.
+    name: '',
+    // The article element.
+    element: null,
+    // Collection of the descendant nodes.
+    descendants: [ /* node */ ]
+  }
 ]
 ```

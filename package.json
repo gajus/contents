@@ -1,51 +1,44 @@
 {
-  "name": "contents",
-  "title": "Contents",
-  "description": "Table of contents generator.",
-  "version": "4.0.4",
   "author": {
+    "email": "gajus@gajus.com",
     "name": "Gajus Kuizinas",
-    "email": "gk@anuary.com",
     "url": "http://gajus.com"
   },
-  "main": "./dist/es5/index.js",
+  "dependencies": {
+    "babel": "^6.23.0",
+    "lodash": "^4.17.10",
+    "sister": "^3.0.1"
+  },
+  "description": "Table of contents generator.",
   "devDependencies": {
-    "babel-loader": "^5.3.2",
-    "chai": "^3.2.0",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "chai": "^4.1.2",
+    "eslint-config-canonical": "^12.0.0",
     "gitdown": "^2.5.2",
-    "gulp": "^3.9.0",
-    "gulp-eslint": "^1.0.0",
-    "jquery": "^2.1.4",
-    "jquery-smooth-scroll": "^1.5.6",
-    "jsonfile": "^2.2.1",
-    "karma": "^0.13.9",
-    "karma-babel-preprocessor": "^5.2.2",
-    "karma-chai": "^0.1.0",
-    "karma-html2js-preprocessor": "^0.1.0",
-    "karma-mocha": "^0.2.0",
-    "karma-phantomjs-launcher": "^0.2.1",
-    "mocha": "^2.3.2",
-    "phantomjs": "^2.1.7",
-    "webpack": "^1.12.1"
+    "jsdom": "^12.0.0",
+    "mocha": "^5.2.0"
   },
   "keywords": [
     "table of contents",
     "toc",
     "contents"
   ],
-  "scripts": {
-    "test": "gulp test",
-    "generate-readme": "gitdown ./.README/README.md --output-file ./README.md",
-    "build": "webpack && babel ./src/ --out-dir ./dist/es5/"
-  },
+  "license": "BSD-3-Clause",
+  "main": "./dist/index.js",
+  "name": "contents",
   "repository": {
     "type": "git",
     "url": "http://github.com/gajus/contents.git"
   },
-  "license": "BSD-3-Clause",
-  "dependencies": {
-    "babel": "^5.8.23",
-    "lodash": "^3.10.1",
-    "sister": "^3.0.0"
-  }
+  "scripts": {
+    "build": "rm -fr ./dist && NODE_ENV=production babel ./src --out-dir ./dist --copy-files --source-maps && flow-copy-source src dist",
+    "generate-readme": "gitdown ./.README/README.md --output-file ./README.md",
+    "lint": "eslint ./src && flow",
+    "test": "mocha --require @babel/register"
+  },
+  "title": "Contents",
+  "version": "4.0.4"
 }

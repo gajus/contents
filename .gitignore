@@ -10,3 +10,4 @@ node_modules
 !.gitignore
 !.gitlab-ci.yml
 !.npmignore
+!.README

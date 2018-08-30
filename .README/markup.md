@@ -17,35 +17,35 @@ Contents will generate the following markup for the above content:
 
 ```html
 <ol>
-    <li>
-        <a href="#javascript">JavaScript</a>
+  <li>
+    <a href="#javascript">JavaScript</a>
+
+    <ol>
+      <li>
+        <a href="#history">History</a>
+      </li>
+      <li>
+        <a href="#trademark">Trademark</a>
+      </li>
+      <li>
+        <a href="#features">Features</a>
 
         <ol>
-            <li>
-                <a href="#history">History</a>
-            </li>
-            <li>
-                <a href="#trademark">Trademark</a>
-            </li>
-            <li>
-                <a href="#features">Features</a>
-
-                <ol>
-                    <li>
-                        <a href="#imperative-and-structured">Imperative and structured</a>
-                    </li>
-                    <li>
-                        <a href="#dynamic">Dynamic</a>
-                    </li>
-                    <li>
-                        <a href="#functional">Functional</a>
-                    </li>
-                </ol>
-            </li>
-            <li>
-                <a href="#syntax">Syntax</a>
-            </li>
+          <li>
+            <a href="#imperative-and-structured">Imperative and structured</a>
+          </li>
+          <li>
+            <a href="#dynamic">Dynamic</a>
+          </li>
+          <li>
+            <a href="#functional">Functional</a>
+          </li>
         </ol>
-    </li>
+      </li>
+      <li>
+        <a href="#syntax">Syntax</a>
+      </li>
+    </ol>
+  </li>
 </ol>
 ```

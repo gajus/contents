@@ -37,36 +37,31 @@ Table of contents generator.
 ### Quick Start
 
 ```js
-var Contents,
-    contents,
-    newHeading;
-
-Contents = require('contents');
-
-// If you are using ./dist/ version, then Contents is available under "gajus" global property, i.e.
-// Contents = gajus.Contents;
+import Contents from 'contents';
 
 // This example generates a table of contents for all of the headings in the document.
 // Table of contents is an ordered list element.
-contents = Contents();
+const contents = Contents();
 
 // Append the generated list element (table of contents) to the container.
 document.querySelector('#your-table-of-contents-container').appendChild(contents.list());
 
 // Attach event listeners:
 contents.eventEmitter().on('change', function () {
-    console.log('User has navigated to a new section of the page.');
+  console.log('User has navigated to a new section of the page.');
 });
 
 // The rest of the code illustrates firing "resize" event after you have
 // added new content after generating the table of contents.
-newHeading = document.createElement('h2');
+const newHeading = document.createElement('h2');
+
 hewHeading.innerHTML = 'Dynamically generated title';
 
 document.body.appendChild(newHeading);
 
 // Firing the "resize" event will regenerate the table of contents.
 contents.eventEmitter().trigger('resize');
+
 ```
 
 <a name="table-of-contents-toc-generator-usage-examples"></a>
@@ -82,6 +77,7 @@ contents.eventEmitter().trigger('resize');
 The code for all of the examples is in the [examples](./examples/) folder.
 
 [Raise an issue](https://github.com/gajus/contents/issues) if you are missing an example.
+
 <a name="table-of-contents-toc-generator-introduction-of-es6-in-4-0-0"></a>
 ## Introduction of ES6 in 4.0.0
 
@@ -140,19 +136,19 @@ Tree is a collection of nodes:
 
 ```js
 [
-    // Node
-    {
-        // Hierarchy level (e.g. h1 = 1)
-        level: 1,
-        // Id derived using articleId() function.
-        id: '',
-        // Name derived using articleName() function.
-        name: '',
-        // The article element.
-        element: null,
-        // Collection of the descendant nodes.
-        descendants: [ /* node */ ]
-    }
+  // Node
+  {
+    // Hierarchy level (e.g. h1 = 1)
+    level: 1,
+    // Id derived using articleId() function.
+    id: '',
+    // Name derived using articleName() function.
+    name: '',
+    // The article element.
+    element: null,
+    // Collection of the descendant nodes.
+    descendants: [ /* node */ ]
+  }
 ]
 ```
 
@@ -163,6 +159,7 @@ Using [NPM](https://www.npmjs.org/):
 
 ```sh
 npm install contents
+
 ```
 
 <a name="table-of-contents-array-configuration"></a>
@@ -180,12 +177,12 @@ The default behavior is to index all headings (H1-H6) in the document.
 Use `articles` setting to index content using your own selector:
 
 ```js
-gajus
-    .contents({
-        articles: document.querySelectorAll('main h2, main h2')
-        // If you are using jQuery
-        // articles: $('main').find('h2, h3').get()
-    });
+Contents({
+  articles: document.querySelectorAll('main h2, main h2')
+  // If you are using jQuery
+  // articles: $('main').find('h2, h3').get()
+});
+
 ```
 
 <a name="table-of-contents-array-content-indexing-hierarchy"></a>
@@ -196,13 +193,14 @@ gajus
 ```js
 $('main').find('.summary').data('gajus.contents.level', 4);
 
-gajus
-    .contents({
-        articles: $('main').find('h1, h2, h3, .summary').get()
-    });
+Contents({
+  articles: $('main').find('h1, h2, h3, .summary').get()
+});
+
 ```
 
 When level of importance cannot be determined, it defaults to 1.
+
 <a name="table-of-contents-array-linking"></a>
 ## Linking
 
@@ -220,59 +218,60 @@ The default implementation:
  * This function is called after the table of contents is generated.
  * It is called for each article in the index.
  * Used to represent article in the table of contents and to setup navigation.
- * 
+ *
  * @param {HTMLElement} guide An element in the table of contents representing an article.
  * @param {HTMLElement} article The represented content element.
  */
-Contents.link = function (guide, article) {
-    var guideLink = document.createElement('a'),
-        articleLink = document.createElement('a'),
-        articleName = article.innerText,
-        articleId = article.id || Contents.id(articleName);
+Contents.link = (guide, article) => {
+  const guideLink = document.createElement('a'),
+  const articleLink = document.createElement('a'),
+  const articleName = article.innerText,
+  const articleId = article.id || Contents.id(articleName);
 
-    article.id = articleId;
+  article.id = articleId;
 
-    articleLink.href = '#' + articleId;
+  articleLink.href = '#' + articleId;
 
-    while (article.childNodes.length) {
-        articleLink.appendChild(article.childNodes[0], articleLink);
-    }
+  while (article.childNodes.length) {
+    articleLink.appendChild(article.childNodes[0], articleLink);
+  }
 
-    article.appendChild(articleLink);
+  article.appendChild(articleLink);
 
-    guideLink.appendChild(document.createTextNode(articleName));
-    guideLink.href = '#' + articleId;
-    guide.insertBefore(guideLink, guide.firstChild);
+  guideLink.appendChild(document.createTextNode(articleName));
+  guideLink.href = '#' + articleId;
+  guide.insertBefore(guideLink, guide.firstChild);
 };
+
 ```
 
 To overwrite the default behavior, you can provide your own `link` function as part of the configuration:
 
 ```js
 Contents({
-    // Example of implementation that does not wrap
-    // article node in a hyperlink.
-    link: function (guide, article) {
-        var guideLink,
-            articleName,
-            articleId;
+  // Example of implementation that does not wrap
+  // article node in a hyperlink.
+  link: (guide, article) => {
+    var guideLink,
+        articleName,
+        articleId;
 
-        guide = $(guide);
-        article = $(article);
+    guide = $(guide);
+    article = $(article);
 
-        guideLink = $('<a>');
-        articleName = article.text();
-        articleId = article.attr('id') || Contents.id(articleName);
+    guideLink = $('<a>');
+    articleName = article.text();
+    articleId = article.attr('id') || Contents.id(articleName);
 
-        guideLink
-            .text(articleName)
-            .attr('href', '#' + articleId)
-            .prependTo(guide);
+    guideLink
+      .text(articleName)
+      .attr('href', '#' + articleId)
+      .prependTo(guide);
 
-        article
-            .attr('id', articleId);
-    }
+    article.attr('id', articleId);
+  }
 });
+
 ```
 
 <a name="table-of-contents-array-linking-article-id"></a>
@@ -288,6 +287,7 @@ If you are overwriting the default `link` implementation, you can take advantage
 <h2>Allow me to reiterate</h2>
 <h2>Allow me to reiterate</h2>
 <h2>Allow me to reiterate</h2>
+
 ```
 
 The default `link` implementation will use `Contents.id` to give each article a unique ID:
@@ -296,7 +296,9 @@ The default `link` implementation will use `Contents.id` to give each article a 
 <h2 id="allow-me-to-reiterate">Allow me to reiterate</h2>
 <h2 id="allow-me-to-reiterate-1">Allow me to reiterate</h2>
 <h2 id="allow-me-to-reiterate-2">Allow me to reiterate</h2>
+
 ```
+
 <a name="table-of-contents-array-markup"></a>
 ## Markup
 
@@ -317,38 +319,39 @@ Contents will generate the following markup for the above content:
 
 ```html
 <ol>
-    <li>
-        <a href="#javascript">JavaScript</a>
+  <li>
+    <a href="#javascript">JavaScript</a>
+
+    <ol>
+      <li>
+        <a href="#history">History</a>
+      </li>
+      <li>
+        <a href="#trademark">Trademark</a>
+      </li>
+      <li>
+        <a href="#features">Features</a>
 
         <ol>
-            <li>
-                <a href="#history">History</a>
-            </li>
-            <li>
-                <a href="#trademark">Trademark</a>
-            </li>
-            <li>
-                <a href="#features">Features</a>
-
-                <ol>
-                    <li>
-                        <a href="#imperative-and-structured">Imperative and structured</a>
-                    </li>
-                    <li>
-                        <a href="#dynamic">Dynamic</a>
-                    </li>
-                    <li>
-                        <a href="#functional">Functional</a>
-                    </li>
-                </ol>
-            </li>
-            <li>
-                <a href="#syntax">Syntax</a>
-            </li>
+          <li>
+            <a href="#imperative-and-structured">Imperative and structured</a>
+          </li>
+          <li>
+            <a href="#dynamic">Dynamic</a>
+          </li>
+          <li>
+            <a href="#functional">Functional</a>
+          </li>
         </ol>
-    </li>
+      </li>
+      <li>
+        <a href="#syntax">Syntax</a>
+      </li>
+    </ol>
+  </li>
 </ol>
 ```
+
 <a name="table-of-contents-array-events"></a>
 ## Events
 
@@ -361,30 +364,34 @@ Contents will generate the following markup for the above content:
 Attach event listeners using the `eventEmitter.on` of the resulting Contents object:
 
 ```js
-var contents = Contents();
+const contents = Contents();
 
-contents.eventEmitter.on('ready', function () {});
-contents.eventEmitter.on('resize', function () {});
+contents.eventEmitter.on('ready', () => {});
+contents.eventEmitter.on('resize', () => {});
+
 ```
 
 The `change` event listener is passed extra parameters: `.current.article`, `.current.guide`, and when available, `.previous.article`, `.previous.guide`:
 
 ```js
-contents.eventEmitter.on('change', function (data) {
-    if (data.previous) {
-        $(data.previous.article).removeClass('active-article');
-        $(data.previous.guide).removeClass('active-guide');
-    }
+contents.eventEmitter.on('change', (data) => {
+  if (data.previous) {
+    $(data.previous.article).removeClass('active-article');
+    $(data.previous.guide).removeClass('active-guide');
+  }
 
-    $(data.current.article).addClass('active-article');
-    $(data.current.guide).addClass('active-guide');
+  $(data.current.article).addClass('active-article');
+  $(data.current.guide).addClass('active-guide');
 });
+
 ```
 
 You must trigger "resize" event after programmatically changing the content or the presentation of the content.:
 
 ```js
 contents.eventEmitter.trigger('resize');
+
 ```
 
 This is required to recalculate the position of the content.
+
