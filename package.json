@@ -40,5 +40,5 @@
     "test": "mocha --require @babel/register"
   },
   "title": "Contents",
-  "version": "4.0.4"
+  "version": "5.0.0"
 }
