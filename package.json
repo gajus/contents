@@ -16,7 +16,7 @@
     "@babel/register": "^7.0.0",
     "chai": "^4.1.2",
     "eslint-config-canonical": "^12.0.0",
-    "gitdown": "^2.5.2",
+    "gitdown": "^2.5.3",
     "jsdom": "^12.0.0",
     "mocha": "^5.2.0"
   },
