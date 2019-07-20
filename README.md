@@ -55,7 +55,7 @@ contents.eventEmitter().on('change', function () {
 // added new content after generating the table of contents.
 const newHeading = document.createElement('h2');
 
-hewHeading.innerHTML = 'Dynamically generated title';
+newHeading.innerHTML = 'Dynamically generated title';
 
 document.body.appendChild(newHeading);
 
@@ -92,7 +92,7 @@ The code for all of the examples is in the [examples](./examples/) folder.
 | [Smooth scrolling](#smooth-scrolling) | - | ✓ | ✓ |
 | Forward and back button support | ✓ | - | ✓ |
 | [Events](#events) | ✓ | - | - |
-| [Efficient `scroll` event](#window-resize-and-scroll-event-handling) | ✓ | ✓ | - |
+| [Efficient `scroll` event](#window-resize-and-scroll-event-handling) | ✓ | ✓ | heading- |
 | [Reflect `window` resize](#window-resize-and-scroll-event-handling) | ✓ | - | ✓ |
 | [Extract table of contents as an array](#table-of-contents-array) | ✓ | - | - |
 | Overwrite markup and navigation | ✓ | - | - |
